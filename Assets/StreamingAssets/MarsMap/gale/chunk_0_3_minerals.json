@@ -1,0 +1,110 @@
+{
+  "chunkX": 0,
+  "chunkZ": 3,
+  "meanElevationMeters": -4353.82,
+  "minElevationMeters": -4432.54,
+  "maxElevationMeters": -4305.73,
+  "rockDensity": 0.5458,
+  "craterCount": 3,
+  "crismObservations": 0,
+  "hiriseCoverage": 0.0,
+  "minerals": {
+    "clays": 0.7009,
+    "sulfates": 0.3055,
+    "ironOxides": 0.4717,
+    "subsurfaceIce": 0.0205
+  },
+  "environment": {
+    "meanTemperatureC": -50.37,
+    "windSpeed": 4.0,
+    "pressurePa": 903.0,
+    "radiationMilliGrayPerDay": 0.2107
+  },
+  "veins": [
+    {
+      "mineral": "clays",
+      "u": 0.2235,
+      "v": 0.8706,
+      "richness": 0.959
+    },
+    {
+      "mineral": "clays",
+      "u": 0.1059,
+      "v": 0.949,
+      "richness": 0.868
+    },
+    {
+      "mineral": "clays",
+      "u": 0.2078,
+      "v": 0.9176,
+      "richness": 0.867
+    },
+    {
+      "mineral": "clays",
+      "u": 0.102,
+      "v": 0.9451,
+      "richness": 0.86
+    },
+    {
+      "mineral": "clays",
+      "u": 0.6824,
+      "v": 0.9843,
+      "richness": 0.855
+    },
+    {
+      "mineral": "clays",
+      "u": 0.1216,
+      "v": 0.8667,
+      "richness": 0.844
+    },
+    {
+      "mineral": "sulfates",
+      "u": 0.4275,
+      "v": 0.3608,
+      "richness": 0.621
+    },
+    {
+      "mineral": "sulfates",
+      "u": 0.5569,
+      "v": 0.0627,
+      "richness": 0.616
+    },
+    {
+      "mineral": "ironOxides",
+      "u": 0.2627,
+      "v": 0.0471,
+      "richness": 0.738
+    },
+    {
+      "mineral": "ironOxides",
+      "u": 0.1843,
+      "v": 0.2118,
+      "richness": 0.702
+    },
+    {
+      "mineral": "ironOxides",
+      "u": 0.349,
+      "v": 0.0431,
+      "richness": 0.674
+    },
+    {
+      "mineral": "ironOxides",
+      "u": 0.1608,
+      "v": 0.3176,
+      "richness": 0.658
+    },
+    {
+      "mineral": "ironOxides",
+      "u": 0.102,
+      "v": 0.2784,
+      "richness": 0.653
+    },
+    {
+      "mineral": "ironOxides",
+      "u": 0.2314,
+      "v": 0.2392,
+      "richness": 0.652
+    }
+  ],
+  "source": "elevación: synthetic: geología fractal de la zona; minerales: índices por geología publicada + ruido; CRISM ODE: sin consultar"
+}

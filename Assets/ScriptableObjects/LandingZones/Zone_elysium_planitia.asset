@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a28a25e419cea22cb245b742c28f854f, type: 3}
+  m_Name: Zone_elysium_planitia
+  m_EditorClassIdentifier:
+  zoneId: elysium_planitia
+  displayName: "Elysium Planitia"
+  description: "Llanura volcánica muy lisa cerca del ecuador. Mucho sol, pocas rocas y clima estable: ideal para aprender."
+  difficulty: 0
+  latitude: 4.5
+  longitudeEast: 135.6
+  terrain:
+    heightmap: {fileID: 0}
+    mapSizeInChunks: 32
+    chunkWorldSize: 64
+    heightScale: 60
+    proceduralResolution: 1025
+    seed: 101
+    roughness: 0.15
+    craterCount: 12
+  rockDensity: 0.15
+  damageMultiplier: 0.7
+  noonIrradiance: 560
+  dustDepositionPerHour: 0.0015
+  stormChancePerSol: 0.01
+  stormDurationSols: 1.5
+  stormLightBlock: 0.7
+  stormDustMultiplier: 6
+  cleaningGustsPerSol: 0.3
+  minTemperatureC: -95
+  maxTemperatureC: -5
+  hasAccessibleWaterIce: 0
+  iceAbundance: 0
+  spawnPointNormalized: {x: 0.5, y: 0.5}
+  spawnHeightOffset: 0.3

@@ -1,0 +1,44 @@
+{
+  "chunkX": 0,
+  "chunkZ": 7,
+  "meanElevationMeters": -2640.97,
+  "minElevationMeters": -2661.53,
+  "maxElevationMeters": -2617.05,
+  "rockDensity": 0.1348,
+  "craterCount": 1,
+  "crismObservations": 0,
+  "hiriseCoverage": 0.606,
+  "minerals": {
+    "clays": 0.5054,
+    "sulfates": 0.1862,
+    "ironOxides": 0.3321,
+    "subsurfaceIce": 0.0403
+  },
+  "environment": {
+    "meanTemperatureC": -57.9,
+    "windSpeed": 5.0,
+    "pressurePa": 773.9,
+    "radiationMilliGrayPerDay": 0.219
+  },
+  "veins": [
+    {
+      "mineral": "sulfates",
+      "u": 0.9176,
+      "v": 0.1608,
+      "richness": 0.218
+    },
+    {
+      "mineral": "ironOxides",
+      "u": 0.302,
+      "v": 0.8588,
+      "richness": 0.613
+    },
+    {
+      "mineral": "ironOxides",
+      "u": 0.3882,
+      "v": 0.7843,
+      "richness": 0.589
+    }
+  ],
+  "source": "elevación: real: MOLA 463 m (USGS) + detalle fractal; minerales: índices por geología publicada + ruido; CRISM ODE: 0 observaciones"
+}

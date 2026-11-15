@@ -1,0 +1,19 @@
+# Unity
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Mm]emoryCaptures/
+*.csproj
+*.sln
+*.suo
+*.user
+.vs/
+.idea/
+
+# Caché de descargas del procesador de mapas
+Tools/MapProcessor/cache/
+__pycache__/

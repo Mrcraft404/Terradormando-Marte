@@ -1,0 +1,62 @@
+using UnityEngine;
+
+namespace MarsRobot.Base
+{
+    /// <summary>
+    /// Máquina de la base con la que el robot interactúa al acercarse (tecla F).
+    /// Cada máquina dibuja su propio menú. De momento con IMGUI (sin paquetes extra);
+    /// cuando haya interfaz definitiva se cambia solo el dibujo, no la lógica.
+    /// </summary>
+    public abstract class BaseStation : MonoBehaviour
+    {
+        [SerializeField] private string displayName = "Máquina";
+        [Tooltip("Distancia (m) desde la que el robot puede usarla.")]
+        [SerializeField, Min(0.5f)] private float interactRadius = 3.5f;
+
+        protected RocketBase Owner { get; private set; }
+
+        public string DisplayName
+        {
+            get { return displayName; }
+        }
+
+        public float InteractRadius
+        {
+            get { return interactRadius; }
+        }
+
+        /// <summary>False para máquinas pasivas (como la plataforma de carga) que no abren menú.</summary>
+        public virtual bool HasMenu
+        {
+            get { return true; }
+        }
+
+        /// <summary>Texto que se muestra al acercarse.</summary>
+        public virtual string Prompt
+        {
+            get { return "F: usar " + displayName; }
+        }
+
+        /// <summary>Lo llama la base al crear la máquina.</summary>
+        public void Init(RocketBase owner, string name, float radius)
+        {
+            Owner = owner;
+            displayName = name;
+            interactRadius = radius;
+        }
+
+        /// <summary>Distancia horizontal al robot (la altura no cuenta: el terreno no es plano).</summary>
+        public float HorizontalDistance(Vector3 worldPos)
+        {
+            Vector3 d = worldPos - transform.position;
+            d.y = 0f;
+            return d.magnitude;
+        }
+
+        /// <summary>Se llama cada frame mientras el robot está dentro del radio (abra o no el menú).</summary>
+        public virtual void WhileRobotNearby(RobotBaseLink robot, float deltaTime) { }
+
+        /// <summary>Dibuja el contenido del menú (dentro de una ventana GUILayout).</summary>
+        public abstract void DrawMenu(RobotBaseLink robot);
+    }
+}

@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a28a25e419cea22cb245b742c28f854f, type: 3}
+  m_Name: Zone_utopia_planitia
+  m_EditorClassIdentifier:
+  zoneId: utopia_planitia
+  displayName: "Utopia Planitia"
+  description: "Llanura del norte con hielo de agua bajo la superficie. Recurso valioso, pero mucho frío y menos sol."
+  difficulty: 4
+  latitude: 48
+  longitudeEast: 134
+  terrain:
+    heightmap: {fileID: 0}
+    mapSizeInChunks: 32
+    chunkWorldSize: 64
+    heightScale: 90
+    proceduralResolution: 1025
+    seed: 505
+    roughness: 0.5
+    craterCount: 30
+  rockDensity: 0.6
+  damageMultiplier: 1.3
+  noonIrradiance: 420
+  dustDepositionPerHour: 0.002
+  stormChancePerSol: 0.03
+  stormDurationSols: 1.5
+  stormLightBlock: 0.7
+  stormDustMultiplier: 6
+  cleaningGustsPerSol: 0.3
+  minTemperatureC: -110
+  maxTemperatureC: -30
+  hasAccessibleWaterIce: 1
+  iceAbundance: 0.85
+  spawnPointNormalized: {x: 0.5, y: 0.5}
+  spawnHeightOffset: 0.3

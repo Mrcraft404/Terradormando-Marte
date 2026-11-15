@@ -1,0 +1,38 @@
+{
+  "formatVersion": 1,
+  "zoneId": "acidalia_planitia",
+  "displayName": "Acidalia Planitia",
+  "centerLat": 46.7,
+  "centerLonEast": 337.8,
+  "chunksX": 8,
+  "chunksZ": 8,
+  "verticesPerChunk": 256,
+  "metersPerSample": 4.0,
+  "chunkSizeMeters": 1020.0,
+  "zoneSizeMeters": 8160.0,
+  "heightMinMeters": -4015.958251953125,
+  "heightMaxMeters": -3974.062744140625,
+  "microScaleMeters": 1.9466135501861572,
+  "albedoSize": 256,
+  "rockMaskSize": 128,
+  "gravity": 3.721,
+  "sources": {
+    "elevation": "synthetic: geología fractal de la zona",
+    "microRelief": "synthetic: ruido fractal",
+    "rocks": "derivado: pendiente + rugosidad del micro-relieve + bordes de cráter",
+    "albedo": "synthetic: sombreado del relieve",
+    "minerals": "índices por geología publicada + ruido; CRISM ODE: sin consultar",
+    "climate": "perfil medio por zona (Mars Climate Database / NASA Ames, Curiosity RAD), ajustado por altitud"
+  },
+  "climate": {
+    "meanTemperatureC": -65,
+    "minTemperatureC": -105,
+    "maxTemperatureC": -20,
+    "meanWindSpeed": 7,
+    "gustWindSpeed": 26,
+    "dustStormChancePerSol": 0.08,
+    "surfacePressurePa": 874.6,
+    "radiationMilliGrayPerDay": 0.2124
+  },
+  "generatedUtc": "2026-11-14T21:42:49Z"
+}

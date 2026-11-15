@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7205ef2433f8b49e1569d1cf3924371, type: 3}
+  m_Name: LandingZoneCatalog
+  m_EditorClassIdentifier:
+  zones:
+  - {fileID: 11400000, guid: 70e951caf557e305a50d36bca0e80ff7, type: 2}
+  - {fileID: 11400000, guid: 42b959673923b355bd483db501a16ba2, type: 2}
+  - {fileID: 11400000, guid: a0761c145cff91d064152efa138fbccb, type: 2}
+  - {fileID: 11400000, guid: a1dce0422b9c9b25c4548f81ea7c8011, type: 2}
+  - {fileID: 11400000, guid: 630f929d1ccf2f7207ddbef34de03590, type: 2}
+  - {fileID: 11400000, guid: 7f3281fdd376ad88e8a03463e860818e, type: 2}

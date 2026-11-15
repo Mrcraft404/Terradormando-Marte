@@ -1,0 +1,7 @@
+# Obligatorias (modo synthetic, sin internet)
+numpy>=1.24
+Pillow>=10.0
+# Para descargar CTX (Mars Trek) y consultar ODE (HiRISE, CRISM)
+requests>=2.31
+# Para leer MOLA y los DTM de HiRISE por ventanas sin descargarlos enteros (incluye GDAL)
+rasterio>=1.3

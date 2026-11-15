@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a28a25e419cea22cb245b742c28f854f, type: 3}
+  m_Name: Zone_acidalia_planitia
+  m_EditorClassIdentifier:
+  zoneId: acidalia_planitia
+  displayName: "Acidalia Planitia"
+  description: "Gran llanura del hemisferio norte. Terreno amable, pero las tormentas de polvo son frecuentes y cubren los paneles."
+  difficulty: 1
+  latitude: 46.7
+  longitudeEast: 337.8
+  terrain:
+    heightmap: {fileID: 0}
+    mapSizeInChunks: 32
+    chunkWorldSize: 64
+    heightScale: 70
+    proceduralResolution: 1025
+    seed: 202
+    roughness: 0.25
+    craterCount: 18
+  rockDensity: 0.25
+  damageMultiplier: 0.85
+  noonIrradiance: 470
+  dustDepositionPerHour: 0.0025
+  stormChancePerSol: 0.08
+  stormDurationSols: 1.5
+  stormLightBlock: 0.7
+  stormDustMultiplier: 6
+  cleaningGustsPerSol: 0.3
+  minTemperatureC: -105
+  maxTemperatureC: -20
+  hasAccessibleWaterIce: 0
+  iceAbundance: 0.15
+  spawnPointNormalized: {x: 0.5, y: 0.5}
+  spawnHeightOffset: 0.3

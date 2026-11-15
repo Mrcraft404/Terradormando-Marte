@@ -1,0 +1,32 @@
+{
+  "chunkX": 4,
+  "chunkZ": 3,
+  "meanElevationMeters": -3995.0,
+  "minElevationMeters": -3999.68,
+  "maxElevationMeters": -3976.36,
+  "rockDensity": 0.3353,
+  "craterCount": 1,
+  "crismObservations": 0,
+  "hiriseCoverage": 0.0,
+  "minerals": {
+    "clays": 0.0609,
+    "sulfates": 0.0969,
+    "ironOxides": 0.4496,
+    "subsurfaceIce": 0.2081
+  },
+  "environment": {
+    "meanTemperatureC": -65.01,
+    "windSpeed": 7.0,
+    "pressurePa": 874.3,
+    "radiationMilliGrayPerDay": 0.2124
+  },
+  "veins": [
+    {
+      "mineral": "subsurfaceIce",
+      "u": 0.8078,
+      "v": 0.0275,
+      "richness": 0.389
+    }
+  ],
+  "source": "elevación: synthetic: geología fractal de la zona; minerales: índices por geología publicada + ruido; CRISM ODE: sin consultar"
+}
