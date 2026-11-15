@@ -203,6 +203,32 @@ namespace MarsRobot.World.TerrainSystem
         }
 
         /// <summary>
+        /// Aplana un círculo a una altura (m), con un borde de transición suave: así una base o un
+        /// cohete aterrizado quedan sobre suelo nivelado. Coordenadas locales del terreno.
+        /// </summary>
+        public void FlattenCircle(float centerX, float centerZ, float radius, float blend, float heightMeters)
+        {
+            int last = Resolution - 1;
+            float cell = WorldSize / last;
+            float target = heightMeters / HeightScale;
+            float outer = radius + blend;
+            int x0 = Mathf.Max(0, Mathf.FloorToInt((centerX - outer) / cell)), x1 = Mathf.Min(last, Mathf.CeilToInt((centerX + outer) / cell));
+            int z0 = Mathf.Max(0, Mathf.FloorToInt((centerZ - outer) / cell)), z1 = Mathf.Min(last, Mathf.CeilToInt((centerZ + outer) / cell));
+            for (int z = z0; z <= z1; z++)
+            {
+                for (int x = x0; x <= x1; x++)
+                {
+                    float dx = x * cell - centerX, dz = z * cell - centerZ;
+                    float d = Mathf.Sqrt(dx * dx + dz * dz);
+                    if (d >= outer) continue;
+                    float t = d <= radius ? 1f : 1f - Mathf.SmoothStep(0f, 1f, (d - radius) / Mathf.Max(0.01f, blend));
+                    int i = z * Resolution + x;
+                    _heights[i] = Mathf.Lerp(_heights[i], target, t);
+                }
+            }
+        }
+
+        /// <summary>
         /// Normal por diferencias centrales. Al usar el campo global (y no la malla del chunk),
         /// los bordes entre chunks quedan con la misma normal y no se notan costuras de luz.
         /// </summary>

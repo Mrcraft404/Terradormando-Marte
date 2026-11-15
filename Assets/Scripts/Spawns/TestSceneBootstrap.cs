@@ -45,15 +45,48 @@ namespace MarsRobot.Spawns
         /// </summary>
         private System.Collections.IEnumerator Start()
         {
+            MarsRobot.Core.GameSettings.ReapplySceneSettings(); // brillo y sensibilidad guardados en Ajustes
             while (_spawner != null && !_spawner.IsReady) yield return null;
             if (_spawner == null || _spawner.RocketBase == null) yield break;
 
+            // El jugador empieza como el astronauta dentro de la nave; el robot espera en el hangar.
+            MarsRobot.Crew.CrewControl.Setup(_spawner.RocketBase, _controller.gameObject);
+
             Transform baseRoot = _spawner.RocketBase.transform;
-            // El robot aparece en (0, 0, 11) mirando al cohete (−Z), así que su izquierda es +X.
-            Vector3 parking = baseRoot.TransformPoint(new Vector3(7f, 0f, 13f));
+            // MarteCar aparcado junto al pie del ascensor (a la derecha según se sale de la nave).
+            Vector3 parking = baseRoot.TransformPoint(new Vector3(8.5f, 0f, 17f));
             parking.y = _terrain.GetHeightAt(parking);
-            MarsRobot.Vehicles.MarteCarFactory.Create(parking, baseRoot.rotation);
-            ShowMessage("MarteCar aparcado a la izquierda de la plataforma: acércate y pulsa F.");
+            MarsRobot.Vehicles.MarteCarFactory.Create(parking, baseRoot.rotation).gameObject
+                .AddComponent<MarsRobot.UI.Minimap.MinimapObjectMarker>().Setup(MarsRobot.UI.Minimap.MinimapMarkerType.Vehicle, false, "MarteCar");
+
+            // Rocas minables alrededor del rover.
+            var rocks = new GameObject("Rocas").AddComponent<RockScatterSpawner>();
+            rocks.Setup(_terrain, _controller.transform, _spawner.ActiveZone);
+
+            // Puntos de descubrimiento: restos de sondas antiguas (ficticias) a 70–120 m de la base.
+            var rng = new System.Random(_zone.terrain.seed);
+            for (int i = 0; i < 2; i++)
+            {
+                float ang = (float)rng.NextDouble() * 360f;
+                float dist = 70f + (float)rng.NextDouble() * 50f;
+                Vector3 p = baseRoot.position + Quaternion.Euler(0f, ang, 0f) * Vector3.forward * dist;
+                p.y = _terrain.GetHeightAt(p);
+                MarsRobot.Dialogue.DiscoveryPoint.Spawn(p, "probe_archive", i == 0 ? "Restos de una sonda antigua" : "Módulo de aterrizaje abandonado");
+            }
+
+            // Aspecto: atrezo con colocación orgánica, cielo marciano, sondas de reflejos y una
+            // jerarquía ordenada (_Environment, _Structures, _Props, _PhysicsSystem).
+            MarsRobot.Visuals.ShipSetDresser.Dress(_spawner.RocketBase, _zone.terrain.seed);
+            MarsRobot.Visuals.MarsEnvironment.Setup(_spawner.RocketBase.Mothership);
+            MarsRobot.Visuals.SceneRoots.OrganizeGameScene();
+
+            // Bienvenida de la IA del cohete (pausa el juego hasta elegir respuesta).
+            yield return new WaitForSeconds(1.5f);
+            MarsRobot.Dialogue.DialogueManager.Play("intro_nav");
+
+            // Mensaje de la comandante cuando la base lleve un rato funcionando.
+            yield return new WaitForSeconds(480f);
+            MarsRobot.Dialogue.DialogueManager.Play("commander_hello");
         }
         private string _lastMessage = "";
         private float _messageTime;
@@ -73,6 +106,14 @@ namespace MarsRobot.Spawns
             Light sun = CreateSun();
             _environment = new GameObject("Clima").AddComponent<MarsEnvironmentSystem>();
             _environment.SunLight = sun;
+
+            // Clima espacial (NASA DONKI, con simulación sin conexión) y su HUD.
+            var spaceWeather = new GameObject("Clima espacial");
+            spaceWeather.AddComponent<MarsRobot.World.SpaceWeather.SpaceWeatherManager>();
+            spaceWeather.AddComponent<MarsRobot.World.SpaceWeather.SpaceWeatherHUD>();
+
+            // Minimapa táctico (arriba a la izquierda).
+            new GameObject("Minimapa").AddComponent<MarsRobot.UI.Minimap.MarsMinimapController>();
 
             _terrain = new GameObject("Terreno").AddComponent<TerrainManager>();
             _terrain.SetMaterial(MarsGroundMaterialFactory.Create(_zone.terrain.seed));
@@ -124,12 +165,13 @@ namespace MarsRobot.Spawns
             var robot = new GameObject("Robot");
 
             var body = robot.AddComponent<Rigidbody>();
-            body.mass = 300f;
+            body.mass = 900f; // RobotModuleSystem la ajusta con el chasis y los módulos
 
+            // Rover a escala de un Curiosity/Perseverance (~3 × 2,7 × 2,2 m): ver RoverConfig.
             var capsule = robot.AddComponent<CapsuleCollider>();
-            capsule.radius = 0.6f;
-            capsule.height = 1.4f;
-            capsule.center = new Vector3(0f, 0.7f, 0f);
+            capsule.radius = 1.0f;
+            capsule.height = 2.0f;
+            capsule.center = new Vector3(0f, 1.0f, 0f);
             capsule.material = CreateSlipperyMaterial();
 
             // Orden importante: cada Awake busca a los anteriores con GetComponent.
@@ -138,37 +180,33 @@ namespace MarsRobot.Spawns
             _dusting = robot.AddComponent<DustingSystem>();
             _controller = robot.AddComponent<RobotController>();
             _repair = robot.AddComponent<RobotRepairController>();
-            robot.AddComponent<RobotUpgrades>();   // mejoras instaladas en el taller
-            robot.AddComponent<RobotToolbelt>();   // L foco · Z escáner · X taladro de muestras
-            robot.AddComponent<BuildModeController>(); // B: construir (antes que RobotBaseLink, que lo busca en Awake)
-            robot.AddComponent<RobotBaseLink>();   // F: usar las máquinas y estructuras de la base
+            robot.AddComponent<RobotUpgrades>();        // mejoras instaladas en el taller
+            robot.AddComponent<MarsRobot.Items.RobotInventory>(); // bahía de carga con masa y volumen (I)
+            robot.AddComponent<RobotModuleSystem>();    // ranuras: brazo, cubierta, bahía interna
+            robot.AddComponent<RoverToolController>();  // X: taladro / pala / soplador
+            robot.AddComponent<RobotToolbelt>();        // L foco · Z escáner
+            robot.AddComponent<BuildModeController>();  // B: construir (antes que RobotBaseLink, que lo busca en Awake)
+            robot.AddComponent<MarsBuildingPlacer>();   // N: hábitats por capas con holograma (después de BuildModeController)
+            robot.AddComponent<RobotBaseLink>();        // F: máquinas y estructuras de la base (por cercanía)
+            robot.AddComponent<MarsRobot.Interaction.PlayerInteractor>(); // F: lo que apunta el punto de mira
+            robot.AddComponent<MarsRobot.Interaction.InteractionUI>();    // punto de mira y texto de acción
+            robot.AddComponent<MarsRobot.Items.InventoryUI>();            // ventana del inventario
+            robot.AddComponent<MarsRobot.Dialogue.LogTerminal>();          // J: bitácora
+            robot.AddComponent<MarsRobot.Dialogue.RobotAlertMonitor>();    // avisos del HUD
+            robot.AddComponent<MarsRobot.CameraEffects.RobotCameraMotion>(); // balanceo e inercia
+            robot.AddComponent<MarsRobot.CameraEffects.CameraShake>();       // sacudidas
+            robot.AddComponent<MarsRobot.World.SpaceWeather.SpaceWeatherMotorGlitch>(); // fallos de motor (GST)
 
-            // Aspecto PROVISIONAL (cuerpo, mástil, cabeza y cuatro ruedas, sin colisionadores propios).
-            // Se sustituirá por el modelo del diseño del robot: basta con quitar este bloque y meter
-            // el modelo como hijo de "Robot", con la base en y = 0 y mirando hacia +Z.
-            var visual = new GameObject("Modelo (provisional)").transform;
-            visual.SetParent(robot.transform, false);
-            Material hull = CreateMaterial(new Color(0.85f, 0.85f, 0.8f));
-            Material dark = CreateMaterial(new Color(0.15f, 0.15f, 0.15f));
-            Material accent = CreateMaterial(new Color(0.95f, 0.55f, 0.1f));
-            AddVisual(PrimitiveType.Cube, visual, new Vector3(0f, 0.75f, 0f), new Vector3(1.4f, 0.5f, 2f), Quaternion.identity, hull);
-            AddVisual(PrimitiveType.Cube, visual, new Vector3(0f, 1.02f, -0.35f), new Vector3(1.6f, 0.05f, 1.1f), Quaternion.identity, dark); // panel solar
-            AddVisual(PrimitiveType.Cube, visual, new Vector3(0f, 1.15f, 0.6f), new Vector3(0.15f, 0.6f, 0.15f), Quaternion.identity, dark);  // mástil
-            AddVisual(PrimitiveType.Cube, visual, new Vector3(0f, 1.5f, 0.62f), new Vector3(0.5f, 0.22f, 0.25f), Quaternion.identity, accent); // cabeza
-            Quaternion wheelRot = Quaternion.Euler(0f, 0f, 90f);
-            for (int x = -1; x <= 1; x += 2)
-            {
-                for (int z = -1; z <= 1; z += 2)
-                {
-                    AddVisual(PrimitiveType.Cylinder, visual, new Vector3(0.8f * x, 0.4f, 0.75f * z),
-                        new Vector3(0.7f, 0.12f, 0.7f), wheelRot, dark);
-                }
-            }
+            // Modelo 3D del rover según el diseño del usuario (seis ruedas rocker-bogie, mástil con
+            // cámaras, brazo robótico, RTG y antenas). Ver Robot/Visual/RoverModelBuilder.
+            MarsRobot.Robot.Visual.RoverVisualRig rig = MarsRobot.Robot.Visual.RoverModelBuilder.Build(robot.transform);
+            robot.AddComponent<MarsRobot.Robot.Visual.RoverVisualAnimator>().Setup(rig);
 
-            // Pivote de la "cabeza": el controlador lo inclina con el ratón.
+            // Pivote de la cámara a la altura de las cámaras del mástil (~2,15 m). El controlador lo
+            // inclina con el ratón y el animador copia ese cabeceo en la cabeza del mástil.
             var head = new GameObject("Cabeza");
             head.transform.SetParent(robot.transform, false);
-            head.transform.localPosition = new Vector3(0f, 1.5f, 0.78f);
+            head.transform.position = rig.cameraMount.position;
             _controller.CameraPivot = head.transform;
 
             // La cámara es hija del pivote; el rig la coloca en 1ª o 3ª persona (tecla V).
@@ -181,11 +219,11 @@ namespace MarsRobot.Spawns
             cam.backgroundColor = RenderSettings.fogColor;
             camGo.AddComponent<AudioListener>();
             camGo.tag = "MainCamera";
+            camGo.AddComponent<MarsRobot.CameraEffects.RobotDamageVisionEffect>(); // visión dañada (cables / erupciones)
 
-            // En primera persona se oculta la cabeza (está justo delante de la cámara).
-            Renderer headRenderer = visual.GetChild(3).GetComponent<Renderer>();
+            // En primera persona se oculta la cabeza del mástil (la cámara está dentro de ella).
             _cameraRig = robot.AddComponent<RobotCameraRig>();
-            _cameraRig.Setup(head.transform, camGo.transform, new[] { headRenderer });
+            _cameraRig.Setup(head.transform, camGo.transform, rig.headRenderers);
 
             return body;
         }
@@ -270,6 +308,15 @@ namespace MarsRobot.Spawns
                 _environment.StartStorm(0.5f);
                 ShowMessage("Prueba: tormenta de polvo.");
             }
+            if (Input.GetKeyDown(KeyCode.F11))
+            {
+                MarsRobot.World.SpaceWeather.SpaceWeatherManager sw;
+                if (GameServices.TryGet(out sw))
+                {
+                    sw.TriggerNextNow();
+                    ShowMessage("Prueba: siguiente evento de clima espacial.");
+                }
+            }
 #endif
         }
 
@@ -295,6 +342,8 @@ namespace MarsRobot.Spawns
         private void OnGUI()
         {
             if (!showDebugPanel || _health == null) return;
+            // Con el astronauta al mando no se muestra el panel del robot.
+            if (MarsRobot.Crew.CrewControl.Instance != null && MarsRobot.Crew.CrewControl.Instance.AstronautActive) return;
             if (_style == null)
             {
                 _style = new GUIStyle(GUI.skin.label) { fontSize = 14, richText = true };
@@ -369,13 +418,16 @@ namespace MarsRobot.Spawns
                           "   Cámara: " + (_cameraRig.Mode == RobotCameraMode.FirstPerson ? "1ª persona" : "3ª persona"));
             sb.AppendLine("W adelante · S atrás · A izquierda · D derecha · Q/E girar · ratón mirar · V cámara");
             sb.AppendLine("F usar máquina · R reparar · T herramienta · G módulo · C limpiar paneles");
-            sb.AppendLine("F1–F6 zona · F7 +recursos · F8 golpe · F9 reparar todo · F10 tormenta · H ocultar panel · Esc soltar ratón");
+            sb.AppendLine("F1–F6 zona · F7 +recursos · F8 golpe · F9 reparar todo · F10 tormenta · F11 clima espacial · H ocultar panel");
             if (Time.time - _messageTime < 4f && _lastMessage.Length > 0) sb.AppendLine("\n<b>" + _lastMessage + "</b>");
 
             GUI.color = new Color(0f, 0f, 0f, 0.55f);
-            GUI.DrawTexture(new Rect(8, 8, 640, 610), Texture2D.whiteTexture);
+            // Debajo del minimapa (que ocupa la esquina superior izquierda).
+            const float top = 294f;
+            float h = Mathf.Min(610f, Screen.height - top - 8f);
+            GUI.DrawTexture(new Rect(8, top, 640, h), Texture2D.whiteTexture);
             GUI.color = Color.white;
-            GUI.Label(new Rect(16, 12, 628, 606), sb.ToString(), _style);
+            GUI.Label(new Rect(16, top + 4, 628, h - 4), sb.ToString(), _style);
         }
 
         private static string Pct(float v)

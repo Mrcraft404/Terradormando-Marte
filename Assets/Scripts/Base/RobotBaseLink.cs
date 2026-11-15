@@ -24,6 +24,8 @@ namespace MarsRobot.Base
         private const int MenuWindowId = 41730; // identificador fijo de la ventana IMGUI del menú
         private bool _menuOpen;
         private BuildModeController _builder;
+        private MarsRobot.Interaction.PlayerInteractor _interactor;
+        private int _openedThisFrame = -1;
         private RobotRepairController _repair;
         private RocketBase _base;
         private BaseStation _nearest;
@@ -50,6 +52,7 @@ namespace MarsRobot.Base
             if (Upgrades == null) Upgrades = gameObject.AddComponent<RobotUpgrades>();
             _repair = GetComponent<RobotRepairController>();
             _builder = GetComponent<BuildModeController>();
+            _interactor = GetComponent<MarsRobot.Interaction.PlayerInteractor>();
         }
 
         /// <summary>True si hay un menú de máquina abierto (el modo construcción no se activa entonces).</summary>
@@ -83,12 +86,16 @@ namespace MarsRobot.Base
             }
 
             // Si nos alejamos con el menú abierto, o la máquina se desmontó, se cierra.
-            if (_menuOpen && (_open == null || _open != _nearest)) CloseMenu();
+            // (Un menú abierto apuntando desde algo más lejos no se cierra hasta alejarse de verdad.)
+            if (_menuOpen && (_open == null || _open.HorizontalDistance(pos) > _open.InteractRadius + 5f)) CloseMenu();
 
             // En modo construcción la F no abre menús (para no mezclar acciones).
             if (_builder != null && _builder.IsActive) return;
 
-            if (RobotInput.InteractPressed)
+            // Si el punto de mira apunta a algo, esa F ya la ha gestionado PlayerInteractor.
+            if (_interactor == null) _interactor = GetComponent<MarsRobot.Interaction.PlayerInteractor>();
+            bool aimed = _interactor != null && _interactor.HasTarget;
+            if (RobotInput.InteractPressed && _openedThisFrame != Time.frameCount && (_menuOpen || !aimed))
             {
                 if (_open != null) CloseMenu();
                 else if (_nearest != null && _nearest.HasMenu) OpenMenu(_nearest);
@@ -97,6 +104,14 @@ namespace MarsRobot.Base
             {
                 CloseMenu();
             }
+        }
+
+        /// <summary>Abre el menú de una máquina (lo usa la interacción por punto de mira).</summary>
+        public void OpenMenuFor(BaseStation station)
+        {
+            if (station == null || _menuOpen) return;
+            OpenMenu(station);
+            _openedThisFrame = Time.frameCount;
         }
 
         private void OpenMenu(BaseStation station)

@@ -112,7 +112,7 @@ namespace MarsRobot.Base
             var all = StructureCatalog.All;
             for (int i = 0; i < all.Count; i++)
             {
-                if (all[i].category == _category) _inCategory.Add(all[i]);
+                if (all[i].category == _category && !all[i].hiddenFromBuildMenu) _inCategory.Add(all[i]);
             }
         }
 
@@ -184,7 +184,7 @@ namespace MarsRobot.Base
 
             Vector3 toBase = pos - _base.transform.position;
             toBase.y = 0f;
-            if (toBase.magnitude > RocketBase.BuildRadius)
+            if (!def.ignoreBuildRadius && toBase.magnitude > RocketBase.BuildRadius)
             {
                 reason = "Demasiado lejos del cohete (máx. " + RocketBase.BuildRadius.ToString("0") + " m).";
                 return false;

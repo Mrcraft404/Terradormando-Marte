@@ -44,6 +44,7 @@ import io
 import json
 import math
 import re
+import shutil
 import sys
 import time
 import zlib
@@ -253,7 +254,7 @@ def fetch_mola(bbox, size, args):
         log("  MOLA: rasterio no está instalado → simulación")
         return None
     url = "/vsicurl/" + args.mola_url
-    env = rasterio.Env(GDAL_DISABLE_READDIR_ON_OPEN="EMPTY_DIR",
+    env = rasterio.Env(GDAL_DISABLE_READDIR_ON_OPEN="EMPTY_DIR", GDAL_CACHEMAX=64,
                        CPL_VSIL_CURL_ALLOWED_EXTENSIONS=".tif",
                        GDAL_HTTP_TIMEOUT=str(args.timeout),
                        GDAL_HTTP_MAX_RETRY="2")
@@ -397,7 +398,8 @@ def build_elevation(zone, bbox, size, mps, rng, args, sources):
 
 def ode_products(session, params, timeout):
     """Consulta la API REST de ODE y devuelve la lista de productos (puede estar vacía)."""
-    query = dict(query="product", target="mars", output="JSON", results="fp")
+    # f = archivos, p = producto, m = metadatos (sin "m" no vienen las coordenadas de la huella).
+    query = dict(query="product", target="mars", output="JSON", results="fpm")
     query.update(params)
     r = session.get(ODE_URL, params=query, timeout=timeout)
     r.raise_for_status()
@@ -420,28 +422,60 @@ def product_files(product):
     return [flist] if isinstance(flist, dict) else list(flist)
 
 
-def product_center(product):
-    for lat_key, lon_key in (("Center_latitude", "Center_longitude"),
-                             ("Center_Latitude", "Center_Longitude")):
-        if lat_key in product and lon_key in product:
-            try:
-                return float(product[lat_key]), float(product[lon_key]) % 360.0
-            except (TypeError, ValueError):
-                pass
-    return None
+def product_bounds(product):
+    """Huella (lat_s, lat_n, lon_w, lon_e en 0..360) de un producto ODE, o None."""
+    try:
+        return (float(product["Minimum_latitude"]), float(product["Maximum_latitude"]),
+                float(product["Westernmost_longitude"]) % 360.0, float(product["Easternmost_longitude"]) % 360.0)
+    except (KeyError, TypeError, ValueError):
+        return None
 
 
-def fetch_hirise_micro(bbox, size, mps, session, args):
-    """Devuelve (micro_m, cobertura 0..1) a partir de un DTM HiRISE, o (None, 0)."""
+def hirise_highpass(data, valid, mps):
+    """
+    Paso alto del DTM (quita la forma grande, que ya aporta MOLA) usando SOLO datos válidos
+    (convolución normalizada): así el borde de la franja HiRISE no deja un escalón.
+    Devuelve (micro en metros, peso 0..1 que se desvanece suavemente cerca del borde).
+    """
+    r = max(1, int(40.0 / mps))
+    v = valid.astype(np.float32)
+    num = box_blur(np.where(valid, data, 0.0), r)
+    den = box_blur(v, r)
+    low = np.where(den > 1e-3, num / np.maximum(den, 1e-3), 0.0)
+    micro = np.where(valid, data - low, 0.0).astype(np.float32)
+    weight = (smoothstep(0.55, 0.95, den) * v).astype(np.float32)
+    return micro, weight
+
+
+def fetch_hirise_micro(bbox, size, mps, session, args, cache_dir=None):
+    """Devuelve (micro_m, peso, cobertura 0..1) a partir de un DTM HiRISE, o (None, None, 0)."""
     if args.no_hirise or session is None or rasterio is None:
-        return None, 0.0
+        return None, None, 0.0
+    # La lectura remota del DTM tarda minutos: se guarda el resultado en la caché.
+    cache_file = None
+    if cache_dir is not None:
+        key = "%.5f_%.5f_%.5f_%.5f_%d" % (bbox["lat_s"], bbox["lat_n"], bbox["lon_w"], bbox["lon_e"], size)
+        cache_file = Path(cache_dir) / "hirise" / ("%08x.npz" % zlib.crc32(key.encode("ascii")))
+        if cache_file.exists():
+            cached = np.load(cache_file)
+            log("  HiRISE: desde caché (cobertura %.0f %%)" % (float(cached["coverage"]) * 100))
+            return cached["micro"], cached["weight"], float(cached["coverage"])
+    result = _fetch_hirise_remote(bbox, size, mps, session, args)
+    if result[0] is not None and cache_file is not None:
+        cache_file.parent.mkdir(parents=True, exist_ok=True)
+        np.savez_compressed(cache_file, micro=result[0], weight=result[1], coverage=result[2])
+    return result
+
+
+def _fetch_hirise_remote(bbox, size, mps, session, args):
+    """Busca un DTM HiRISE con ODE y lo lee por ventana con rasterio /vsicurl/."""
     try:
         params = dict(ihid="MRO", iid="HIRISE", pt="DTM")
         params.update(ode_bbox_params(bbox))
         products = ode_products(session, params, args.timeout)
     except Exception as e:
         log("  HiRISE: consulta ODE fallida (%s)" % e)
-        return None, 0.0
+        return None, None, 0.0
 
     urls = []
     for p in products:
@@ -452,49 +486,50 @@ def fetch_hirise_micro(bbox, size, mps, session, args):
                 urls.append(url)
     if not urls:
         log("  HiRISE: ningún DTM cubre la zona → micro-relieve simulado")
-        return None, 0.0
+        return None, None, 0.0
 
     mars_geo = CRS.from_proj4("+proj=longlat +a=3396190 +b=3396190 +no_defs")
-    env = rasterio.Env(GDAL_DISABLE_READDIR_ON_OPEN="EMPTY_DIR", GDAL_HTTP_TIMEOUT=str(args.timeout))
     for url in urls[:3]:
-        try:
-            with env, rasterio.open("/vsicurl/" + url) as ds:
-                left, bottom, right, top = transform_bounds(
-                    mars_geo, ds.crs, lon_signed(bbox["lon_w"]), bbox["lat_s"],
-                    lon_signed(bbox["lon_e"]), bbox["lat_n"])
-                win = from_bounds(left, bottom, right, top, transform=ds.transform)
-                nodata = ds.nodata if ds.nodata is not None else -3.4028226550889045e38
-                data = ds.read(1, window=win, out_shape=(size, size), boundless=True,
-                               fill_value=nodata, resampling=Resampling.bilinear).astype(np.float64)
+        name = url.rsplit("/", 1)[-1]
+        for attempt in (1, 2):
+            try:
+                # Los DTM pesan 400-700 MB: se lee solo la ventana de la zona. Fragmentos de 1 MB
+                # (menos peticiones), reintentos HTTP y caché de GDAL limitada (por defecto ~5 % de la RAM).
+                with rasterio.Env(GDAL_DISABLE_READDIR_ON_OPEN="EMPTY_DIR", GDAL_CACHEMAX=64,
+                                  GDAL_HTTP_TIMEOUT=str(int(args.timeout)), GDAL_HTTP_MAX_RETRY="5",
+                                  GDAL_HTTP_RETRY_DELAY="3", CPL_VSIL_CURL_CHUNK_SIZE="1048576"),                         rasterio.open("/vsicurl/" + url) as ds:
+                    left, bottom, right, top = transform_bounds(
+                        mars_geo, ds.crs, lon_signed(bbox["lon_w"]), bbox["lat_s"],
+                        lon_signed(bbox["lon_e"]), bbox["lat_n"])
+                    win = from_bounds(left, bottom, right, top, transform=ds.transform)
+                    nodata = ds.nodata if ds.nodata is not None else -3.4028226550889045e38
+                    data = ds.read(1, window=win, out_shape=(size, size), boundless=True,
+                                   fill_value=nodata, resampling=Resampling.bilinear).astype(np.float64)
                 valid = (data > -1e30) & np.isfinite(data) & (data != nodata)
                 coverage = float(valid.mean())
                 if coverage < 0.05:
-                    continue
-                filled = np.where(valid, data, np.nanmean(np.where(valid, data, np.nan)))
-                # Paso alto: quitamos la forma grande (ya la aporta MOLA) y dejamos el micro-relieve.
-                micro = filled - box_blur(filled, max(1, int(40.0 / mps)))
-                micro = np.where(valid, micro, 0.0).astype(np.float32)
-                log("  HiRISE: DTM %s (cobertura %.0f %%)" % (url.rsplit("/", 1)[-1], coverage * 100))
-                return micro, coverage
-        except Exception as e:
-            log("  HiRISE: no se pudo leer %s (%s)" % (url.rsplit("/", 1)[-1], e))
-    return None, 0.0
+                    break                                   # este DTM apenas toca la zona: el siguiente
+                micro, weight = hirise_highpass(data, valid, mps)
+                log("  HiRISE: DTM %s (cobertura %.0f %%)" % (name, coverage * 100))
+                return micro, weight, coverage
+            except Exception as e:
+                log("  HiRISE: intento %d con %s fallido (%s)" % (attempt, name, e))
+    return None, None, 0.0
 
 
-def build_micro(zone, bbox, size, mps, rng, session, args, sources):
+def build_micro(zone, bbox, size, mps, rng, session, args, sources, cache_dir=None):
     # Micro-relieve: rugosidad de escala métrica (beta 2,2), amplitud pequeña.
     synthetic = fractal_noise(size, 2.2, rng) * zone["micro_m"]
     if args.mode == "synthetic":
         sources["microRelief"] = "synthetic: ruido fractal"
         return synthetic, 0.0
-    micro, coverage = fetch_hirise_micro(bbox, size, mps, session, args)
+    micro, weight, coverage = fetch_hirise_micro(bbox, size, mps, session, args, cache_dir)
     if micro is None:
         sources["microRelief"] = "synthetic: ruido fractal (sin DTM HiRISE en la zona)"
         return synthetic, 0.0
-    # Donde el DTM no llega, completamos con el micro-relieve simulado.
-    mask = micro != 0.0
+    # Donde el DTM no llega, micro-relieve simulado; en el borde se mezclan con suavidad.
     sources["microRelief"] = "real: DTM HiRISE (%.0f %% de la zona) + fractal" % (coverage * 100)
-    return np.where(mask, micro, synthetic).astype(np.float32), coverage
+    return (micro * weight + synthetic * (1.0 - weight)).astype(np.float32), coverage
 
 
 # ---------------------------------------------------------------------------
@@ -584,6 +619,7 @@ def load_ctx_level(m, template, style, tms_id, ranges, session, args, cache_dir)
     c0, c1, r0, r1 = ranges
     total = (c1 - c0 + 1) * (r1 - r0 + 1)
     mosaic = Image.new("L", ((c1 - c0 + 1) * m["tw"], (r1 - r0 + 1) * m["th"]), 0)
+    filled = Image.new("L", mosaic.size, 0)          # 255 donde hay tesela buena
     missing = 0
     tile_cache = cache_dir / "ctx" / str(m["id"])
     tile_cache.mkdir(parents=True, exist_ok=True)
@@ -591,6 +627,10 @@ def load_ctx_level(m, template, style, tms_id, ranges, session, args, cache_dir)
         for col in range(c0, c1 + 1):
             wrapped = col % m["mw"]
             path = tile_cache / ("%d_%d.img" % (row, wrapped))
+            bad = tile_cache / ("%d_%d.bad" % (row, wrapped))   # tesela que ya falló: no repetir
+            if bad.exists():
+                missing += 1
+                continue
             data = path.read_bytes() if path.exists() else None
             if data is None:
                 url = fill_template(template, {"Style": style, "TileMatrixSet": tms_id,
@@ -599,8 +639,10 @@ def load_ctx_level(m, template, style, tms_id, ranges, session, args, cache_dir)
                     resp = session.get(url, timeout=args.timeout)
                     if resp.status_code == 200 and resp.content:
                         data = resp.content
+                    elif 400 <= resp.status_code < 500:
+                        bad.touch()                  # no existe en el servidor
                 except Exception:
-                    data = None
+                    data = None                      # error de red: se reintentará otro día
             if data is None:
                 missing += 1
                 continue
@@ -610,10 +652,18 @@ def load_ctx_level(m, template, style, tms_id, ranges, session, args, cache_dir)
                 tile = Image.open(io.BytesIO(data))
                 tile.load()
                 mosaic.paste(tile.convert("L"), ((col - c0) * m["tw"], (row - r0) * m["th"]))
+                filled.paste(255, ((col - c0) * m["tw"], (row - r0) * m["th"],
+                                   (col - c0 + 1) * m["tw"], (row - r0 + 1) * m["th"]))
                 if not path.exists():
                     path.write_bytes(data)          # solo se guardan en caché las teselas buenas
             except Exception:
                 missing += 1
+                bad.touch()                          # PNG roto del servidor
+    if missing:
+        # Huecos de teselas que faltan: gris mediano de la imagen, no negro.
+        arr, ok = np.asarray(mosaic), np.asarray(filled) > 0
+        if ok.any():
+            mosaic = Image.fromarray(np.where(ok, arr, np.uint8(np.median(arr[ok]))).astype(np.uint8), "L")
     return mosaic, missing, total
 
 
@@ -694,7 +744,7 @@ def build_rocks(zone, elev, micro, rim_map, mps, rng):
 
 
 def query_crism(bbox, session, args):
-    """Centros (lat, lon) de las observaciones CRISM de la zona, o None si no se pudo consultar."""
+    """Huellas de las observaciones CRISM que tocan la zona, o None si no se pudo consultar."""
     if args.no_crism or session is None or args.mode == "synthetic":
         return None
     for pt in ("MTRDR", "TRDR"):
@@ -702,10 +752,10 @@ def query_crism(bbox, session, args):
             params = dict(ihid="MRO", iid="CRISM", pt=pt)
             params.update(ode_bbox_params(bbox))
             products = ode_products(session, params, args.timeout)
-            centers = [c for c in (product_center(p) for p in products) if c is not None]
+            footprints = [b for b in (product_bounds(p) for p in products) if b is not None]
             log("  CRISM: %d observaciones %s en la zona" % (len(products), pt))
             if products:
-                return centers
+                return footprints
         except Exception as e:
             log("  CRISM: consulta %s fallida (%s)" % (pt, e))
     return []
@@ -769,7 +819,7 @@ def process_zone(zone_id, args, session, out_root, cache_dir):
     log("%s: %d×%d chunks, %.2f km de lado, %.1f m por muestra" % (zone["name"], n, n, zone_m / 1000.0, mps))
 
     elev, rim_map, craters = build_elevation(zone, bbox, size, mps, rng, args, sources)
-    micro, hirise_cov = build_micro(zone, bbox, size, mps, rng, session, args, sources)
+    micro, hirise_cov = build_micro(zone, bbox, size, mps, rng, session, args, sources, cache_dir)
     rocks = build_rocks(zone, elev, micro, rim_map, mps, rng)
     sources["rocks"] = "derivado: pendiente + rugosidad del micro-relieve + bordes de cráter"
     slope = slope_degrees(elev, mps)
@@ -796,8 +846,13 @@ def process_zone(zone_id, args, session, out_root, cache_dir):
     h_range = max(h_max - h_min, 0.01)
     micro_scale = float(min(max(np.abs(micro).max(), 0.05), 5.0))
 
-    zone_dir = out_root / zone_id
-    zone_dir.mkdir(parents=True, exist_ok=True)
+    # Se escribe en una carpeta temporal y se cambia al final: si algo falla a medias
+    # (red, memoria), la zona anterior queda intacta.
+    final_dir = out_root / zone_id
+    zone_dir = out_root / ("." + zone_id + ".tmp")   # el punto inicial hace que Unity la ignore
+    if zone_dir.exists():
+        shutil.rmtree(zone_dir)
+    zone_dir.mkdir(parents=True)
     a = args.albedo_size
     rm = args.rock_mask_size
 
@@ -837,7 +892,15 @@ def process_zone(zone_id, args, session, out_root, cache_dir):
         generatedUtc=datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"))
     with open(zone_dir / "manifest.json", "w", encoding="utf-8") as fh:
         json.dump(manifest, fh, ensure_ascii=False, indent=2)
-    log("  listo en %.1f s → %s" % (time.time() - t0, zone_dir))
+    old_dir = out_root / ("." + zone_id + ".old")
+    if old_dir.exists():
+        shutil.rmtree(old_dir)
+    if final_dir.exists():
+        final_dir.rename(old_dir)
+    zone_dir.rename(final_dir)
+    if old_dir.exists():
+        shutil.rmtree(old_dir)
+    log("  listo en %.1f s → %s" % (time.time() - t0, final_dir))
 
 
 def write_chunk_metadata(base, zone, cx, cz, n, v, size, rows, cols, h_block, rocks, fields,
@@ -849,15 +912,15 @@ def write_chunk_metadata(base, zone, cx, cz, n, v, size, rows, cols, h_block, ro
     r0, r1, c0, c1 = rows.start, rows.stop, cols.start, cols.stop
     crater_count = sum(1 for (cy, ccx, _r) in craters if r0 <= cy < r1 and c0 <= ccx < c1)
 
-    # Observaciones CRISM cuyo centro cae en el chunk (lat/lon del chunk).
+    # Observaciones CRISM cuya huella se solapa con el chunk (el centro suele caer fuera).
     crism_count = 0
     if crism_centers:
         lat_s = bbox["lat_s"] + (bbox["lat_n"] - bbox["lat_s"]) * cz / n
         lat_n = bbox["lat_s"] + (bbox["lat_n"] - bbox["lat_s"]) * (cz + 1) / n
-        lon_w = bbox["lon_w"] + (bbox["lon_e"] - bbox["lon_w"]) * cx / n
-        lon_e = bbox["lon_w"] + (bbox["lon_e"] - bbox["lon_w"]) * (cx + 1) / n
-        crism_count = sum(1 for (la, lo) in crism_centers
-                          if lat_s <= la < lat_n and lon_w % 360.0 <= lo < lon_e % 360.0)
+        lon_w = (bbox["lon_w"] + (bbox["lon_e"] - bbox["lon_w"]) * cx / n) % 360.0
+        lon_e = (bbox["lon_w"] + (bbox["lon_e"] - bbox["lon_w"]) * (cx + 1) / n) % 360.0
+        crism_count = sum(1 for (fs, fn, fw, fe) in crism_centers
+                          if fs < lat_n and fn > lat_s and fw < lon_e and fe > lon_w)
 
     # Vetas: en los puntos más ricos de cada mineral (unas pocas por chunk).
     veins = []

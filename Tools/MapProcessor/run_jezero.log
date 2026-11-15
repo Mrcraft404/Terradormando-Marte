@@ -1,0 +1,11 @@
+[mars] Cráter Jezero: 8×8 chunks, 8.16 km de lado, 4.0 m por muestra
+[mars]   MOLA: -2682..-2610 m (resolución nativa 463 m/px)
+[mars]   HiRISE: consulta ODE fallida (HTTPSConnectionPool(host='oderest.rsl.wustl.edu', port=443): Read timed out.)
+[mars]   CTX: sin lista de niveles de ArcGIS (HTTPSConnectionPool(host='astro.arcgis.com', port=443): Read timed out. (read timeout=60.0)); uso la del WMTS
+[mars]   CTX: nivel 11 (10.2 m/píxel), 3×2 teselas
+[mars]   CTX: nivel 11 inservible (faltan o vienen rotas 6 de 6 teselas)
+[mars]   CTX: nivel 10 (20.4 m/píxel), 2×1 teselas
+[mars]   CRISM: 7 observaciones MTRDR en la zona
+[mars] ERROR en jezero: Unable to allocate 16.0 MiB for an array with shape (2048, 1025) and data type float64
+[mars] terminado: 0 zona(s) bien, 1 con error
+exit=1

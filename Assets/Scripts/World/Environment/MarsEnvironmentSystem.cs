@@ -50,6 +50,9 @@ namespace MarsRobot.World.Weather
             get { return _stormRemainingSeconds > 0f; }
         }
 
+        /// <summary>Bloqueo de luz impuesto desde fuera (clima espacial): 1 = noche total.</summary>
+        public float ExternalLightBlock { get; set; }
+
         public float SolarIrradiance { get; private set; }
 
         public float DustDepositionPerHour
@@ -107,6 +110,7 @@ namespace MarsRobot.World.Weather
             float sunHeight = Mathf.Sin((_solTime01 - 0.25f) * Mathf.PI * 2f); // −1..1, 1 a mediodía
             float clear = _zone.noonIrradiance * Mathf.Max(0f, sunHeight);
             float block = IsDustStormActive ? _zone.stormLightBlock : 0f;
+            block = Mathf.Max(block, Mathf.Clamp01(ExternalLightBlock)); // p. ej. tormenta global por una CME
             SolarIrradiance = clear * (1f - block);
 
             if (sunLight != null)

@@ -14,7 +14,7 @@ namespace MarsRobot.Vehicles
     ///  • Aparcado (sin robot): freno de mano para que no se deslice por las pendientes.
     /// </summary>
     [DisallowMultipleComponent]
-    public sealed class VehicleSeat : MonoBehaviour
+    public sealed class VehicleSeat : MonoBehaviour, MarsRobot.Interaction.IInteractable
     {
         [Tooltip("Distancia (m) desde la que el robot puede subir.")]
         [SerializeField, Min(1f)] private float boardRadius = 4f;
@@ -45,13 +45,35 @@ namespace MarsRobot.Vehicles
         {
             if (_robot == null && !GameServices.TryGet(out _robot)) return;
 
-            if (IsOccupied)
-            {
-                if (RobotInput.InteractPressed) Exit();
-                return;
-            }
+            // Para subir: apuntar al coche con el punto de mira y pulsar F (IInteractable).
+            // Para bajar: F (el robot va dentro, así que no hay punto de mira).
+            if (IsOccupied && RobotInput.InteractPressed && _enteredFrame != Time.frameCount) Exit();
+        }
 
-            if (RobotInput.InteractPressed && RobotIsClose() && !RobotIsUsingStation()) Enter();
+        private int _enteredFrame = -1;
+
+        // IInteractable -------------------------------------------------------
+
+        public bool CanInteract()
+        {
+            return !IsOccupied && _robot != null && RobotIsClose() && !RobotIsUsingStation();
+        }
+
+        public string GetInteractionPrompt()
+        {
+            return RobotIsClose() ? "Subir al MarteCar [F]" : "Acércate más para subir al MarteCar";
+        }
+
+        public float HoldDuration
+        {
+            get { return 0f; }
+        }
+
+        public void Interact(MarsRobot.Interaction.Interactor interactor)
+        {
+            if (!CanInteract()) return;
+            _enteredFrame = Time.frameCount;
+            Enter();
         }
 
         private void FixedUpdate()
@@ -147,10 +169,6 @@ namespace MarsRobot.Vehicles
             {
                 float kmh = Mathf.Abs(_car.ForwardSpeed) * 3.6f;
                 text = "MarteCar  " + kmh.ToString("0") + " km/h   ·   W/S acelerar · A/D girar · F bajar";
-            }
-            else if (RobotIsClose() && !RobotIsUsingStation())
-            {
-                text = "F: subir al MarteCar";
             }
             if (text != null)
             {

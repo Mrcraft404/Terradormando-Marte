@@ -4,10 +4,10 @@
   "meanElevationMeters": -2656.07,
   "minElevationMeters": -2671.83,
   "maxElevationMeters": -2639.96,
-  "rockDensity": 0.2699,
+  "rockDensity": 0.4799,
   "craterCount": 4,
-  "crismObservations": 0,
-  "hiriseCoverage": 0.606,
+  "crismObservations": 4,
+  "hiriseCoverage": 0.0,
   "minerals": {
     "clays": 0.7141,
     "sulfates": 0.0429,
@@ -40,5 +40,5 @@
       "richness": 0.094
     }
   ],
-  "source": "elevación: real: MOLA 463 m (USGS) + detalle fractal; minerales: índices por geología publicada + ruido; CRISM ODE: 0 observaciones"
+  "source": "elevación: real: MOLA 463 m (USGS) + detalle fractal; minerales: índices por geología publicada + ruido; CRISM ODE: 7 observaciones"
 }

@@ -47,6 +47,12 @@ namespace MarsRobot.Base
         /// </summary>
         public PlacedStructure PlaceStructure(StructureDefinition def, Vector3 position, Quaternion rotation)
         {
+            return PlaceStructure<PlacedStructure>(def, position, rotation);
+        }
+
+        /// <summary>Igual, pero con un comportamiento propio (p. ej. la refinería ISRU).</summary>
+        public T PlaceStructure<T>(StructureDefinition def, Vector3 position, Quaternion rotation) where T : PlacedStructure
+        {
             var go = new GameObject(def.name);
             go.transform.SetParent(transform, true);
             go.transform.SetPositionAndRotation(Ground(position), rotation);
@@ -59,7 +65,10 @@ namespace MarsRobot.Base
                 box.size = def.size;
             }
 
-            var placed = go.AddComponent<PlacedStructure>();
+            var placed = go.AddComponent<T>();
+            go.AddComponent<MarsRobot.UI.Minimap.MinimapObjectMarker>().Setup(
+                def.kind == StructureKind.CommBeacon ? MarsRobot.UI.Minimap.MinimapMarkerType.Beacon : MarsRobot.UI.Minimap.MinimapMarkerType.Structure,
+                false, def.name);
             placed.Setup(this, def);
             _stations.Add(placed);
             Grid.Register(placed);
@@ -125,6 +134,8 @@ namespace MarsRobot.Base
             rb.Research = root.AddComponent<BaseResearch>();
             rb.LoadInitialCargo();
             rb.BuildAll();
+            // Sistemas del cohete nodriza: bodega, terminal, fundición, refinería y berma de blindaje.
+            root.AddComponent<RocketBaseManager>().Build(rb);
             return rb;
         }
 
@@ -138,44 +149,82 @@ namespace MarsRobot.Base
             Inventory.Add(ResourceType.MetalParts, 4);
             Inventory.Add(ResourceType.Wiring, 4);
             Inventory.Add(ResourceType.SolarCells, 2);
+            Inventory.Add(ResourceType.Water, 10);
+
+            // Materias primas y consumibles para empezar a fabricar (en las casillas del almacén).
+            AddItem(MarsRobot.Items.ItemDatabase.IronOre, 10);
+            AddItem(MarsRobot.Items.ItemDatabase.Clays, 6);
+            AddItem(MarsRobot.Items.ItemDatabase.Sulfates, 4);
+            AddItem(MarsRobot.Items.ItemDatabase.Polymer, 6);
+            AddItem(MarsRobot.Items.ItemDatabase.Co2, 4);
+            AddItem(MarsRobot.Items.ItemDatabase.RepairKit, 1);
+            AddItem(MarsRobot.Items.ItemDatabase.PowerCell, 1);
+            // Kit de semillas traído de la Tierra y solución nutritiva para el huerto.
+            foreach (string crop in MarsRobot.Items.ItemDatabase.Crops) AddItem(MarsRobot.Items.ItemDatabase.SeedOf(crop), 4);
+            AddItem(MarsRobot.Items.ItemDatabase.Nutrients, 6);
+            AddItem(MarsRobot.Items.ItemDatabase.Sample, 2);
+        }
+
+        private void AddItem(string itemId, int count)
+        {
+            MarsRobot.Items.ItemData item = MarsRobot.Items.ItemDatabase.Get(itemId);
+            if (item != null) Inventory.Storage.Add(item, count);
         }
 
         private void BuildAll()
         {
             // Materiales provisionales.
-            Material white = Mat(new Color(0.9f, 0.9f, 0.88f), Color.black);
             Material dark = Mat(new Color(0.18f, 0.18f, 0.2f), Color.black);
-            Material orange = Mat(new Color(0.95f, 0.5f, 0.1f), Color.black);
-            Material metal = Mat(new Color(0.55f, 0.56f, 0.58f), Color.black);
-            Material glowYellow = Mat(new Color(1f, 0.85f, 0.2f), new Color(1f, 0.75f, 0.1f) * 1.5f);
-            Material glowCyan = Mat(new Color(0.2f, 0.9f, 1f), new Color(0.1f, 0.7f, 1f) * 1.5f);
 
             // Choques suaves con la base: no queremos que aparcar destroce el robot.
             var hazard = gameObject.AddComponent<SurfaceHazard>();
             hazard.impactMultiplier = 0.1f;
 
-            BuildRocket(Vector3.zero, white, dark, orange);
+            // Cohete nodriza (Ø 10 m, 6 niveles). Todas las máquinas están DENTRO: el robot sube con
+            // el ascensor hasta el hangar (nivel 1) y el astronauta trabaja en los talleres (nivel 2).
+            // Inspección con cámara libre: tecla K. Ver Rocket/Ship.
+            Mothership = MarsRobot.Base.Ship.ShipModelBuilder.Build(transform);
             BuildLandingPad(Vector3.zero, dark);
 
-            var pad = AddStation<ChargingPad>("Plataforma de carga", new Vector3(0f, 0f, 11f), 2.2f);
-            BuildChargingPad(pad.transform, metal, glowYellow);
+            // Hangar (nivel 1): puesto de carga, taller de modificaciones y terminal del robot.
+            int hangar = MarsRobot.Base.Ship.ShipModel.HangarLevel;
+            AddStationInside<ChargingPad>("Puesto de carga del hangar", MarsRobot.Base.Ship.ShipLayout.OnLevel(hangar, MarsRobot.Base.Ship.ShipLayout.RobotDock), 2.6f);
+            AddStationInside<RobotAssemblyBay>("Taller de modificaciones", MarsRobot.Base.Ship.ShipLayout.OnLevel(hangar, MarsRobot.Base.Ship.ShipLayout.AssemblyBay), 2.2f);
 
-            var fab = AddStation<FabricatorStation>("Fabricador", new Vector3(-8f, 0f, 2f), 4f);
-            BuildFabricator(fab.transform, metal, orange, glowCyan);
+            // Talleres (nivel 2): estaciones de fabricación del astronauta.
+            int shop = MarsRobot.Base.Ship.ShipModel.WorkshopLevel;
+            Transform shipRoot = Mothership.transform;
+            MarsRobot.Crafting.CraftingStation.Create(shipRoot, "Fabricador", MarsRobot.Crafting.CraftStation.Fabricator, MarsRobot.Base.Ship.ShipLayout.OnLevel(shop, MarsRobot.Base.Ship.ShipLayout.Fabricator), MarsRobot.Base.Ship.ShipLayout.FabricatorFacing);
+            MarsRobot.Crafting.CraftingStation.Create(shipRoot, "Fundición", MarsRobot.Crafting.CraftStation.Smelter, MarsRobot.Base.Ship.ShipLayout.OnLevel(shop, MarsRobot.Base.Ship.ShipLayout.Smelter), MarsRobot.Base.Ship.ShipLayout.SmelterFacing);
+            MarsRobot.Crafting.CraftingStation.Create(shipRoot, "Refinería química", MarsRobot.Crafting.CraftStation.Refinery, MarsRobot.Base.Ship.ShipLayout.OnLevel(shop, MarsRobot.Base.Ship.ShipLayout.Refinery), MarsRobot.Base.Ship.ShipLayout.RefineryFacing);
+            MarsRobot.Crafting.CraftingStation.Create(shipRoot, "Banco de trabajo", MarsRobot.Crafting.CraftStation.Workbench, MarsRobot.Base.Ship.ShipLayout.OnLevel(shop, MarsRobot.Base.Ship.ShipLayout.Workbench), MarsRobot.Base.Ship.ShipLayout.WorkbenchFacing);
+            MarsRobot.Crafting.ContainerAccess.Create(shipRoot, "Almacén de la base", MarsRobot.Base.Ship.ShipLayout.OnLevel(shop, MarsRobot.Base.Ship.ShipLayout.Lockers), () => Inventory.Storage);
 
-            var shop = AddStation<UpgradeStation>("Taller de modificaciones", new Vector3(8f, 0f, 2f), 4f);
-            BuildWorkshop(shop.transform, metal, orange, glowCyan);
+            // Niveles 3–5: impresora 3D, electrónica, huerto, laboratorio, agua, oxígeno y cocina.
+            Station(shipRoot, 2, "Impresora 3D", MarsRobot.Crafting.CraftStation.Printer3D, MarsRobot.Base.Ship.ShipLayout.Printer3D);
+            Station(shipRoot, 2, "Taller de electrónica", MarsRobot.Crafting.CraftStation.Electronics, MarsRobot.Base.Ship.ShipLayout.ElectronicsBench);
+            MarsRobot.Crafting.ContainerAccess.Create(shipRoot, "contenedores de minerales (almacén)",
+                MarsRobot.Base.Ship.ShipLayout.OnLevel(2, MarsRobot.Base.Ship.ShipLayout.MineralBins.Position), () => Inventory.Storage);
+            Station(shipRoot, 3, "Huerto hidropónico A", MarsRobot.Crafting.CraftStation.Garden, MarsRobot.Base.Ship.ShipLayout.GardenA).gameObject.AddComponent<MarsRobot.Crafting.GardenVisual>();
+            Station(shipRoot, 3, "Huerto hidropónico B", MarsRobot.Crafting.CraftStation.Garden, MarsRobot.Base.Ship.ShipLayout.GardenB).gameObject.AddComponent<MarsRobot.Crafting.GardenVisual>();
+            Station(shipRoot, 3, "Laboratorio", MarsRobot.Crafting.CraftStation.Lab, MarsRobot.Base.Ship.ShipLayout.Laboratory);
+            Station(shipRoot, 4, "Planta de agua", MarsRobot.Crafting.CraftStation.WaterPlant, MarsRobot.Base.Ship.ShipLayout.WaterPlant);
+            Station(shipRoot, 4, "Generador de oxígeno", MarsRobot.Crafting.CraftStation.OxygenPlant, MarsRobot.Base.Ship.ShipLayout.OxygenPlant);
+            Station(shipRoot, 4, "Cocina", MarsRobot.Crafting.CraftStation.Kitchen, MarsRobot.Base.Ship.ShipLayout.Kitchen);
+            MarsRobot.Crafting.ContainerAccess.Create(shipRoot, "despensa (almacén)",
+                MarsRobot.Base.Ship.ShipLayout.OnLevel(4, MarsRobot.Base.Ship.ShipLayout.Pantry.Position), () => Inventory.Storage);
 
-            // El robot aparece sobre la plataforma de carga, mirando al cohete.
-            RobotSpawnPosition = pad.transform.position;
-            Vector3 toRocket = transform.position - pad.transform.position;
-            toRocket.y = 0f;
-            RobotSpawnRotation = Quaternion.LookRotation(toRocket.normalized, Vector3.up);
+            // Ascensor exterior: lleva al robot del suelo al hangar.
+            Elevator = MarsRobot.Base.Ship.ShipElevator.Create(this, Mothership);
+
+            // El robot aparece acoplado en el hangar, mirando a la puerta de carga.
+            RobotSpawnPosition = transform.TransformPoint(MarsRobot.Base.Ship.ShipLayout.OnLevel(hangar, MarsRobot.Base.Ship.ShipLayout.RobotDock) + Vector3.up * 0.15f);
+            RobotSpawnRotation = transform.rotation;
 
             // Luz de la base (se ve de noche y ayuda a volver).
             var lightGo = new GameObject("Luz de la base");
             lightGo.transform.SetParent(transform, false);
-            lightGo.transform.localPosition = new Vector3(0f, 6f, 4f);
+            lightGo.transform.localPosition = new Vector3(0f, 8f, 9f);
             var light = lightGo.AddComponent<Light>();
             light.type = LightType.Point;
             light.range = 30f;
@@ -183,7 +232,34 @@ namespace MarsRobot.Base
             light.color = new Color(1f, 0.9f, 0.75f);
         }
 
-        private T AddStation<T>(string name, Vector3 localPos, float radius) where T : BaseStation
+        private static MarsRobot.Crafting.CraftingStation Station(Transform shipRoot, int level, string name,
+            MarsRobot.Crafting.CraftStation type, MarsRobot.Base.Ship.ShipLayout.Spot spot)
+        {
+            return MarsRobot.Crafting.CraftingStation.Create(shipRoot, name, type,
+                MarsRobot.Base.Ship.ShipLayout.OnLevel(level, spot.Position), spot.FacingCenter);
+        }
+
+        /// <summary>Nave nodriza (modelo, niveles y medidas).</summary>
+        public MarsRobot.Base.Ship.ShipModel Mothership { get; private set; }
+
+        /// <summary>Ascensor exterior del robot.</summary>
+        public MarsRobot.Base.Ship.ShipElevator Elevator { get; private set; }
+
+        /// <summary>Crea una máquina dentro de la nave (posición local de la nave, sin apoyarla en el terreno).</summary>
+        public T AddStationInside<T>(string name, Vector3 shipLocalPos, float radius) where T : BaseStation
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(transform, false);
+            go.transform.localPosition = shipLocalPos;
+            go.transform.localRotation = Quaternion.identity;
+            var station = go.AddComponent<T>();
+            station.Init(this, name, radius);
+            _stations.Add(station);
+            return station;
+        }
+
+        /// <summary>Crea una máquina como hija de la base, apoyada en el terreno.</summary>
+        public T AddStation<T>(string name, Vector3 localPos, float radius) where T : BaseStation
         {
             var go = new GameObject(name);
             go.transform.SetParent(transform, false);
@@ -233,41 +309,8 @@ namespace MarsRobot.Base
         private void BuildLandingPad(Vector3 localPos, Material mat)
         {
             // Mancha quemada/aplanada bajo el cohete (solo visual, sin colisión: no crea escalones).
-            var pad = Part(PrimitiveType.Cylinder, transform, localPos, new Vector3(16f, 0.02f, 16f), mat, false);
+            var pad = Part(PrimitiveType.Cylinder, transform, localPos, new Vector3(24f, 0.02f, 24f), mat, false);
             pad.position = Ground(pad.position) + Vector3.up * 0.03f;
-        }
-
-        private static void BuildChargingPad(Transform station, Material metal, Material glow)
-        {
-            Part(PrimitiveType.Cylinder, station, new Vector3(0f, 0.04f, 0f), new Vector3(4f, 0.04f, 4f), metal, false);
-            Part(PrimitiveType.Cylinder, station, new Vector3(0f, 0.06f, 0f), new Vector3(3.2f, 0.03f, 3.2f), glow, false);
-            Part(PrimitiveType.Cylinder, station, new Vector3(0f, 0.08f, 0f), new Vector3(2.6f, 0.03f, 2.6f), metal, false);
-            // Poste con el cable de carga.
-            Part(PrimitiveType.Cube, station, new Vector3(2.4f, 1f, 0f), new Vector3(0.3f, 2f, 0.3f), metal, true);
-            Part(PrimitiveType.Cube, station, new Vector3(2.4f, 2.05f, 0f), new Vector3(0.5f, 0.15f, 0.5f), glow, false);
-        }
-
-        private static void BuildFabricator(Transform station, Material metal, Material accent, Material glow)
-        {
-            Part(PrimitiveType.Cube, station, new Vector3(0f, 1f, 0f), new Vector3(2.6f, 2f, 2f), metal, true);
-            Part(PrimitiveType.Cube, station, new Vector3(0f, 2.1f, 0f), new Vector3(2.7f, 0.2f, 2.1f), accent, false);
-            Part(PrimitiveType.Cube, station, new Vector3(0f, 1.1f, 1.01f), new Vector3(1.4f, 0.9f, 0.05f), glow, false); // ventana de impresión
-            Part(PrimitiveType.Cylinder, station, new Vector3(-1.6f, 0.9f, 0f), new Vector3(0.9f, 0.9f, 0.9f), metal, true); // tolva de regolito
-        }
-
-        private static void BuildWorkshop(Transform station, Material metal, Material accent, Material glow)
-        {
-            // Arco bajo el que entra el robot.
-            Part(PrimitiveType.Cube, station, new Vector3(-1.9f, 1.6f, 0f), new Vector3(0.4f, 3.2f, 0.6f), metal, true);
-            Part(PrimitiveType.Cube, station, new Vector3(1.9f, 1.6f, 0f), new Vector3(0.4f, 3.2f, 0.6f), metal, true);
-            Part(PrimitiveType.Cube, station, new Vector3(0f, 3.3f, 0f), new Vector3(4.2f, 0.4f, 0.8f), accent, false);
-            // Brazos robóticos colgando del arco.
-            Part(PrimitiveType.Cube, station, new Vector3(-0.8f, 2.7f, 0f), new Vector3(0.15f, 0.9f, 0.15f), metal, false);
-            Part(PrimitiveType.Cube, station, new Vector3(0.8f, 2.7f, 0f), new Vector3(0.15f, 0.9f, 0.15f), metal, false);
-            Part(PrimitiveType.Sphere, station, new Vector3(-0.8f, 2.2f, 0f), new Vector3(0.3f, 0.3f, 0.3f), glow, false);
-            Part(PrimitiveType.Sphere, station, new Vector3(0.8f, 2.2f, 0f), new Vector3(0.3f, 0.3f, 0.3f), glow, false);
-            // Suelo del taller.
-            Part(PrimitiveType.Cube, station, new Vector3(0f, 0.03f, 0f), new Vector3(3.4f, 0.04f, 3.4f), metal, false);
         }
 
         // ------------------------------------------------------------------
@@ -275,7 +318,7 @@ namespace MarsRobot.Base
         // ------------------------------------------------------------------
 
         /// <summary>Misma posición XZ, altura del terreno.</summary>
-        private Vector3 Ground(Vector3 world)
+        public Vector3 Ground(Vector3 world)
         {
             if (_terrain != null && _terrain.IsMapReady) world.y = _terrain.GetHeightAt(world);
             return world;

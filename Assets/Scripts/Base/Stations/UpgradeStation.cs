@@ -8,7 +8,7 @@ namespace MarsRobot.Base
     /// Taller de modificaciones: el robot entra bajo el arco y aquí se le instalan mejoras
     /// (pagadas con materiales del almacén) y se le hace una reparación completa gratis.
     /// </summary>
-    public sealed class UpgradeStation : BaseStation
+    public class UpgradeStation : BaseStation
     {
         [SerializeField] private List<RobotUpgradeDefinition> catalog = RobotUpgrades.DefaultCatalog();
 

@@ -62,6 +62,13 @@ namespace MarsRobot.Base
             return _levels.TryGetValue(def.id, out l) ? l : 0;
         }
 
+        /// <summary>Nivel instalado de una mejora por su id ("motors", "battery"…).</summary>
+        public int GetLevel(string id)
+        {
+            int l;
+            return _levels.TryGetValue(id, out l) ? l : 0;
+        }
+
         public bool IsMaxed(RobotUpgradeDefinition def)
         {
             return GetLevel(def) >= def.maxLevel;
@@ -76,6 +83,8 @@ namespace MarsRobot.Base
 
             _levels[def.id] = next;
             Apply(def, next);
+            var inv = GetComponent<MarsRobot.Items.RobotInventory>();
+            if (inv != null) inv.RecalculateCapacity(); // motores y chasis mejorados cargan más
             if (Installed != null) Installed(def, next);
             return true;
         }

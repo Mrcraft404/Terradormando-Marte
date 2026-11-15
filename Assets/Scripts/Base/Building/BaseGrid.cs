@@ -27,6 +27,17 @@ namespace MarsRobot.Base
         [SerializeField, Min(0.1f)] private float tickSeconds = 0.5f;
 
         private readonly List<PlacedStructure> _structures = new List<PlacedStructure>();
+        private readonly Dictionary<object, float> _externalDemand = new Dictionary<object, float>();
+
+        /// <summary>Consumo de máquinas que no son estructuras (p. ej. la fundición). 0 para quitarlo.</summary>
+        public void SetExternalDemand(object owner, float watts)
+        {
+            if (watts <= 0f) _externalDemand.Remove(owner);
+            else _externalDemand[owner] = watts;
+        }
+
+        /// <summary>Multiplicador externo del suministro (tormentas magnéticas). 1 = normal.</summary>
+        public float ExternalSupplyMultiplier { get; set; } = 1f;
         private RocketBase _base;
         private ISolarEnvironment _environment;
         private float _timer;
@@ -126,6 +137,9 @@ namespace MarsRobot.Base
                 demand += s.ComputeDemand();
                 capacity += s.Definition.storageWh;
             }
+
+            foreach (var kv in _externalDemand) demand += kv.Value;
+            gen *= Mathf.Clamp01(ExternalSupplyMultiplier);
 
             // 3) Balance con las baterías.
             float ratio = 1f;

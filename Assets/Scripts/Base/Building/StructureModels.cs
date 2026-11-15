@@ -145,6 +145,19 @@ namespace MarsRobot.Base
                     Part(PrimitiveType.Sphere, parent, new Vector3(s.x * 0.3f, 2.5f, 0f), new Vector3(0.6f, 0.4f, 0.6f), M(_glowCyan));
                     break;
 
+                case StructureKind.FuelRefinery:
+                    Part(PrimitiveType.Cube, parent, new Vector3(0f, 1.2f, 0f), new Vector3(s.x, 2.4f, s.z), M(_metal));
+                    Part(PrimitiveType.Cylinder, parent, new Vector3(-s.x * 0.3f, 2.9f, 0f), new Vector3(0.9f, 0.7f, 0.9f), M(_white)); // reactor Sabatier
+                    Part(PrimitiveType.Cylinder, parent, new Vector3(s.x * 0.3f, 2.9f, 0f), new Vector3(0.7f, 0.7f, 0.7f), M(_orange)); // electrolizador
+                    Part(PrimitiveType.Cube, parent, new Vector3(0f, 1.4f, s.z * 0.51f), new Vector3(s.x * 0.5f, 0.3f, 0.02f), M(_glowCyan));
+                    break;
+
+                case StructureKind.CommBeacon:
+                    Part(PrimitiveType.Cylinder, parent, new Vector3(0f, 1.4f, 0f), new Vector3(0.12f, 1.4f, 0.12f), M(_metal));
+                    Part(PrimitiveType.Cube, parent, new Vector3(0f, 1.2f, 0f), new Vector3(0.8f, 0.05f, 0.5f), M(_solar)).localRotation = Quaternion.Euler(-25f, 0f, 0f);
+                    Part(PrimitiveType.Sphere, parent, new Vector3(0f, 2.9f, 0f), new Vector3(0.25f, 0.25f, 0.25f), M(_glowGreen));
+                    break;
+
                 case StructureKind.CommsAntenna:
                     Part(PrimitiveType.Cylinder, parent, new Vector3(0f, s.y * 0.45f, 0f), new Vector3(0.25f, s.y * 0.45f, 0.25f), M(_metal));
                     Part(PrimitiveType.Sphere, parent, new Vector3(0f, s.y * 0.92f, 0.3f), new Vector3(1.8f, 1.8f, 0.4f), M(_white)) // plato

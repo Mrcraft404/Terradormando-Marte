@@ -109,10 +109,12 @@ namespace MarsRobot.Spawns
             //     El robot aparece sobre la plataforma de carga, mirando al cohete.
             if (buildRocketBase)
             {
+                // Suelo nivelado bajo el cohete (patas, ascensor y entorno de la base).
+                spawn.y = terrain.FlattenAround(spawn, 22f, 35f); // transición larga: sin paredes verticales en zonas escarpadas
                 RocketBase = RocketBase.Create(terrain, spawn, Vector3.forward);
                 RocketBase.Zone = ActiveZone; // para saber cuánto hielo hay bajo la base
+                // El robot aparece acoplado en el hangar de la nave (en alto): no se baja al terreno.
                 spawn = RocketBase.RobotSpawnPosition;
-                spawn.y = terrain.GetHeightAt(spawn);
                 spawnRotation = RocketBase.RobotSpawnRotation;
             }
 

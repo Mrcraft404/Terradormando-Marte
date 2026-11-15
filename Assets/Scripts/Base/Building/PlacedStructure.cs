@@ -25,6 +25,18 @@ namespace MarsRobot.Base
         /// <summary>Polvo acumulado (solo paneles solares), 0..1.</summary>
         public float Dust01 { get; private set; }
 
+        /// <summary>Quita polvo de un panel solar fijo (soplador del rover o limpieza manual).</summary>
+        public void CleanPanel(float amount)
+        {
+            Dust01 = Mathf.Clamp01(Dust01 - Mathf.Max(0f, amount));
+        }
+
+        /// <summary>Degrada el panel (p. ej. partículas solares energéticas): sube el "polvo" efectivo.</summary>
+        public void DegradePanel(float amount)
+        {
+            Dust01 = Mathf.Clamp01(Dust01 + Mathf.Max(0f, amount));
+        }
+
         /// <summary>Impresora atascada: no produce hasta desatascarla.</summary>
         public bool IsJammed { get; private set; }
 

@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7c0a88d79da5b64186ada6891e4b628, type: 3}
+  m_Name: Dlg_Ejemplo_Pregunta
+  m_EditorClassIdentifier: 
+  nodeID: ejemplo_pregunta
+  speaker: 0
+  customSpeakerName:
+  text: "Detecto una fuga en el cableado de sensores. ¿Quieres que desvíe energía para repararlo a distancia?"
+  voiceClip: {fileID: 0}
+  roboticStatic: 0
+  choices:
+  - text: "Sí, repáralo."
+    next: {fileID: 11400000, guid: 2c3fdb75a41507bad5537a2396a2f221, type: 2}
+  - text: "No, lo haré yo con el kit de empalme."
+    next: {fileID: 0}
+  next: {fileID: 0}
+  pauseGame: 1
+  addToLog: 1
+  onFinish: []

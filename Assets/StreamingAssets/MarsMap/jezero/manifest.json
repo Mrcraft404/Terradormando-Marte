@@ -12,16 +12,16 @@
   "zoneSizeMeters": 8160.0,
   "heightMinMeters": -2696.63818359375,
   "heightMaxMeters": -2597.719482421875,
-  "microScaleMeters": 5.0,
+  "microScaleMeters": 2.9869449138641357,
   "albedoSize": 256,
   "rockMaskSize": 128,
   "gravity": 3.721,
   "sources": {
     "elevation": "real: MOLA 463 m (USGS) + detalle fractal",
-    "microRelief": "real: DTM HiRISE (61 % de la zona) + fractal",
+    "microRelief": "synthetic: ruido fractal (sin DTM HiRISE en la zona)",
     "rocks": "derivado: pendiente + rugosidad del micro-relieve + bordes de cráter",
     "albedo": "real: CTX 5 m (Murray Lab/Caltech) vía NASA Mars Trek",
-    "minerals": "índices por geología publicada + ruido; CRISM ODE: 0 observaciones",
+    "minerals": "índices por geología publicada + ruido; CRISM ODE: 7 observaciones",
     "climate": "perfil medio por zona (Mars Climate Database / NASA Ames, Curiosity RAD), ajustado por altitud; referencias accesibles: {'nasa_ames_mcmc': True, 'curiosity_rad': True}"
   },
   "climate": {
@@ -34,5 +34,5 @@
     "surfacePressurePa": 771.0,
     "radiationMilliGrayPerDay": 0.2192
   },
-  "generatedUtc": "2026-11-14T22:17:34Z"
+  "generatedUtc": "2026-11-15T06:29:48Z"
 }
