@@ -73,7 +73,34 @@ namespace MarsRobot.Robot.Visual
             BuildSolarDeck(root, rig);
 
             Combine(chassis);
+            ApplyNasaModel(root, rig);
             return rig;
+        }
+
+        /// <summary>
+        /// Si está importado el modelo de la NASA (Curiosity), se usa como aspecto del rover.
+        /// El modelo procedural se sigue construyendo (oculto) porque sus piezas dan la posición de
+        /// la cámara, del brazo y de la animación; la física no cambia.
+        /// </summary>
+        private static void ApplyNasaModel(Transform root, RoverVisualRig rig)
+        {
+            GameObject nasa = MarsRobot.Visuals.NasaModelLibrary.Spawn(MarsRobot.Visuals.NasaModelLibrary.Rover, root, "Modelo NASA (Curiosity)");
+            if (nasa == null) return;
+
+            foreach (Renderer r in root.GetComponentsInChildren<Renderer>(true))
+            {
+                if (!r.transform.IsChildOf(nasa.transform)) r.enabled = false;
+            }
+
+            // En 1ª persona se ocultan las piezas del modelo NASA que rodean la cámara (cabeza del mástil).
+            var head = new List<Renderer>();
+            Vector3 cam = rig.cameraMount != null ? rig.cameraMount.position : root.position + Vector3.up * 2.15f;
+            foreach (Renderer r in nasa.GetComponentsInChildren<Renderer>(true))
+            {
+                Bounds b = r.bounds;
+                if (b.SqrDistance(cam) < 0.35f * 0.35f && b.size.magnitude < 1.2f) head.Add(r);
+            }
+            rig.headRenderers = head.ToArray();
         }
 
         // ------------------------------------------------------------------

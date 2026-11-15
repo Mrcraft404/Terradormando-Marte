@@ -306,6 +306,13 @@ namespace MarsRobot.UI.Menu
             Tinted(info, MenuArt.Rounded, new Color(0.04f, 0.04f, 0.06f, 0.72f), 12);
             Label(new Rect(info.x + 24, info.y, info.width - 30, info.height),
                 "VERSIÓN " + Application.version + "  |  USUARIO: <b>" + _commander + "</b>", _text, 24, TextLight);
+
+            if (MarsRobot.Visuals.NasaModelLibrary.HasAny)
+            {
+                _text.alignment = TextAnchor.MiddleRight;
+                ShadowLabel(new Rect(VW - 760, 990, 720, 40), MarsRobot.Visuals.NasaModelLibrary.Credit, 20, new Color(1f, 0.9f, 0.8f, 0.85f));
+                _text.alignment = TextAnchor.MiddleLeft;
+            }
         }
 
         // ------------------------------------------------------------------

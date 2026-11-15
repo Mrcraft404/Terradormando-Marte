@@ -41,12 +41,19 @@ namespace MarsRobot.Base
     }
 
     /// <summary>
-    /// Almacén de la base (bodega del cohete). Todas las máquinas leen y gastan de aquí.
+    /// Almacén de la base (bodega del cohete). Todo se guarda como objetos en casillas
+    /// (<see cref="Storage"/>, el mismo contenedor que abren la bodega del hangar y los armarios del
+    /// taller). Esta clase conserva la API por tipo de recurso (Get / Add / TrySpend) para la
+    /// construcción, la investigación y las mejoras: cada recurso es un objeto concreto
+    /// (ItemDatabase.ForResource: hierro → lingote de hierro, agua → bidón de agua…).
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class BaseInventory : MonoBehaviour
     {
-        private readonly Dictionary<ResourceType, int> _stock = new Dictionary<ResourceType, int>();
+        public const int StorageSlots = 160;
+
+        /// <summary>Casillas del almacén (lo ven y modifican las interfaces de inventario).</summary>
+        public MarsRobot.Items.ItemContainer Storage { get; private set; }
 
         /// <summary>Cambio en un recurso: tipo y nueva cantidad.</summary>
         public event Action<ResourceType, int> Changed;
@@ -54,6 +61,19 @@ namespace MarsRobot.Base
         private void Awake()
         {
             GameServices.Register(this);
+            Storage = new MarsRobot.Items.ItemContainer(StorageSlots, 5000f, 0f);
+            Storage.Changed += OnStorageChanged;
+        }
+
+        private void OnStorageChanged()
+        {
+            if (Changed == null) return;
+            foreach (ResourceType t in Enum.GetValues(typeof(ResourceType))) Changed(t, Get(t));
+        }
+
+        private static MarsRobot.Items.ItemData ItemFor(ResourceType type)
+        {
+            return MarsRobot.Items.ItemDatabase.ForResource(type);
         }
 
         private void OnDestroy()
@@ -63,8 +83,7 @@ namespace MarsRobot.Base
 
         public int Get(ResourceType type)
         {
-            int v;
-            return _stock.TryGetValue(type, out v) ? v : 0;
+            return Storage != null ? Storage.Count(ItemFor(type)) : 0;
         }
 
         /// <summary>
@@ -76,11 +95,9 @@ namespace MarsRobot.Base
             if (amount <= 0) return 0;
             int current = Get(type);
             int cap = GetCapacity(type);
-            int added = cap >= 0 ? Mathf.Clamp(cap - current, 0, amount) : amount;
-            if (added <= 0) return 0;
-            _stock[type] = current + added;
-            if (Changed != null) Changed(type, _stock[type]);
-            return added;
+            int wanted = cap >= 0 ? Mathf.Clamp(cap - current, 0, amount) : amount;
+            if (wanted <= 0) return 0;
+            return Storage.Add(ItemFor(type), wanted);
         }
 
         // ------------------------------------------------------------------
@@ -108,8 +125,9 @@ namespace MarsRobot.Base
             int c = GetCapacity(type);
             if (c < 0) return;
             _capacity[type] = Mathf.Max(0, c + amount);
-            if (Get(type) > _capacity[type]) _stock[type] = _capacity[type];
-            if (Changed != null) Changed(type, Get(type));
+            int excess = Get(type) - _capacity[type];
+            if (excess > 0) Storage.Remove(ItemFor(type), excess);
+            else if (Changed != null) Changed(type, Get(type));
         }
 
         /// <summary>True si el recurso tiene límite y está lleno.</summary>
@@ -134,9 +152,7 @@ namespace MarsRobot.Base
             if (!Has(cost, multiplier)) return false;
             for (int i = 0; i < cost.Count; i++)
             {
-                ResourceType t = cost[i].type;
-                _stock[t] = Get(t) - cost[i].amount * multiplier;
-                if (Changed != null) Changed(t, _stock[t]);
+                Storage.Remove(ItemFor(cost[i].type), cost[i].amount * multiplier);
             }
             return true;
         }
@@ -147,17 +163,16 @@ namespace MarsRobot.Base
         // ------------------------------------------------------------------
 
         /// <summary>Capacidad de almacenaje de la nave nodriza (kg).</summary>
-        public float MaxMassKg { get; set; } = 5000f;
+        public float MaxMassKg
+        {
+            get { return Storage != null ? Storage.MaxMassKg : 5000f; }
+            set { if (Storage != null) Storage.MaxMassKg = value; }
+        }
 
         /// <summary>Masa total almacenada (kg).</summary>
         public float TotalMassKg
         {
-            get
-            {
-                float m = 0f;
-                foreach (var kv in _stock) m += kv.Value * MassPerUnit(kv.Key);
-                return m;
-            }
+            get { return Storage != null ? Storage.TotalMassKg : 0f; }
         }
 
         /// <summary>Masa aproximada de una unidad de cada recurso (kg).</summary>

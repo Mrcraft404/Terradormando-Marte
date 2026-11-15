@@ -49,13 +49,15 @@ namespace MarsRobot.Spawns
             while (_spawner != null && !_spawner.IsReady) yield return null;
             if (_spawner == null || _spawner.RocketBase == null) yield break;
 
+            // El jugador empieza como el astronauta dentro de la nave; el robot espera en el hangar.
+            MarsRobot.Crew.CrewControl.Setup(_spawner.RocketBase, _controller.gameObject);
+
             Transform baseRoot = _spawner.RocketBase.transform;
-            // El robot aparece en (0, 0, 14) mirando al cohete (−Z), así que su izquierda es +X.
+            // MarteCar aparcado junto al pie del ascensor (a la derecha según se sale de la nave).
             Vector3 parking = baseRoot.TransformPoint(new Vector3(8.5f, 0f, 17f));
             parking.y = _terrain.GetHeightAt(parking);
             MarsRobot.Vehicles.MarteCarFactory.Create(parking, baseRoot.rotation).gameObject
                 .AddComponent<MarsRobot.UI.Minimap.MinimapObjectMarker>().Setup(MarsRobot.UI.Minimap.MinimapMarkerType.Vehicle, false, "MarteCar");
-            ShowMessage("MarteCar aparcado a la izquierda de la plataforma: apúntale y pulsa F.");
 
             // Rocas minables alrededor del rover.
             var rocks = new GameObject("Rocas").AddComponent<RockScatterSpawner>();
@@ -71,6 +73,12 @@ namespace MarsRobot.Spawns
                 p.y = _terrain.GetHeightAt(p);
                 MarsRobot.Dialogue.DiscoveryPoint.Spawn(p, "probe_archive", i == 0 ? "Restos de una sonda antigua" : "Módulo de aterrizaje abandonado");
             }
+
+            // Aspecto: atrezo con colocación orgánica, cielo marciano, sondas de reflejos y una
+            // jerarquía ordenada (_Environment, _Structures, _Props, _PhysicsSystem).
+            MarsRobot.Visuals.ShipSetDresser.Dress(_spawner.RocketBase, _zone.terrain.seed);
+            MarsRobot.Visuals.MarsEnvironment.Setup(_spawner.RocketBase.Mothership);
+            MarsRobot.Visuals.SceneRoots.OrganizeGameScene();
 
             // Bienvenida de la IA del cohete (pausa el juego hasta elegir respuesta).
             yield return new WaitForSeconds(1.5f);
@@ -178,6 +186,7 @@ namespace MarsRobot.Spawns
             robot.AddComponent<RoverToolController>();  // X: taladro / pala / soplador
             robot.AddComponent<RobotToolbelt>();        // L foco · Z escáner
             robot.AddComponent<BuildModeController>();  // B: construir (antes que RobotBaseLink, que lo busca en Awake)
+            robot.AddComponent<MarsBuildingPlacer>();   // N: hábitats por capas con holograma (después de BuildModeController)
             robot.AddComponent<RobotBaseLink>();        // F: máquinas y estructuras de la base (por cercanía)
             robot.AddComponent<MarsRobot.Interaction.PlayerInteractor>(); // F: lo que apunta el punto de mira
             robot.AddComponent<MarsRobot.Interaction.InteractionUI>();    // punto de mira y texto de acción
@@ -333,6 +342,8 @@ namespace MarsRobot.Spawns
         private void OnGUI()
         {
             if (!showDebugPanel || _health == null) return;
+            // Con el astronauta al mando no se muestra el panel del robot.
+            if (MarsRobot.Crew.CrewControl.Instance != null && MarsRobot.Crew.CrewControl.Instance.AstronautActive) return;
             if (_style == null)
             {
                 _style = new GUIStyle(GUI.skin.label) { fontSize = 14, richText = true };

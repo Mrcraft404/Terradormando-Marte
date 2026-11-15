@@ -31,6 +31,16 @@ namespace MarsRobot.Base.Ship
             Furnace = ShipMesh.Mat("Horno", new Color(0.9f, 0.4f, 0.1f), 0f, 0.6f, null, default(Vector2), new Color(2f, 0.7f, 0.15f));
             Water = ShipMesh.Mat("Agua", new Color(0.3f, 0.6f, 0.9f), 0.2f, 0.9f);
             Orange = ShipMesh.Mat("Naranja", new Color(0.95f, 0.5f, 0.12f), 0.3f, 0.5f);
+
+            // Materiales PBR generados (texturas con albedo, normal, metálico/suavidad y oclusión) si
+            // existen en Resources/GeneratedMaterials; si no, se quedan los procedurales.
+            Steel = MarsRobot.Visuals.PBRMaterials.Override("Ship_Steel", Steel);
+            HeatShield = MarsRobot.Visuals.PBRMaterials.Override("Ship_HeatShield", HeatShield);
+            DarkMetal = MarsRobot.Visuals.PBRMaterials.Override("Ship_DarkMetal", DarkMetal);
+            Metal = MarsRobot.Visuals.PBRMaterials.Override("Ship_Metal", Metal);
+            Floor = MarsRobot.Visuals.PBRMaterials.Override("Ship_Floor", Floor);
+            Wall = MarsRobot.Visuals.PBRMaterials.Override("Ship_Wall", Wall);
+            Panel = MarsRobot.Visuals.PBRMaterials.Override("Ship_Panel", Panel);
         }
     }
 
@@ -74,17 +84,28 @@ namespace MarsRobot.Base.Ship
             ShipInteriorBuilder.BuildLevels(model);
             root.AddComponent<ShipInspector>(); // tecla K: vista exterior, corte, niveles, etiquetas y cotas
 
-            // Colisiones: casco (cápsula) y plataforma del elevador (el robot puede subirse).
+            // Colisiones: la parte baja (tanques, motores) es maciza hasta el suelo del hangar; los
+            // niveles interiores tienen suelos, paredes y muebles con colisión (ShipInteriorBuilder),
+            // así el robot entra por la puerta de carga y el astronauta camina por dentro.
             var col = new GameObject("Colisión del casco");
             col.transform.SetParent(root.transform, false);
             var cap = col.AddComponent<CapsuleCollider>();
             cap.radius = ShipModel.OuterRadius;
-            cap.height = ShipModel.TotalHeight - ShipModel.HullBottom;
+            cap.height = ShipModel.FirstLevelFloor - ShipModel.HullBottom;
             cap.center = new Vector3(0f, ShipModel.HullBottom + cap.height * 0.5f, 0f);
             // La cápsula es redondeada abajo: este bloque impide que el robot se meta bajo el casco.
             var block = col.AddComponent<BoxCollider>();
-            block.size = new Vector3(6.6f, 6.5f, 6.6f);
+            block.size = new Vector3(7.2f, 6.5f, 7.2f);
             block.center = new Vector3(0f, 3.25f, 0f);
+            // Bajo el suelo del hangar (entre la cápsula y el primer suelo) y la nariz, macizos.
+            var under = col.AddComponent<BoxCollider>();
+            under.size = new Vector3(ShipModel.OuterRadius * 1.4f, 3f, ShipModel.OuterRadius * 1.4f);
+            under.center = new Vector3(0f, ShipModel.FirstLevelFloor - 1.6f, 0f);
+            float top = ShipModel.LevelFloorY(ShipModel.LevelCount - 1) + ShipModel.LevelHeight;
+            var nose = col.AddComponent<CapsuleCollider>();
+            nose.radius = ShipModel.HullRadiusAt(top + 1f) * 0.9f;
+            nose.height = ShipModel.TotalHeight - top;
+            nose.center = new Vector3(0f, top + nose.height * 0.5f, 0f);
             return model;
         }
 
@@ -111,7 +132,7 @@ namespace MarsRobot.Base.Ship
                 bool door = Mathf.Abs(wrapped) < 22.6f;                 // 3 sectores delanteros: hueco de la puerta
                 bool belly = Mathf.Abs(wrapped) > 112f;                 // cara trasera: escudo térmico
 
-                var parts = new List<CombineInstance>();
+                var parts = new List<Mesh>();
                 if (door)
                 {
                     parts.Add(Piece(new[] { V(ShipModel.HullBottom), V(DoorBottom) }, from));
@@ -123,9 +144,12 @@ namespace MarsRobot.Base.Ship
                 }
                 parts.Add(Piece(nose.ToArray(), from));
 
-                var mesh = new Mesh { name = "Casco " + s, indexFormat = UnityEngine.Rendering.IndexFormat.UInt32 };
-                mesh.CombineMeshes(parts.ToArray(), true, false);
-                GameObject go = ShipMesh.MeshObject(hull, "Sector " + s, mesh, belly ? ShipMaterials.HeatShield : ShipMaterials.Steel);
+                // Cada tramo es su propio objeto (antes se fusionaban con CombineMeshes, que dejaba la
+                // malla vacía: el casco no se veía y el interior quedaba a la vista).
+                var go = new GameObject("Sector " + s);
+                go.transform.SetParent(hull, false);
+                Material mat = belly ? ShipMaterials.HeatShield : ShipMaterials.Steel;
+                for (int k = 0; k < parts.Count; k++) ShipMesh.MeshObject(go.transform, "Tramo " + k, parts[k], mat);
                 model.HullSectors.Add(new ShipModel.HullSector { go = go, centerDeg = center });
             }
         }
@@ -135,9 +159,9 @@ namespace MarsRobot.Base.Ship
             return new Vector2(ShipModel.OuterRadius, y);
         }
 
-        private static CombineInstance Piece(Vector2[] profile, float from)
+        private static Mesh Piece(Vector2[] profile, float from)
         {
-            return new CombineInstance { mesh = ShipMesh.Lathe(profile, from, from + SectorDeg, 4, true, 0.08f, 0.25f), transform = Matrix4x4.identity };
+            return ShipMesh.Lathe(profile, from, from + SectorDeg, 4, true, 0.08f, 0.25f);
         }
 
         // ------------------------------------------------------------------
@@ -147,7 +171,7 @@ namespace MarsRobot.Base.Ship
         private static void BuildEngines(Transform p)
         {
             // Estructura de empuje bajo los tanques.
-            ShipMesh.Cyl(p, new Vector3(0f, 4.2f, 0f), 4.2f, 0.3f, ShipMaterials.DarkMetal);
+            ShipMesh.Cyl(p, new Vector3(0f, 4.2f, 0f), ShipModel.OuterRadius - 0.3f, 0.3f, ShipMaterials.DarkMetal);
             for (int i = 0; i < 3; i++)
             {
                 // Motores de nivel del mar (centro) y de vacío (anillo exterior, toberas grandes).
@@ -177,9 +201,9 @@ namespace MarsRobot.Base.Ship
             for (int i = 0; i < 6; i++)
             {
                 Quaternion q = Quaternion.Euler(0f, 30f + i * 60f, 0f);
-                Vector3 top = q * new Vector3(0f, 4.0f, 4.3f);
-                Vector3 foot = q * new Vector3(0f, 0.25f, 5.7f);
-                Vector3 brace = q * new Vector3(0f, 1.8f, 4.45f);
+                Vector3 top = q * new Vector3(0f, 4.0f, 4.8f);
+                Vector3 foot = q * new Vector3(0f, 0.25f, 6.4f);
+                Vector3 brace = q * new Vector3(0f, 1.8f, 4.95f);
                 ShipMesh.Beam(p, top, foot, 0.18f, ShipMaterials.Steel);
                 ShipMesh.Beam(p, brace, foot, 0.1f, ShipMaterials.Metal);
                 ShipMesh.Cyl(p, new Vector3(foot.x, 0.1f, foot.z), 0.55f, 0.2f, ShipMaterials.DarkMetal);
@@ -218,14 +242,7 @@ namespace MarsRobot.Base.Ship
                 }
             }
             ShipMesh.Box(p, new Vector3(0f, 28.7f, z + 0.3f), new Vector3(4.4f, 0.5f, 0.9f), ShipMaterials.DarkMetal);
-            // Plataforma (abajo, lista para el robot): 3,6 × 4 m con barandillas y franjas de aviso.
-            ShipMesh.Box(p, new Vector3(0f, 0.12f, z + 2.0f), new Vector3(3.6f, 0.24f, 4f), ShipMaterials.Metal);
-            ShipMesh.Box(p, new Vector3(0f, 0.25f, z + 3.95f), new Vector3(3.6f, 0.02f, 0.12f), ShipMaterials.Hazard);
-            for (int s = -1; s <= 1; s += 2)
-            {
-                ShipMesh.Box(p, new Vector3(s * 1.78f, 0.75f, z + 2.0f), new Vector3(0.05f, 0.05f, 4f), ShipMaterials.Orange);
-                for (int k = 0; k < 4; k++) ShipMesh.Box(p, new Vector3(s * 1.78f, 0.5f, z + 0.5f + k * 1.0f), new Vector3(0.05f, 0.5f, 0.05f), ShipMaterials.Metal);
-            }
+            // La plataforma móvil la crea ShipElevator (sube y baja con el robot).
             // Marco de la puerta de carga (3,2 m) con señalización.
             ShipMesh.Box(p, new Vector3(0f, DoorTop + 0.1f, ShipModel.OuterRadius - 0.05f), new Vector3(3.6f, 0.2f, 0.25f), ShipMaterials.Hazard);
             ShipMesh.Box(p, new Vector3(-1.7f, (DoorBottom + DoorTop) * 0.5f, ShipModel.OuterRadius - 0.3f), new Vector3(0.2f, 3f, 0.25f), ShipMaterials.Hazard);
@@ -237,7 +254,7 @@ namespace MarsRobot.Base.Ship
         private static void BuildWindows(Transform p)
         {
             // Ventanas del nivel de control, en la base de la nariz, mirando al frente.
-            float y = ShipModel.LevelFloorY(4) + 1.6f;
+            float y = ShipModel.LevelFloorY(ShipModel.ControlLevel) + 1.6f;
             float r = ShipModel.HullRadiusAt(y) + 0.02f;
             for (int i = -2; i <= 2; i++)
             {

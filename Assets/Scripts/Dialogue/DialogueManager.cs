@@ -133,7 +133,7 @@ namespace MarsRobot.Dialogue
             }
 
             bool typing = _shownChars < total;
-            if (RobotInput.DialogueAdvancePressed)
+            if (RobotInput.DialogueAdvanceAny)
             {
                 if (typing) _shownChars = total;
                 else if (_current.choices.Count == 0) Advance(_current.next);
@@ -142,9 +142,18 @@ namespace MarsRobot.Dialogue
             {
                 for (int i = 0; i < _current.choices.Count && i < 9; i++)
                 {
-                    if (RobotInput.NumberPressed(i)) Advance(_current.choices[i].next);
+                    if (RobotInput.ChoicePressed(i)) Advance(_current.choices[i].next);
                 }
             }
+        }
+
+        /// <summary>Prueba automática: pasa el diálogo actual (elige la primera respuesta).</summary>
+        public static void DebugSkip()
+        {
+            DialogueManager m = _instance;
+            if (m == null || m._current == null) return;
+            if (m._current.choices.Count > 0) m.Advance(m._current.choices[0].next);
+            else m.Advance(m._current.next);
         }
 
         private void Advance(DialogueNode next)
@@ -178,6 +187,14 @@ namespace MarsRobot.Dialogue
         {
             RobotController rc;
             if (!GameServices.TryGet(out rc)) return;
+            // Con el astronauta al mando, el robot sigue aparcado al cerrar el diálogo.
+            var crew = MarsRobot.Crew.CrewControl.Instance;
+            if (enabled && crew != null && crew.AstronautActive)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+                return;
+            }
             rc.InputEnabled = enabled;
             Cursor.lockState = enabled ? CursorLockMode.Locked : CursorLockMode.None;
             Cursor.visible = !enabled;

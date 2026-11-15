@@ -115,7 +115,7 @@ namespace MarsRobot.Base.Ship
             for (int i = 0; i < _model.Levels.Length; i++)
             {
                 _model.Levels[i].gameObject.SetActive(true);
-                if (_model.LevelLights[i] != null) _model.LevelLights[i].enabled = false;
+                if (_model.LevelLights[i] != null) _model.LevelLights[i].enabled = true; // el interior se habita: luces siempre encendidas
             }
             foreach (LineRenderer l in _lines) if (l != null) Destroy(l.gameObject);
             _lines.Clear();

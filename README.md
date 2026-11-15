@@ -80,6 +80,9 @@ The full list is also in-game: **I ▸ Ajustes ▸ Controles**.
 | MarteCar | **F** (aiming at the car) get in · **W/S** throttle · **A/D** steer · **F** get out |
 | Ship inspector | **LMB** rotate · **RMB** pan · **Wheel** zoom · **WASD/Q/E** move · **1–5** level · **Shift+1–5** isolate level · **0** all · **C** cutaway · **L** labels · **M** dimensions · **K/Esc** exit |
 | Dialogue | **Enter / Space** continue · **1–4** choose an answer |
+| Astronaut | **P** switch astronaut ↔ robot (robot must be in the hangar) · **WASD** walk · **Shift** run · **Space** jump · **F** use machine / lockers / lift · **I** personal inventory and hand crafting · **V** 1st/3rd person |
+| Crafting window | **Click** select · **Right-click / Shift+click** transfer stack · **Drag** move between inventories · **Double-click** a blueprint to craft · **Esc / F / I** close |
+| Elevator (robot) | **F** on the platform: up to the hangar / down to the ground · **F** at the hangar door or at the foot of the rails: call it |
 | Debug | **F1–F6** landing zone · **F7** +10 of each resource · **F8** heavy hit · **F9** repair all · **F10** dust storm · **F11** next space-weather event · **H** hide debug panel |
 
 ## Systems
@@ -155,7 +158,7 @@ The project is designed for machines with little free memory:
 
 - The UI uses IMGUI drawn in code; there are no Canvas prefabs, because the uGUI package is not installed.
 - Models and icons are procedural placeholders, ready to be swapped for real art.
-- The rover is the only character, and it can enter only level 1 (hangar) of the ship. Upper levels are viewed with the ship inspector (**K**).
+- The astronaut walks only inside the ship (6 levels, lift between them); outside, you play as the rover. Crafting stations have no power or fuel requirement yet.
 - The ship interior is a fictional conversion made for the game; it is not based on real ship plans.
 - In-game, CMEs trigger global dust storms. That is a gameplay liberty: real Martian dust storms are not caused by CMEs.
 - There is no music yet, and only Spanish is available.
@@ -177,3 +180,23 @@ The project is designed for machines with little free memory:
 - Mars science references: NASA (MOXIE, RAD, CRISM, DONKI, Mars Trek, HiRISE). Values are simplified for gameplay.
 - The mothership is inspired by large reusable stainless-steel spacecraft. No third-party names, logos or trademarks are used in the game.
 - Not affiliated with NASA, SpaceX or the publishers of any game mentioned in this file.
+
+### Garden and new stations
+
+Levels 3–6 were redesigned (machines against the wall, open centre; **Marte ▸ Comprobar espacio de la nave** reports walkable area per level). New crafting stations: 3D printer, electronics bench, two hydroponic gardens (3 trays each, growing in parallel with visible plant growth), laboratory, water plant, oxygen plant and kitchen. Crops: red lettuce, radish, dwarf tomato, potato, dwarf wheat, soybean (seeds, harvests, nutrients, flour, rations, salad). Details in LEEME.md.
+
+### Visual system (Built-in pipeline)
+
+Scene hierarchy `_Environment` / `_Structures` / `_Props` / `_PhysicsSystem` (built at runtime by `Visuals/SceneRoots`; **Marte ▸ Arquitectura de escena** creates it in the editor) · organic set dressing (±15° yaw, ±8 % scale, mm offsets, seeded) · mesh-fitted colliders (static: collider only; loose props: Rigidbody with mass from volume × density) · procedural PBR texture sets and a PBR material factory for the Standard shader (**Marte ▸ Materiales PBR**; maps: Albedo, Normal, MetallicSmoothness or Metallic + Roughness, AO) · Mars sky cubemap and realtime reflection probes. Details in LEEME.md.
+
+### Optional NASA 3D models
+
+The game can use 3D models from [NASA 3D Resources](https://science.nasa.gov/3d-resources/) (free to use under the [NASA Images and Media Usage Guidelines](https://www.nasa.gov/nasa-brand-center/images-and-media/); NASA logos and insignia must not suggest NASA endorses the game). The `.glb` files (about 35 MB) live in `Assets/Models/NASA/<Id>/` and the generated prefabs in `Assets/Resources/NASAModels/`; if those prefabs are removed, the procedural models are used again. The Curiosity file is a single static mesh, so with it the rover's wheels, mast and arm are not animated (the procedural rig is still built, hidden, for the camera and tools).
+
+| Id | Model | Credit | Source | Used for |
+|---|---|---|---|---|
+| `CuriosityRover` | Curiosity Rover, 3D Model | NASA/JPL-Caltech | https://science.nasa.gov/resource/curiosity-rover-3d-model/ | Look of the XR-1 rover |
+| `InSightLander` | InSight Lander, 3D Model | NASA/JPL-Caltech | https://science.nasa.gov/resource/insight-lander-3d-model/ | "Módulo de aterrizaje abandonado" discovery point |
+| `Ingenuity` | Mars Ingenuity Helicopter, 3D Model | NASA/JPL-Caltech | https://science.nasa.gov/resource/mars-ingenuity-helicopter-3d-model/ | "Restos de una sonda antigua" discovery point |
+
+Setup: the project uses the **glTFast** package (`com.unity.cloud.gltfast`) to import `.glb` files. Put each downloaded "glTF File (3D Model)" in `Assets/Models/NASA/<Id>/`, then run **Marte ▸ Configurar modelos NASA**. It scales each model to real size, puts it on the ground facing +Z and saves `Assets/Resources/NASAModels/<Id>.prefab` (`Visuals/NasaModelLibrary` loads it). **Marte ▸ Vista previa modelos NASA** renders front/side/top PNGs to `Logs/NasaPreview/`. The NASA models are visual only: rover physics, colliders, camera mount and arm stay the same.

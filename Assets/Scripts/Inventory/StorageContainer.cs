@@ -57,6 +57,19 @@ namespace MarsRobot.Items
         }
 
         /// <summary>
+        /// Usa un contenedor existente (p. ej. el almacén de la base) en vez de uno propio: así la
+        /// bodega del hangar y los armarios del taller muestran las mismas casillas. Los objetos
+        /// entran tal cual, sin convertirse.
+        /// </summary>
+        public void UseContainer(ItemContainer shared)
+        {
+            _storage = shared;
+            slots = shared.MaxSlots;
+            convertToBaseResources = false;
+            mineralsOnly = false;
+        }
+
+        /// <summary>
         /// Recibe una pila del robot. En la bodega del cohete, lo convertible pasa al almacén de la base.
         /// Devuelve cuántas unidades se entregaron.
         /// </summary>

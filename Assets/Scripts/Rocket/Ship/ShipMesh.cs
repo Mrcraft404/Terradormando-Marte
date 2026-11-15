@@ -159,6 +159,10 @@ namespace MarsRobot.Base.Ship
         {
             Shader urp = Shader.Find("Universal Render Pipeline/Lit");
             var m = new Material(urp != null ? urp : Shader.Find("Standard")) { name = name, color = c };
+            // Un metal casi puro solo se ve por sus reflejos; aunque ahora hay sondas de reflejos
+            // (MarsEnvironment), se limita un poco para que la luz difusa también lo ilumine.
+            metallic = Mathf.Min(metallic, 0.6f);
+            smooth = Mathf.Min(smooth, 0.7f);
             if (m.HasProperty("_Metallic")) m.SetFloat("_Metallic", metallic);
             if (m.HasProperty("_Glossiness")) m.SetFloat("_Glossiness", smooth);
             if (m.HasProperty("_Smoothness")) m.SetFloat("_Smoothness", smooth);

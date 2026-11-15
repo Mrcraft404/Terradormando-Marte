@@ -50,6 +50,8 @@ namespace MarsRobot.Base
         public float HorizontalDistance(Vector3 worldPos)
         {
             Vector3 d = worldPos - transform.position;
+            // Las máquinas están dentro de la nave, a distintas alturas: otro nivel no cuenta como cerca.
+            if (Mathf.Abs(d.y) > 2.5f) return float.MaxValue;
             d.y = 0f;
             return d.magnitude;
         }

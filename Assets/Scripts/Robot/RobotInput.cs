@@ -18,6 +18,15 @@ namespace MarsRobot.Robot
         /// </summary>
         public static bool Suspended { get; set; }
 
+        /// <summary>
+        /// Si es true, la rueda del ratón no hace zoom (la usa otro sistema, p. ej. para girar el
+        /// holograma de construcción de hábitats).
+        /// </summary>
+        public static bool ZoomCaptured { get; set; }
+
+        /// <summary>Si es true, el ratón no gira la cámara (p. ej. mientras está abierto el menú radial).</summary>
+        public static bool LookCaptured { get; set; }
+
 #if ENABLE_LEGACY_INPUT_MANAGER
         public static Vector2 Move
         {
@@ -48,7 +57,7 @@ namespace MarsRobot.Robot
         /// <summary>Rueda del ratón: acercar/alejar la cámara en tercera persona.</summary>
         public static float Zoom
         {
-            get { if (Suspended) return default; return Input.GetAxis("Mouse ScrollWheel"); }
+            get { if (Suspended || ZoomCaptured) return default; return Input.GetAxis("Mouse ScrollWheel"); }
         }
 
         /// <summary>F: usar la máquina de la base más cercana (abrir/cerrar su menú).</summary>
@@ -124,6 +133,18 @@ namespace MarsRobot.Robot
             get { if (Suspended) return default; return Input.GetKeyDown(KeyCode.J); }
         }
 
+        /// <summary>Avanzar el diálogo aunque el robot no esté controlado (astronauta activo).</summary>
+        public static bool DialogueAdvanceAny
+        {
+            get { return Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space); }
+        }
+
+        /// <summary>Elegir respuesta 1–9 en un diálogo, controles a quien controles.</summary>
+        public static bool ChoicePressed(int index)
+        {
+            return index >= 0 && index < 9 && Input.GetKeyDown(KeyCode.Alpha1 + index);
+        }
+
         /// <summary>Intro o espacio: avanzar el diálogo.</summary>
         public static bool DialogueAdvancePressed
         {
@@ -132,7 +153,7 @@ namespace MarsRobot.Robot
 
         public static Vector2 Look
         {
-            get { if (Suspended) return default; return new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")); }
+            get { if (Suspended || LookCaptured) return default; return new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")); }
         }
 
         public static bool RepairHeld
@@ -194,6 +215,8 @@ namespace MarsRobot.Robot
         public static bool InventoryPressed { get { return false; } }
         public static bool LogPressed { get { return false; } }
         public static bool DialogueAdvancePressed { get { return false; } }
+        public static bool DialogueAdvanceAny { get { return false; } }
+        public static bool ChoicePressed(int index) { return false; }
         public static bool RepairHeld { get { return false; } }
         public static bool NextToolPressed { get { return false; } }
         public static bool NextModulePressed { get { return false; } }

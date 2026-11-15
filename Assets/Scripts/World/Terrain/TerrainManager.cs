@@ -319,6 +319,24 @@ namespace MarsRobot.World.TerrainSystem
             return _active.TryGetValue(WorldToChunk(worldPosition), out chunk) && chunk.HasCollider;
         }
 
+        /// <summary>
+        /// Nivela el terreno en un círculo (altura del centro) y reconstruye los chunks afectados.
+        /// Lo usa la base del cohete para no quedar sobre una pendiente.
+        /// </summary>
+        public float FlattenAround(Vector3 worldCenter, float radius, float blend)
+        {
+            if (!IsMapReady) return worldCenter.y;
+            Vector3 local = transform.InverseTransformPoint(worldCenter);
+            float h = HeightField.SampleHeight(local.x, local.z);
+            HeightField.FlattenCircle(local.x, local.z, radius, blend, h);
+            // Los chunks ya construidos se descartan: se vuelven a generar con el suelo nivelado.
+            _toRemove.Clear();
+            foreach (var pair in _active) _toRemove.Add(pair.Key);
+            for (int i = 0; i < _toRemove.Count; i++) ReleaseChunk(_toRemove[i]);
+            _refreshTimer = 0f;
+            return h + transform.position.y;
+        }
+
         /// <summary>Fuerza un refresco inmediato (por ejemplo tras teletransportar al robot).</summary>
         public void ForceRefresh()
         {

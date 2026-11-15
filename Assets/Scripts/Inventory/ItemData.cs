@@ -10,7 +10,9 @@ namespace MarsRobot.Items
         Volatile,        // Hielo / volátiles
         RobotComponent,  // Componente robótico
         Tool,            // Herramienta
-        Garden           // Material de huerto
+        Garden,          // Material de huerto
+        Material,        // Material procesado (lingotes, polímero, electrónica…)
+        Consumable       // Consumible que se usa (kits de reparación, baterías…)
     }
 
     /// <summary>

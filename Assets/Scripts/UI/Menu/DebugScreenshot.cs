@@ -20,5 +20,25 @@ namespace MarsRobot.UI.Menu
             File.WriteAllBytes(path, tex.EncodeToPNG());
             Object.Destroy(tex);
         }
+
+        /// <summary>Renderiza una cámara a PNG (sin interfaz). Solo para pruebas.</summary>
+        public static void RenderCamera(Camera cam, string path, int width = 1280, int height = 720)
+        {
+            var rt = new RenderTexture(width, height, 24);
+            RenderTexture prevTarget = cam.targetTexture;
+            cam.targetTexture = rt;
+            cam.Render();
+            RenderTexture.active = rt;
+            var tex = new Texture2D(width, height, TextureFormat.RGB24, false);
+            tex.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+            tex.Apply(false);
+            RenderTexture.active = null;
+            cam.targetTexture = prevTarget;
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
+            File.WriteAllBytes(path, tex.EncodeToPNG());
+            Object.Destroy(tex);
+            rt.Release();
+            Object.Destroy(rt);
+        }
     }
 }

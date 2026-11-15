@@ -22,16 +22,35 @@ namespace MarsRobot.UI
         private const int S = 64;
         private static readonly Dictionary<string, Texture2D> Cache = new Dictionary<string, Texture2D>();
 
+        private static readonly Dictionary<string, Texture2D> Custom = new Dictionary<string, Texture2D>();
+
+        /// <summary>
+        /// Icono de un objeto, por orden de preferencia:
+        /// 1) el icono asignado en su ItemData; 2) una imagen propia en
+        /// Assets/Resources/ItemIcons/&lt;itemID&gt;.png; 3) su ilustración 2D (ItemIconArt);
+        /// 4) una forma genérica coloreada.
+        /// </summary>
         public static Texture2D For(ItemData item)
         {
             if (item == null) return null;
             if (item.icon != null) return item.icon;
+            Texture2D custom;
+            if (!Custom.TryGetValue(item.itemID, out custom))
+            {
+                custom = Resources.Load<Texture2D>("ItemIcons/" + item.itemID);
+                Custom[item.itemID] = custom;
+            }
+            if (custom != null) return custom;
+            Texture2D art = ItemIconArt.Get(item.itemID);
+            if (art != null) return art;
             return Get(ShapeFor(item.itemID, item.itemCategory), item.iconColor);
         }
 
         public static Texture2D For(ResourceType type)
         {
-            return Get(ShapeFor(type), ItemDatabase.ResourceColor(type));
+            ItemData item = ItemDatabase.ForResource(type);
+            Texture2D t = item != null ? For(item) : null;
+            return t != null ? t : Get(ShapeFor(type), ItemDatabase.ResourceColor(type));
         }
 
         public static IconShape ShapeFor(ResourceType t)

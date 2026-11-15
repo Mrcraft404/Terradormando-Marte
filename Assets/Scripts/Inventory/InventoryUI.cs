@@ -50,6 +50,13 @@ namespace MarsRobot.Items
         /// <summary>Lista de controles por sección (tecla, acción). Mantener al día al añadir teclas.</summary>
         private static readonly string[][] Controls =
         {
+            new[] { "#", "Astronauta (dentro de la nave)" },
+            new[] { "P", "Cambiar entre astronauta y robot (solo con el robot en el hangar)" },
+            new[] { "WASD · Mayús · Espacio", "Caminar · correr · saltar" },
+            new[] { "F", "Usar máquina, armario o montacargas" },
+            new[] { "I", "Inventario personal y fabricación a mano" },
+            new[] { "V", "Primera / tercera persona" },
+
             new[] { "#", "Movimiento del robot" },
             new[] { "W / S", "Adelante / atrás" },
             new[] { "A / D", "Izquierda / derecha (de lado, ruedas a 90°)" },
@@ -61,6 +68,7 @@ namespace MarsRobot.Items
 
             new[] { "#", "Acciones del robot" },
             new[] { "F", "Usar lo que apuntas o la máquina más cercana" },
+            new[] { "F (en el ascensor)", "Subir al hangar / bajar al suelo · llamar al ascensor" },
             new[] { "F (mantener)", "Minar rocas, volcar regolito en la berma, descargar registros" },
             new[] { "X (mantener, parado)", "Herramienta del brazo: taladro, pala o soplador" },
             new[] { "Z", "Escáner geológico" },

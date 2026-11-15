@@ -20,7 +20,7 @@ namespace MarsRobot.Base
     public sealed class RocketBaseManager : MonoBehaviour
     {
         /// <summary>Radio del anillo de berma (m) y número de tramos.</summary>
-        public const float BermRadius = 8.5f; // fuera de las patas (5,7 m) y aletas (6 m) de la nave
+        public const float BermRadius = 9.5f; // fuera de las patas (6,4 m) y aletas (6,5 m) de la nave
         public const int BermSegments = 11;
 
         [Tooltip("Propelente (metano) necesario para el vuelo de regreso / reabastecer la nave.")]
@@ -76,29 +76,19 @@ namespace MarsRobot.Base
         {
             _base = rocketBase;
 
-            // Bodega del cohete, al pie de la rampa (a la derecha) y terminal (a la izquierda).
-            Hold = rocketBase.AddStation<StorageContainer>("Bodega del cohete", new Vector3(5f, 0f, 11.5f), 2.8f);
-            Hold.Configure(80, 0f, 0f, true, false);
-            Prop(Hold.transform, new Vector3(0f, 0.7f, 0f), new Vector3(1.8f, 1.4f, 1.4f), new Color(0.55f, 0.56f, 0.6f));
-            Prop(Hold.transform, new Vector3(0f, 1.45f, 0f), new Vector3(1.9f, 0.1f, 1.5f), new Color(0.95f, 0.5f, 0.1f));
+            // Bodega del hangar: el robot entrega aquí su carga. Comparte las casillas con el almacén
+            // de la base (lo que entrega el robot lo ve el astronauta en los talleres).
+            int hangar = MarsRobot.Base.Ship.ShipModel.HangarLevel;
+            Hold = rocketBase.AddStationInside<StorageContainer>("Bodega del hangar",
+                MarsRobot.Base.Ship.ShipLayout.OnLevel(hangar, MarsRobot.Base.Ship.ShipLayout.Hold), 2.2f);
+            Hold.UseContainer(rocketBase.Inventory.Storage);
 
-            var terminal = rocketBase.AddStation<RocketTerminalStation>("Terminal del cohete", new Vector3(-5f, 0f, 11.5f), 2.5f);
-            Prop(terminal.transform, new Vector3(0f, 0.6f, 0f), new Vector3(0.6f, 1.2f, 0.4f), new Color(0.2f, 0.2f, 0.22f));
-            Prop(terminal.transform, new Vector3(0f, 1.35f, 0.05f), new Vector3(0.9f, 0.55f, 0.08f), new Color(0.2f, 0.8f, 1f));
+            // Terminal del cohete, en el banco de trabajo del hangar.
+            rocketBase.AddStationInside<RocketTerminalStation>("Terminal del cohete",
+                MarsRobot.Base.Ship.ShipLayout.OnLevel(hangar, MarsRobot.Base.Ship.ShipLayout.Terminal), 1.8f);
 
-            // Fundición (detrás del cohete, a la izquierda).
-            Smelter = rocketBase.AddStation<SmelterStation>("Fundición", new Vector3(-10.5f, 0f, -10.5f), 4f);
-            Prop(Smelter.transform, new Vector3(0f, 1.1f, 0f), new Vector3(2.4f, 2.2f, 2.4f), new Color(0.35f, 0.33f, 0.32f));
-            Prop(Smelter.transform, new Vector3(0f, 2.9f, 0f), new Vector3(0.6f, 1.6f, 0.6f), new Color(0.25f, 0.24f, 0.24f)); // chimenea
-            Prop(Smelter.transform, new Vector3(0f, 0.8f, 1.21f), new Vector3(1f, 0.6f, 0.04f), new Color(1f, 0.45f, 0.1f), true); // boca del horno
-
-            // Refinería ISRU (detrás del cohete, a la derecha): es una estructura más de la red de energía.
-            StructureDefinition refineryDef = StructureCatalog.Find("refinery");
-            if (refineryDef != null)
-            {
-                Vector3 pos = rocketBase.transform.TransformPoint(new Vector3(10.5f, 0f, -10.5f));
-                Refinery = rocketBase.PlaceStructure<ISRU_FuelRefinery>(refineryDef, pos, rocketBase.transform.rotation);
-            }
+            // La fundición y la refinería están ahora dentro de la nave (nivel de talleres, ver
+            // CraftingStation). La refinería ISRU exterior se puede seguir construyendo con B.
 
             // Berma: tramos en arco, dejando libre la rampa (+Z).
             for (int i = 0; i < BermSegments; i++)

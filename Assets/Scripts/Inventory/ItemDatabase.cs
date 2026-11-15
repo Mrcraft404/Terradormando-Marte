@@ -22,6 +22,62 @@ namespace MarsRobot.Items
         public const string AuxBattery = "bateria_auxiliar";
         public const string SpareParts = "piezas_repuesto";
 
+        // Materiales procesados (fabricación estilo supervivencia).
+        public const string IronIngot = "lingote_hierro";
+        public const string Steel = "placa_acero";
+        public const string SiliconRefined = "silicio";
+        public const string Glass = "vidrio";
+        public const string Sulfur = "azufre";
+        public const string Carbon = "carbono";
+        public const string Co2 = "co2";
+        public const string Water = "agua";
+        public const string Oxygen = "oxigeno";
+        public const string Methane = "metano";
+        public const string Polymer = "polimero";
+        public const string MetalParts = "piezas_metalicas";
+        public const string Wiring = "cableado";
+        public const string Electronics = "electronica";
+        public const string SolarCell = "celula_solar";
+        public const string RegolithBrick = "bloque_regolito";
+        public const string SealTape = "cinta_sellado";
+        // Consumibles con efecto en el robot.
+        public const string RepairKit = "kit_reparacion";
+        public const string SpareWheel = "rueda_repuesto";
+        public const string CleaningBrush = "cepillo_antiestatico";
+        public const string PowerCell = "celda_energia";
+        public const string ResearchData = "datos_investigacion";
+        // Huerto y alimentación.
+        public const string Nutrients = "nutrientes";
+        public const string Flour = "harina";
+        public const string Ration = "racion";
+        public const string Salad = "ensalada";
+
+        /// <summary>Especies del huerto hidropónico (ids de la cosecha; las semillas son semillas_X).</summary>
+        public static readonly string[] Crops = { "lechuga", "rabano", "tomate", "patata", "trigo", "soja" };
+
+        public static string SeedOf(string crop)
+        {
+            return "semillas_" + crop;
+        }
+
+        /// <summary>Objeto que representa cada recurso del almacén de la base (todo vive en casillas).</summary>
+        private static readonly Dictionary<ResourceType, string> ResourceItems = new Dictionary<ResourceType, string>
+        {
+            { ResourceType.Regolith, Regolith },
+            { ResourceType.Iron, IronIngot },
+            { ResourceType.Silicon, SiliconRefined },
+            { ResourceType.Ice, Ice },
+            { ResourceType.MetalParts, MetalParts },
+            { ResourceType.Wiring, Wiring },
+            { ResourceType.SolarCells, SolarCell },
+            { ResourceType.RegolithBricks, RegolithBrick },
+            { ResourceType.Water, Water },
+            { ResourceType.Oxygen, Oxygen },
+            { ResourceType.Samples, Sample },
+            { ResourceType.Research, ResearchData },
+            { ResourceType.Methane, Methane },
+        };
+
         private static Dictionary<string, ItemData> _items;
 
         public static IEnumerable<ItemData> All
@@ -40,8 +96,10 @@ namespace MarsRobot.Items
         public static ItemData ForResource(ResourceType type)
         {
             Ensure();
-            string id = "recurso_" + type;
+            string mapped;
             ItemData d;
+            if (ResourceItems.TryGetValue(type, out mapped) && _items.TryGetValue(mapped, out d)) return d;
+            string id = "recurso_" + type;
             if (_items.TryGetValue(id, out d)) return d;
             float kg = Mathf.Max(0.05f, BaseInventory.MassPerUnit(type));
             d = Make(id, BaseInventory.Label(type), ItemCategory.RobotComponent, kg, kg * 0.8f, 20, ResourceColor(type),
@@ -117,9 +175,127 @@ namespace MarsRobot.Items
             Add(Make(SpareParts, "Piezas de repuesto", ItemCategory.RobotComponent, 2f, 1.5f, 10, new Color(0.6f, 0.6f, 0.65f),
                 "Tornillería, servos pequeños y placas para reparaciones.", "Aleación de aluminio y acero.", ResourceType.MetalParts, 1));
 
+            AddCraftingItems();
+            AddGardenItems();
+
             // Assets del proyecto (Resources/Items) sustituyen a los de por defecto.
             ItemData[] assets = Resources.LoadAll<ItemData>("Items");
             for (int i = 0; i < assets.Length; i++) Add(assets[i]);
+        }
+
+        /// <summary>Recurso del almacén que representa un objeto (para las estadísticas de la base).</summary>
+        public static bool TryGetResource(ItemData item, out ResourceType type)
+        {
+            foreach (var kv in ResourceItems)
+            {
+                if (item != null && kv.Value == item.itemID)
+                {
+                    type = kv.Key;
+                    return true;
+                }
+            }
+            type = ResourceType.Regolith;
+            return false;
+        }
+
+        /// <summary>Materiales procesados y consumibles de la fabricación (masa y volumen aproximados).</summary>
+        private static void AddCraftingItems()
+        {
+            const ItemCategory M = ItemCategory.Material, C = ItemCategory.Consumable, V = ItemCategory.Volatile;
+            Add(Make(IronIngot, "Lingote de hierro", M, 5f, 0.7f, 50, new Color(0.55f, 0.32f, 0.27f),
+                "Hierro reducido en la fundición a partir de la mena. Base de casi todo lo metálico.",
+                "Reducción de hematita (Fe₂O₃) con hidrógeno o CO a ~1000 °C.", ResourceType.Iron, 1));
+            Add(Make(Steel, "Placa de acero", M, 8f, 1f, 30, new Color(0.62f, 0.64f, 0.68f),
+                "Acero laminado: estructuras, chasis y ruedas.", "Hierro con ~0,3 % de carbono.", ResourceType.MetalParts, 0, convert: false));
+            Add(Make(SiliconRefined, "Silicio", M, 3f, 1.3f, 50, new Color(0.7f, 0.78f, 0.9f),
+                "Silicio refinado para electrónica y células solares.", "Reducción carbotérmica de la sílice (SiO₂) de las arcillas.", ResourceType.Silicon, 1));
+            Add(Make(Glass, "Vidrio", M, 2.5f, 1f, 30, new Color(0.65f, 0.85f, 0.85f),
+                "Vidrio fundido de regolito: ventanas, ópticas y cubiertas de paneles.", "El regolito es ~45 % sílice.", ResourceType.Silicon, 0, convert: false));
+            Add(Make(Sulfur, "Azufre", M, 2f, 1f, 50, new Color(0.95f, 0.88f, 0.3f),
+                "Azufre extraído de los sulfatos. Aglomerante del hormigón de azufre.", "Hormigón de azufre: no necesita agua, ideal para Marte.", ResourceType.Samples, 0, convert: false));
+            Add(Make(Carbon, "Carbono", M, 1f, 0.6f, 50, new Color(0.15f, 0.15f, 0.16f),
+                "Carbono obtenido del CO₂ atmosférico. Necesario para el acero.", "Reacción de Bosch: CO₂ + 2 H₂ → C + 2 H₂O.", ResourceType.Samples, 0, convert: false));
+            Add(Make(Co2, "Bombona de CO₂", V, 2f, 2f, 20, new Color(0.75f, 0.75f, 0.8f),
+                "Dióxido de carbono comprimido, captado de la atmósfera marciana (95 % CO₂).", "Compresión desde 0,6 kPa.", ResourceType.Samples, 0, convert: false));
+            Add(Make(Water, "Bidón de agua", V, 1f, 1f, 50, new Color(0.35f, 0.65f, 1f),
+                "Agua líquida purificada. Soporte vital y materia prima de oxígeno y combustible.", "H₂O.", ResourceType.Water, 1));
+            Add(Make(Oxygen, "Botella de oxígeno", V, 1f, 1.2f, 50, new Color(0.45f, 0.75f, 0.95f),
+                "Oxígeno para el traje y el soporte vital.", "Electrólisis del agua (o MOXIE: CO₂ → CO + O).", ResourceType.Oxygen, 1));
+            Add(Make(Methane, "Bombona de metano", V, 0.5f, 1.5f, 100, new Color(0.9f, 0.35f, 0.15f),
+                "Metano líquido: propelente del cohete y materia prima de polímeros.", "Sabatier: CO₂ + 4 H₂ → CH₄ + 2 H₂O.", ResourceType.Methane, 1));
+            Add(Make(Polymer, "Polímero", M, 1f, 1f, 50, new Color(0.9f, 0.9f, 0.8f),
+                "Plástico técnico hecho de metano: aislantes, juntas y piezas ligeras.", "Polietileno a partir de metano.", ResourceType.MetalParts, 0, convert: false));
+            Add(Make(MetalParts, "Piezas metálicas", M, 2f, 1f, 50, new Color(0.65f, 0.66f, 0.7f),
+                "Tornillería, soportes y engranajes.", "Mecanizado de lingotes de hierro.", ResourceType.MetalParts, 1));
+            Add(Make(Wiring, "Cableado", M, 1f, 0.8f, 50, new Color(0.75f, 0.45f, 0.25f),
+                "Cable conductor aislado para circuitos y estructuras.", "Conductor metálico con funda de polímero.", ResourceType.Wiring, 1));
+            Add(Make(Electronics, "Electrónica", M, 0.5f, 0.5f, 30, new Color(0.2f, 0.6f, 0.35f),
+                "Placas de circuito para máquinas, baterías y sensores.", "Obleas de silicio dopado.", ResourceType.MetalParts, 0, convert: false));
+            Add(Make(SolarCell, "Célula solar", M, 2f, 2f, 30, new Color(0.2f, 0.3f, 0.6f),
+                "Célula fotovoltaica para paneles solares.", "Silicio cristalino bajo cubierta de vidrio.", ResourceType.SolarCells, 1));
+            Add(Make(RegolithBrick, "Bloque de regolito", M, 10f, 5f, 20, new Color(0.7f, 0.42f, 0.28f),
+                "Bloque de hormigón de azufre y regolito para construir.", "Regolito + azufre fundido a ~140 °C.", ResourceType.RegolithBricks, 1));
+            Add(Make(SealTape, "Cinta de sellado", M, 0.2f, 0.2f, 50, new Color(0.85f, 0.6f, 0.2f),
+                "Cinta de polímero para sellar juntas contra el polvo.", "Adhesivo apto para −120 °C.", ResourceType.MetalParts, 0, convert: false));
+            Add(Make(ResearchData, "Datos de investigación", M, 0.01f, 0.01f, 999, new Color(0.6f, 0.9f, 0.6f),
+                "Resultados científicos del laboratorio, guardados en memoria.", "Puntos de investigación.", ResourceType.Research, 1));
+
+            Add(Make(RepairKit, "Kit de reparación", C, 3f, 2f, 10, new Color(0.9f, 0.55f, 0.15f),
+                "Repara por completo el módulo más dañado del robot.", "Piezas, cableado y polímero.", ResourceType.MetalParts, 0, convert: false));
+            Add(Make(SpareWheel, "Rueda de repuesto", C, 12f, 30f, 2, new Color(0.25f, 0.25f, 0.27f),
+                "Deja todas las ruedas del robot como nuevas.", "Rueda de 0,5 m con garras.", ResourceType.MetalParts, 0, convert: false));
+            Add(Make(CleaningBrush, "Cepillo antiestático", C, 0.6f, 1f, 5, new Color(0.4f, 0.7f, 0.9f),
+                "Limpia del todo el polvo de los paneles solares del robot.", "Cerdas de polímero con descarga electrostática.", ResourceType.MetalParts, 0, convert: false));
+            Add(Make(PowerCell, "Celda de energía", C, 4f, 2f, 5, new Color(0.35f, 0.8f, 0.4f),
+                "Carga el 50 % de la batería del robot al usarla.", "Batería de ion-litio de un solo uso.", ResourceType.MetalParts, 0, convert: false));
+        }
+
+        /// <summary>Semillas, cosechas y alimentos del huerto hidropónico.</summary>
+        private static void AddGardenItems()
+        {
+            const ItemCategory G = ItemCategory.Garden;
+            string[] names = { "Lechuga", "Rábano", "Tomate enano", "Patata", "Trigo enano", "Soja" };
+            string[] seedNotes =
+            {
+                "Lactuca sativa roja 'Outredgeous': la primera lechuga que comieron los astronautas en la ISS (Veggie, 2015).",
+                "Raphanus sativus: crece en unos 30 días; se cultivó en la ISS (Plant Habitat-02).",
+                "Tomate enano 'Red Robin', cultivado en la ISS en 2023 (VEG-05).",
+                "Solanum tuberosum: se planta con tubérculos-semilla; muchas calorías por metro cuadrado.",
+                "Trigo enano 'USU-Apogee', desarrollado con la NASA para sistemas de soporte vital.",
+                "Glycine max: proteína y aceite; fija nitrógeno.",
+            };
+            string[] cropDesc =
+            {
+                "Hojas frescas: vitaminas y moral para la tripulación.",
+                "Raíz picante y hojas comestibles. Cosecha rápida.",
+                "Tomates pequeños y jugosos, ricos en licopeno.",
+                "Tubérculos con muchas calorías: la base de la dieta marciana.",
+                "Grano para moler en harina.",
+                "Vainas con granos ricos en proteína.",
+            };
+            Color[] seedColors = { new Color(0.3f, 0.25f, 0.2f), new Color(0.55f, 0.35f, 0.2f), new Color(0.85f, 0.78f, 0.55f),
+                new Color(0.75f, 0.6f, 0.35f), new Color(0.85f, 0.68f, 0.3f), new Color(0.9f, 0.82f, 0.45f) };
+            Color[] cropColors = { new Color(0.45f, 0.75f, 0.3f), new Color(0.85f, 0.2f, 0.3f), new Color(0.9f, 0.2f, 0.15f),
+                new Color(0.75f, 0.58f, 0.35f), new Color(0.9f, 0.75f, 0.35f), new Color(0.55f, 0.7f, 0.3f) };
+            float[] cropKg = { 0.3f, 0.1f, 0.15f, 0.25f, 0.2f, 0.15f };
+            for (int i = 0; i < Crops.Length; i++)
+            {
+                Add(Make(SeedOf(Crops[i]), "Semillas de " + names[i].ToLowerInvariant(), G, 0.02f, 0.02f, 50, seedColors[i],
+                    "Se plantan en una bandeja del huerto hidropónico con agua y solución nutritiva.", seedNotes[i], ResourceType.Samples, 0, convert: false));
+                Add(Make(Crops[i], names[i], G, cropKg[i], cropKg[i] * 1.5f, 30, cropColors[i],
+                    cropDesc[i] + " En la cocina se convierte en comida; en el laboratorio da semillas nuevas.", "Cultivo hidropónico bajo LED.",
+                    ResourceType.Samples, 0, convert: false));
+            }
+            Add(Make(Nutrients, "Solución nutritiva", G, 1f, 1f, 30, new Color(0.3f, 0.75f, 0.45f),
+                "Abono líquido para el huerto hidropónico, hecho con sulfatos y agua.", "Sales de nitrógeno, fósforo, potasio y azufre disueltas.",
+                ResourceType.Samples, 0, convert: false));
+            Add(Make(Flour, "Harina", G, 1f, 1.5f, 30, new Color(0.95f, 0.92f, 0.85f), "Trigo molido para cocinar.", "Harina integral de trigo enano.",
+                ResourceType.Samples, 0, convert: false));
+            Add(Make(Ration, "Ración de supervivencia", ItemCategory.Consumable, 0.6f, 0.6f, 20, new Color(0.75f, 0.76f, 0.8f),
+                "Comida completa envasada al vacío para la tripulación (unas 2.000 kcal).", "Pan de trigo, soja y patata.",
+                ResourceType.Samples, 0, convert: false));
+            Add(Make(Salad, "Ensalada fresca", ItemCategory.Consumable, 0.4f, 0.8f, 10, new Color(0.45f, 0.8f, 0.35f),
+                "Lechuga, tomate y rábano del huerto. Vitaminas frescas.", "Se conserva poco tiempo.", ResourceType.Samples, 0, convert: false));
         }
 
         private static void Add(ItemData d)
