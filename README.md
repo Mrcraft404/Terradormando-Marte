@@ -1,4 +1,4 @@
-# Mars Rover XR-1 — v1
+# Terraforming Mars
 
 > **Working title.** "Terraforming Mars" is the name of an existing commercial board game (and its digital edition), so it is only used as an internal working name. Pick a final title before publishing anything. In code, the root namespace is the neutral `MarsRobot`.
 
@@ -7,6 +7,8 @@ A first-person survival and terraforming game for Unity. You control the explore
 This is **version 1**: a playable prototype. Every model, icon and UI element is generated in code, so the project needs no external art assets.
 
 ---
+
+> Download in the releases.
 
 ## Table of contents
 
