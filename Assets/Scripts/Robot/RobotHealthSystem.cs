@@ -337,6 +337,17 @@ namespace MarsRobot.Robot
             return module.NeedsRepair ? RepairResult.Repaired : RepairResult.FullyRepaired;
         }
 
+        /// <summary>Repara por completo un módulo (eventos de diálogo, misiones…).</summary>
+        public void RepairModule(RobotModuleId id)
+        {
+            RobotModule m = GetModule(id);
+            if (m == null) return;
+            ModuleState previous = m.SetIntegrity(m.MaxIntegrity);
+            if (ModuleRepaired != null) ModuleRepaired(m);
+            NotifyStateChange(m, previous);
+            RecalculateAggregates(false);
+        }
+
         /// <summary>Restaura todo (debug o al reconstruir el robot en la base).</summary>
         public void RepairAll()
         {

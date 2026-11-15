@@ -17,6 +17,12 @@ namespace MarsRobot.Base
             return def.researchCost <= 0 || _unlocked.Contains(def.id);
         }
 
+        /// <summary>Desbloquea sin coste (recompensas de misiones o diálogos).</summary>
+        public void ForceUnlock(string structureId)
+        {
+            if (!string.IsNullOrEmpty(structureId)) _unlocked.Add(structureId);
+        }
+
         public bool TryUnlock(StructureDefinition def, BaseInventory inventory)
         {
             if (IsUnlocked(def)) return false;

@@ -21,6 +21,13 @@ namespace MarsRobot.Robot
         [Tooltip("Pivote de la cámara (cabeza del robot). Gira en vertical; el cuerpo gira en horizontal.")]
         [SerializeField] private Transform cameraPivot;
         [SerializeField, Min(0.01f)] private float mouseSensitivity = 2f;
+
+        /// <summary>Sensibilidad del ratón (la cambian los Ajustes).</summary>
+        public float MouseSensitivity
+        {
+            get { return mouseSensitivity; }
+            set { mouseSensitivity = Mathf.Clamp(value, 0.1f, 10f); }
+        }
         [SerializeField] private float minPitch = -60f;
         [SerializeField] private float maxPitch = 70f;
         [Tooltip("Grados por segundo al girar con Q/E.")]
@@ -92,6 +99,35 @@ namespace MarsRobot.Robot
             set { _inputEnabled = value; }
         }
 
+        // ------------------------------------------------------------------
+        // Modificadores externos (carga, módulos, clima espacial…)
+        // ------------------------------------------------------------------
+
+        private readonly System.Collections.Generic.List<IMovementModifier> _modifiers = new System.Collections.Generic.List<IMovementModifier>();
+        private float _speedMod = 1f, _powerMod = 1f, _wearMod = 1f;
+
+        /// <summary>Multiplicador de velocidad combinado de todos los modificadores (para el HUD).</summary>
+        public float SpeedModifier
+        {
+            get { return _speedMod; }
+        }
+
+        /// <summary>Multiplica todos los IMovementModifier del robot (se buscan cada paso: son pocos).</summary>
+        private void CollectModifiers()
+        {
+            GetComponents(_modifiers);
+            _speedMod = 1f;
+            _powerMod = 1f;
+            _wearMod = 1f;
+            for (int i = 0; i < _modifiers.Count; i++)
+            {
+                if (_modifiers[i] is Behaviour b && !b.isActiveAndEnabled) continue;
+                _speedMod *= _modifiers[i].SpeedMultiplier;
+                _powerMod *= _modifiers[i].PowerMultiplier;
+                _wearMod *= _modifiers[i].WearMultiplier;
+            }
+        }
+
         private void Awake()
         {
             _rb = GetComponent<Rigidbody>();
@@ -158,7 +194,8 @@ namespace MarsRobot.Robot
 
             // --- Energía disponible ---
             float throttle = _moveInput.magnitude;
-            float wantedWatts = idlePowerWatts + drivePowerWatts * throttle;
+            CollectModifiers();
+            float wantedWatts = idlePowerWatts + drivePowerWatts * throttle * _powerMod;
             float energyFactor = 1f;
             if (battery != null)
             {
@@ -175,7 +212,7 @@ namespace MarsRobot.Robot
 
             // --- Velocidad objetivo ---
             float surfaceFactor = _currentSurface != null ? _currentSurface.speedMultiplier : 1f;
-            float speedLimit = maxSpeed * _health.Mobility * energyFactor * surfaceFactor;
+            float speedLimit = maxSpeed * _health.Mobility * energyFactor * surfaceFactor * _speedMod;
 
             Vector3 wish = transform.forward * _moveInput.y + transform.right * (_moveInput.x * strafeFactor);
             Vector3 targetVelocity = wish * speedLimit;
@@ -221,7 +258,7 @@ namespace MarsRobot.Robot
                 {
                     float severity = Mathf.InverseLerp(cfg.roughSlopeDegrees, 90f, slope);
                     _health.ApplyWear(ModuleCategory.Locomotion,
-                        cfg.roughTerrainWearPerSecond * (1f + severity * 3f) * speed01 * dt,
+                        cfg.roughTerrainWearPerSecond * (1f + severity * 3f) * speed01 * dt * _wearMod,
                         DamageSourceType.RoughTerrain);
                 }
                 if (_currentSurface != null && _currentSurface.wearPerSecond > 0f)

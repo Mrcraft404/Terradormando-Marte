@@ -58,3 +58,41 @@ vuelve a crear.
   chunks del robot tienen colisionador.
 - Pool con tope (`maxPooledChunks`), y la malla se vacía al volver al pool.
 - Las mallas se calculan en hilos de fondo y se suben de 2 en 2 por frame (ajustable).
+
+## Sistemas añadidos (paso 5)
+
+| Sistema | Carpeta | Teclas / uso |
+|---|---|---|
+| Inventario físico (masa kg + volumen L, sublimación, corrosión) | `Assets/Scripts/Inventory` | **I** inventario · objetos de ejemplo en `Assets/Resources/Items` |
+| Módulos del rover (brazo, cubierta, bahía; a escala Curiosity) | `Assets/Scripts/Robot` (`RoverConfig`, `RobotModuleSystem`, `RoverToolController`) | **X** herramienta del brazo · se cambian en el **Taller de ensamblaje** |
+| Interacción por punto de mira + rocas minables | `Assets/Scripts/Interaction`, `Spawns/RockScatterSpawner` | **F** (pulsar o mantener) sobre lo que apuntas |
+| Cohete nodriza: bodega, terminal, fundición, refinería Sabatier, berma | `Assets/Scripts/Rocket` | Vuelca regolito en la berma con **F** |
+| Diálogos, avisos y bitácora | `Assets/Scripts/Dialogue` · ejemplos en `Assets/Resources/Dialogue` | **Intro/Espacio** avanzar · **1–4** responder · **J** bitácora |
+| Efectos de cámara (inercia, sacudidas, visión dañada) | `Assets/Scripts/Camera` · shader `Assets/Shaders/DamageVision.shader` | automático |
+| Clima espacial con NASA DONKI (FLR, CME, SEP, GST) | `Assets/Scripts/Environment/SpaceWeather` | **F11** lanza el siguiente evento (prueba) |
+| Minimapa táctico con niebla y marcadores | `Assets/Scripts/UI/Minimap` | arriba a la izquierda; las balizas (B ▸ Ciencia) revelan más mapa |
+
+Notas:
+- La tecla de usar es **F** (la E gira el rover). La interfaz es IMGUI hecha por código (no hay paquete uGUI ni prefabs de Canvas).
+- DONKI usa la clave `DEMO_KEY` (pocas peticiones por hora). Sin internet, el clima espacial se simula.
+- En una build, añade `Hidden/MarsRobot/DamageVision` a *Graphics ▸ Always Included Shaders*.
+
+## Menú principal (paso 6)
+
+Escena de arranque: `Assets/Scenes/MenuPrincipal.unity` (escena 0 en Build Settings; si se descoloca,
+menú **Marte ▸ Configurar menú principal en Build Settings**).
+
+| Pantalla | Qué hace |
+|---|---|
+| Inicio | Fondo de Marte con la base, título y botones **JUGAR / OPCIONES / SALIR** |
+| Modo | **Creativo** (sin daño, energía y recursos ilimitados, sin tormentas) o **Supervivencia** (Fácil / Normal / Difícil) |
+| Crear mundo | Nombre, semilla, modo, dificultad y punto de aparición |
+| Mapa de Marte | Mapa completo: clic en cualquier punto. Los rombos dorados son las 6 zonas con datos NASA; el resto es terreno procedural según latitud, altura y rugosidad |
+| Opciones | Usa los Ajustes del juego (`Core/GameSettings`): volúmenes, brillo, sensibilidad, calidad, FPS y nombre del comandante |
+
+Archivos: `UI/Menu/MainMenu.cs`, `UI/Menu/MenuArt.cs`, `UI/Menu/MenuAudio.cs`, `World/GlobalMap/MarsGlobalMap.cs`,
+`Spawns/SpawnZoneFactory.cs`, `Spawns/GameModeRuntime.cs`, `Core/GameModeState.cs`, `Editor/MainMenuSceneSetup.cs`.
+
+En la partida, con el ratón libre (**Esc**) aparece abajo a la derecha el botón **Menú principal**.
+Imágenes opcionales: `Assets/Resources/MenuBackground.png` (fondo) y `Assets/Resources/MarsGlobalMap.png`
+(mapa equirectangular real, p. ej. el mosaico MOLA coloreado de la NASA).

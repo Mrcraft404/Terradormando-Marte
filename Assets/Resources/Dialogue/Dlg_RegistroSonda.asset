@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7c0a88d79da5b64186ada6891e4b628, type: 3}
+  m_Name: Dlg_RegistroSonda
+  m_EditorClassIdentifier: 
+  nodeID: probe_archive
+  speaker: 1
+  customSpeakerName:
+  text: "...registro recuperado... Sol 4127. Batería al 3 %. El polvo cubre los paneles. Último análisis: arcillas y sulfatos en este valle; aquí hubo agua líquida. Transmitiendo coordenadas de interés... fin del registro."
+  voiceClip: {fileID: 0}
+  roboticStatic: 1
+  choices: []
+  next: {fileID: 0}
+  pauseGame: 0
+  addToLog: 1
+  onFinish:
+  - type: 4
+    stringParam: Research
+    intParam: 5
+  - type: 5
+    stringParam: "Sonda antigua: el valle muestra arcillas y sulfatos (hubo agua en el pasado)."
+    intParam: 0

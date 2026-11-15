@@ -12,11 +12,18 @@ namespace MarsRobot.Robot
     /// </summary>
     public static class RobotInput
     {
+        /// <summary>
+        /// Si es true, el rover no recibe ninguna tecla (p. ej. mientras se inspecciona la nave con
+        /// la cámara libre). Lo activa y desactiva quien toma el control de la entrada.
+        /// </summary>
+        public static bool Suspended { get; set; }
+
 #if ENABLE_LEGACY_INPUT_MANAGER
         public static Vector2 Move
         {
             get
             {
+                if (Suspended) return Vector2.zero;
                 // Ejes del Input Manager (WASD y flechas) y, por si alguien los borra, teclas directas.
                 var axis = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
                 if (axis.sqrMagnitude > 0.01f) return axis;
@@ -29,108 +36,133 @@ namespace MarsRobot.Robot
         /// <summary>Giro con teclado: Q izquierda (−1), E derecha (+1).</summary>
         public static float KeyboardTurn
         {
-            get { return (Input.GetKey(KeyCode.E) ? 1f : 0f) - (Input.GetKey(KeyCode.Q) ? 1f : 0f); }
+            get { if (Suspended) return default; return (Input.GetKey(KeyCode.E) ? 1f : 0f) - (Input.GetKey(KeyCode.Q) ? 1f : 0f); }
         }
 
         /// <summary>V: alternar primera / tercera persona.</summary>
         public static bool CameraTogglePressed
         {
-            get { return Input.GetKeyDown(KeyCode.V); }
+            get { if (Suspended) return default; return Input.GetKeyDown(KeyCode.V); }
         }
 
         /// <summary>Rueda del ratón: acercar/alejar la cámara en tercera persona.</summary>
         public static float Zoom
         {
-            get { return Input.GetAxis("Mouse ScrollWheel"); }
+            get { if (Suspended) return default; return Input.GetAxis("Mouse ScrollWheel"); }
         }
 
         /// <summary>F: usar la máquina de la base más cercana (abrir/cerrar su menú).</summary>
         public static bool InteractPressed
         {
-            get { return Input.GetKeyDown(KeyCode.F); }
+            get { if (Suspended) return default; return Input.GetKeyDown(KeyCode.F); }
         }
 
         /// <summary>B: entrar/salir del modo construcción.</summary>
         public static bool BuildModePressed
         {
-            get { return Input.GetKeyDown(KeyCode.B); }
+            get { if (Suspended) return default; return Input.GetKeyDown(KeyCode.B); }
         }
 
         /// <summary>En construcción: R gira la pieza 90°.</summary>
         public static bool BuildRotatePressed
         {
-            get { return Input.GetKeyDown(KeyCode.R); }
+            get { if (Suspended) return default; return Input.GetKeyDown(KeyCode.R); }
         }
 
         /// <summary>En construcción: Tab cambia de categoría.</summary>
         public static bool BuildCategoryPressed
         {
-            get { return Input.GetKeyDown(KeyCode.Tab); }
+            get { if (Suspended) return default; return Input.GetKeyDown(KeyCode.Tab); }
         }
 
         /// <summary>En construcción: clic izquierdo o Intro colocan la pieza.</summary>
         public static bool BuildPlacePressed
         {
-            get { return Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Return); }
+            get { if (Suspended) return default; return Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Return); }
         }
 
         /// <summary>Tecla numérica 1–9 (índice 0–8).</summary>
         public static bool NumberPressed(int index)
         {
+            if (Suspended) return false;
             return index >= 0 && index < 9 && Input.GetKeyDown(KeyCode.Alpha1 + index);
         }
 
         /// <summary>L: foco del robot.</summary>
         public static bool FlashlightPressed
         {
-            get { return Input.GetKeyDown(KeyCode.L); }
+            get { if (Suspended) return default; return Input.GetKeyDown(KeyCode.L); }
         }
 
         /// <summary>Z: escáner geológico.</summary>
         public static bool ScanPressed
         {
-            get { return Input.GetKeyDown(KeyCode.Z); }
+            get { if (Suspended) return default; return Input.GetKeyDown(KeyCode.Z); }
         }
 
-        /// <summary>X (mantener): taladro de muestras.</summary>
+        /// <summary>X (mantener): usar la herramienta del brazo delantero (taladro, pala o soplador).</summary>
         public static bool DrillHeld
         {
-            get { return Input.GetKey(KeyCode.X); }
+            get { if (Suspended) return default; return Input.GetKey(KeyCode.X); }
+        }
+
+        /// <summary>F mantenida (interacciones largas, como minar una roca).</summary>
+        public static bool InteractHeld
+        {
+            get { if (Suspended) return default; return Input.GetKey(KeyCode.F); }
+        }
+
+        /// <summary>I: inventario (bahía de carga).</summary>
+        public static bool InventoryPressed
+        {
+            get { if (Suspended) return default; return Input.GetKeyDown(KeyCode.I); }
+        }
+
+        /// <summary>J: bitácora (registro de mensajes).</summary>
+        public static bool LogPressed
+        {
+            get { if (Suspended) return default; return Input.GetKeyDown(KeyCode.J); }
+        }
+
+        /// <summary>Intro o espacio: avanzar el diálogo.</summary>
+        public static bool DialogueAdvancePressed
+        {
+            get { if (Suspended) return default; return Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space); }
         }
 
         public static Vector2 Look
         {
-            get { return new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")); }
+            get { if (Suspended) return default; return new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")); }
         }
 
         public static bool RepairHeld
         {
-            get { return Input.GetKey(KeyCode.R); }
+            get { if (Suspended) return default; return Input.GetKey(KeyCode.R); }
         }
 
         public static bool NextToolPressed
         {
-            get { return Input.GetKeyDown(KeyCode.T); }
+            get { if (Suspended) return default; return Input.GetKeyDown(KeyCode.T); }
         }
 
         public static bool NextModulePressed
         {
-            get { return Input.GetKeyDown(KeyCode.G); }
+            get { if (Suspended) return default; return Input.GetKeyDown(KeyCode.G); }
         }
 
         public static bool CleanPanelsPressed
         {
-            get { return Input.GetKeyDown(KeyCode.C); }
+            get { if (Suspended) return default; return Input.GetKeyDown(KeyCode.C); }
         }
 
         public static bool ReleaseCursorPressed
         {
-            get { return Input.GetKeyDown(KeyCode.Escape); }
+            get { if (Suspended) return default; return Input.GetKeyDown(KeyCode.Escape); }
         }
 
         public static bool ClickPressed
         {
-            get { return Input.GetMouseButtonDown(0); }
+            get { if (Suspended) return default; return Input.GetMouseButtonDown(0); }
         }
 #else
         // El proyecto solo tiene activado el nuevo Input System: ver Project Settings ▸ Player ▸
@@ -158,6 +190,10 @@ namespace MarsRobot.Robot
         public static bool FlashlightPressed { get { return false; } }
         public static bool ScanPressed { get { return false; } }
         public static bool DrillHeld { get { return false; } }
+        public static bool InteractHeld { get { return false; } }
+        public static bool InventoryPressed { get { return false; } }
+        public static bool LogPressed { get { return false; } }
+        public static bool DialogueAdvancePressed { get { return false; } }
         public static bool RepairHeld { get { return false; } }
         public static bool NextToolPressed { get { return false; } }
         public static bool NextModulePressed { get { return false; } }

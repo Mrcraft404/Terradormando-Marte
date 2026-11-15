@@ -47,6 +47,12 @@ namespace MarsRobot.Base
         /// </summary>
         public PlacedStructure PlaceStructure(StructureDefinition def, Vector3 position, Quaternion rotation)
         {
+            return PlaceStructure<PlacedStructure>(def, position, rotation);
+        }
+
+        /// <summary>Igual, pero con un comportamiento propio (p. ej. la refinería ISRU).</summary>
+        public T PlaceStructure<T>(StructureDefinition def, Vector3 position, Quaternion rotation) where T : PlacedStructure
+        {
             var go = new GameObject(def.name);
             go.transform.SetParent(transform, true);
             go.transform.SetPositionAndRotation(Ground(position), rotation);
@@ -59,7 +65,10 @@ namespace MarsRobot.Base
                 box.size = def.size;
             }
 
-            var placed = go.AddComponent<PlacedStructure>();
+            var placed = go.AddComponent<T>();
+            go.AddComponent<MarsRobot.UI.Minimap.MinimapObjectMarker>().Setup(
+                def.kind == StructureKind.CommBeacon ? MarsRobot.UI.Minimap.MinimapMarkerType.Beacon : MarsRobot.UI.Minimap.MinimapMarkerType.Structure,
+                false, def.name);
             placed.Setup(this, def);
             _stations.Add(placed);
             Grid.Register(placed);
@@ -125,6 +134,8 @@ namespace MarsRobot.Base
             rb.Research = root.AddComponent<BaseResearch>();
             rb.LoadInitialCargo();
             rb.BuildAll();
+            // Sistemas del cohete nodriza: bodega, terminal, fundición, refinería y berma de blindaje.
+            root.AddComponent<RocketBaseManager>().Build(rb);
             return rb;
         }
 
@@ -154,16 +165,18 @@ namespace MarsRobot.Base
             var hazard = gameObject.AddComponent<SurfaceHazard>();
             hazard.impactMultiplier = 0.1f;
 
-            BuildRocket(Vector3.zero, white, dark, orange);
+            // Cohete nodriza de 52,5 m (casco de acero, 5 niveles interiores, ascensor del robot).
+            // Inspección con cámara libre: tecla K. Ver Rocket/Ship.
+            Ship.ShipModelBuilder.Build(transform);
             BuildLandingPad(Vector3.zero, dark);
 
-            var pad = AddStation<ChargingPad>("Plataforma de carga", new Vector3(0f, 0f, 11f), 2.2f);
+            var pad = AddStation<ChargingPad>("Plataforma de carga", new Vector3(0f, 0f, 14f), 2.2f);
             BuildChargingPad(pad.transform, metal, glowYellow);
 
-            var fab = AddStation<FabricatorStation>("Fabricador", new Vector3(-8f, 0f, 2f), 4f);
+            var fab = AddStation<FabricatorStation>("Fabricador", new Vector3(-12f, 0f, 2f), 4f);
             BuildFabricator(fab.transform, metal, orange, glowCyan);
 
-            var shop = AddStation<UpgradeStation>("Taller de modificaciones", new Vector3(8f, 0f, 2f), 4f);
+            var shop = AddStation<RobotAssemblyBay>("Taller de ensamblaje", new Vector3(12f, 0f, 2f), 4f);
             BuildWorkshop(shop.transform, metal, orange, glowCyan);
 
             // El robot aparece sobre la plataforma de carga, mirando al cohete.
@@ -175,7 +188,7 @@ namespace MarsRobot.Base
             // Luz de la base (se ve de noche y ayuda a volver).
             var lightGo = new GameObject("Luz de la base");
             lightGo.transform.SetParent(transform, false);
-            lightGo.transform.localPosition = new Vector3(0f, 6f, 4f);
+            lightGo.transform.localPosition = new Vector3(0f, 8f, 9f);
             var light = lightGo.AddComponent<Light>();
             light.type = LightType.Point;
             light.range = 30f;
@@ -183,7 +196,8 @@ namespace MarsRobot.Base
             light.color = new Color(1f, 0.9f, 0.75f);
         }
 
-        private T AddStation<T>(string name, Vector3 localPos, float radius) where T : BaseStation
+        /// <summary>Crea una máquina como hija de la base, apoyada en el terreno.</summary>
+        public T AddStation<T>(string name, Vector3 localPos, float radius) where T : BaseStation
         {
             var go = new GameObject(name);
             go.transform.SetParent(transform, false);
@@ -233,7 +247,7 @@ namespace MarsRobot.Base
         private void BuildLandingPad(Vector3 localPos, Material mat)
         {
             // Mancha quemada/aplanada bajo el cohete (solo visual, sin colisión: no crea escalones).
-            var pad = Part(PrimitiveType.Cylinder, transform, localPos, new Vector3(16f, 0.02f, 16f), mat, false);
+            var pad = Part(PrimitiveType.Cylinder, transform, localPos, new Vector3(24f, 0.02f, 24f), mat, false);
             pad.position = Ground(pad.position) + Vector3.up * 0.03f;
         }
 
@@ -275,7 +289,7 @@ namespace MarsRobot.Base
         // ------------------------------------------------------------------
 
         /// <summary>Misma posición XZ, altura del terreno.</summary>
-        private Vector3 Ground(Vector3 world)
+        public Vector3 Ground(Vector3 world)
         {
             if (_terrain != null && _terrain.IsMapReady) world.y = _terrain.GetHeightAt(world);
             return world;

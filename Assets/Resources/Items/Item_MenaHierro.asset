@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 927ab218c5d8876438cf9d3d42fd97dd, type: 3}
+  m_Name: Item_MenaHierro
+  m_EditorClassIdentifier: 
+  itemID: mena_hierro
+  itemName: "Mena de hierro"
+  icon: {fileID: 0}
+  iconColor: {r: 0.45, g: 0.2, b: 0.15, a: 1}
+  description: "Roca rica en óxidos de hierro. Se funde en la fundición del cohete."
+  scientificNotes: "Hematita (Fe2O3) y magnetita detectadas por espectrometría orbital (CRISM)."
+  itemCategory: 0
+  massKg: 9
+  volumeLiters: 3
+  maxStackSize: 10
+  requiresCryoStorage: 0
+  sublimationPerHour: 0
+  isCorrosiveOrToxic: 0
+  convertsToBaseResource: 1
+  baseResource: 1
+  baseResourcePerUnit: 2

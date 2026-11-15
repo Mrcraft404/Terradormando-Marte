@@ -1,3 +1,4 @@
+using MarsRobot.Interaction;
 using UnityEngine;
 
 namespace MarsRobot.Base
@@ -7,7 +8,7 @@ namespace MarsRobot.Base
     /// Cada máquina dibuja su propio menú. De momento con IMGUI (sin paquetes extra);
     /// cuando haya interfaz definitiva se cambia solo el dibujo, no la lógica.
     /// </summary>
-    public abstract class BaseStation : MonoBehaviour
+    public abstract class BaseStation : MonoBehaviour, IInteractable
     {
         [SerializeField] private string displayName = "Máquina";
         [Tooltip("Distancia (m) desde la que el robot puede usarla.")]
@@ -55,6 +56,30 @@ namespace MarsRobot.Base
 
         /// <summary>Se llama cada frame mientras el robot está dentro del radio (abra o no el menú).</summary>
         public virtual void WhileRobotNearby(RobotBaseLink robot, float deltaTime) { }
+
+        // ------------------------------------------------------------------
+        // IInteractable: también se puede usar apuntándole con el punto de mira
+        // ------------------------------------------------------------------
+
+        public virtual bool CanInteract()
+        {
+            return HasMenu;
+        }
+
+        public virtual string GetInteractionPrompt()
+        {
+            return Prompt;
+        }
+
+        public float HoldDuration
+        {
+            get { return 0f; }
+        }
+
+        public void Interact(Interactor interactor)
+        {
+            if (HasMenu && interactor.BaseLink != null) interactor.BaseLink.OpenMenuFor(this);
+        }
 
         /// <summary>Dibuja el contenido del menú (dentro de una ventana GUILayout).</summary>
         public abstract void DrawMenu(RobotBaseLink robot);

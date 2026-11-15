@@ -21,7 +21,9 @@ namespace MarsRobot.Base
         RadiationShelter,    // Refugio contra radiación
         LandingPad,          // Pista de aterrizaje nivelada
         SampleLab,           // Laboratorio: muestras → investigación
-        CommsAntenna         // Antena: mensajes de la Tierra y objetivos
+        CommsAntenna,        // Antena: mensajes de la Tierra y objetivos
+        FuelRefinery,        // Refinería Sabatier (viene con el cohete)
+        CommBeacon           // Baliza de comunicaciones (revela el mapa)
     }
 
     /// <summary>Categoría del menú de construcción.</summary>
@@ -79,6 +81,11 @@ namespace MarsRobot.Base
         public float maxSlopeDegrees = 15f;
         [Tooltip("Puntos de investigación necesarios para desbloquearla (0 = disponible desde el inicio).")]
         public int researchCost;
+        [Tooltip("No aparece en el menú de construcción (p. ej. la refinería que trae el cohete).")]
+        public bool hiddenFromBuildMenu;
+        [Tooltip("Se puede colocar lejos del cohete (balizas de exploración).")]
+        public bool ignoreBuildRadius;
+
         [Tooltip("Tiene colisión (los suelos y la pista no, para poder pasar por encima).")]
         public bool solid = true;
 
@@ -258,6 +265,24 @@ namespace MarsRobot.Base
                     description = "Recibe mensajes de la Tierra (con unos minutos de retraso) y la lista de preparación para la tripulación.",
                     size = new Vector3(2f, 6f, 2f), consumptionWatts = 150f,
                     cost = new[] { R(ResourceType.MetalParts, 3), R(ResourceType.Wiring, 3) }
+                },
+
+                // ---------------- Cohete nodriza y exploración ----------------
+                new StructureDefinition
+                {
+                    id = "refinery", name = "Refinería ISRU (Sabatier)", kind = StructureKind.FuelRefinery, category = StructureCategory.LifeSupport,
+                    description = "Electroliza agua y la combina con el CO₂ del aire (reacción de Sabatier): metano para el cohete y oxígeno. 2 agua → 1 metano + 2 oxígeno.",
+                    size = new Vector3(4f, 3.5f, 3f), consumptionWatts = 1500f, hiddenFromBuildMenu = true,
+                    consumes = new[] { new ResourceRate(ResourceType.Water, 2f) },
+                    produces = new[] { new ResourceRate(ResourceType.Methane, 1f), new ResourceRate(ResourceType.Oxygen, 2f) },
+                    cost = new[] { R(ResourceType.MetalParts, 8), R(ResourceType.Wiring, 4) }
+                },
+                new StructureDefinition
+                {
+                    id = "beacon", name = "Baliza de comunicaciones", kind = StructureKind.CommBeacon, category = StructureCategory.Science,
+                    description = "Repetidor solar autónomo: revela el minimapa en 120 m a su alrededor. Se puede colocar lejos de la base.",
+                    size = new Vector3(1f, 3f, 1f), ignoreBuildRadius = true, maxSlopeDegrees = 30f,
+                    cost = new[] { R(ResourceType.MetalParts, 1), R(ResourceType.Wiring, 1) }
                 },
             };
         }

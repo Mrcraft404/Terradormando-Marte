@@ -19,6 +19,7 @@ namespace MarsRobot.Robot
     ///  • Tercera persona: detrás y por encima del pivote, girando con él. Si hay terreno o rocas
     ///    entre el robot y la cámara, se acerca para no atravesarlos.
     /// </summary>
+    [DefaultExecutionOrder(100)] // después de los efectos de cámara, que calculan su desplazamiento antes
     [DisallowMultipleComponent]
     public sealed class RobotCameraRig : MonoBehaviour
     {
@@ -120,10 +121,14 @@ namespace MarsRobot.Robot
         {
             if (pivot == null || cameraTransform == null) return;
 
+            // Efectos de cámara (balanceo, inercia, sacudidas) sumados encima de la posición normal.
+            Vector3 fxPos = MarsRobot.CameraEffects.CameraEffectStack.Position;
+            Quaternion fxRot = Quaternion.Euler(MarsRobot.CameraEffects.CameraEffectStack.Euler);
+
             if (mode == RobotCameraMode.FirstPerson)
             {
-                cameraTransform.localPosition = Vector3.zero;
-                cameraTransform.localRotation = Quaternion.identity;
+                cameraTransform.localPosition = fxPos;
+                cameraTransform.localRotation = fxRot;
                 return;
             }
 
@@ -143,6 +148,8 @@ namespace MarsRobot.Robot
 
             cameraTransform.position = target + desiredDir * _currentDistance;
             cameraTransform.rotation = Quaternion.LookRotation(target - cameraTransform.position, Vector3.up);
+            cameraTransform.position += cameraTransform.rotation * fxPos;
+            cameraTransform.rotation *= fxRot;
         }
 
         /// <summary>Distancia libre hasta el primer obstáculo, ignorando los colisionadores del propio robot.</summary>
