@@ -52,8 +52,8 @@ namespace MarsRobot.Crafting
         {
             get
             {
-                string busy = Queue != null && Queue.Entries.Count > 0 ? " (fabricando…)" : "";
-                return "F: usar " + DisplayName + busy;
+                string busy = Queue != null && Queue.Entries.Count > 0 ? Tr.T(" (fabricando…)") : "";
+                return Tr.T("F: usar ") + DisplayName + busy;
             }
         }
 
@@ -115,7 +115,7 @@ namespace MarsRobot.Crafting
 
         public string CrewPrompt
         {
-            get { return "F: abrir " + _title; }
+            get { return Tr.T("F: abrir ") + _title; }
         }
 
         public Vector3 CrewPoint

@@ -1,7 +1,6 @@
 using MarsRobot.Core;
 using MarsRobot.Robot;
 using MarsRobot.Spawns;
-using MarsRobot.Vehicles;
 using MarsRobot.World.SpaceWeather;
 using UnityEngine;
 
@@ -36,22 +35,52 @@ namespace MarsRobot.UI.Minimap
         private Texture2D _scanlines, _arrow, _cone, _noise;
         private GUIStyle _small, _title, _center;
         private int _frame;
+        private MarsRobot.World.TerrainSystem.TerrainManager _terrain;
+
+        /// <summary>El minimapa de la escena (lo usa el mapa a pantalla completa).</summary>
+        public static MarsMinimapController Instance { get; private set; }
+
+        /// <summary>Niebla de guerra (zonas exploradas).</summary>
+        public MinimapFogOfWar Fog
+        {
+            get { return _fog; }
+        }
+
+        /// <summary>Medio lado del minimapa en metros.</summary>
+        public float HalfSizeMeters
+        {
+            get { return halfSizeMeters; }
+        }
+
+        public Texture2D ArrowTexture
+        {
+            get { return _arrow; }
+        }
+
+        public Texture2D ConeTexture
+        {
+            get { return _cone; }
+        }
+
+        /// <summary>¿Hay señal de radar? (cable sano y sin interferencia solar).</summary>
+        public bool HasSignal
+        {
+            get { return !SignalLost && !SpaceWeatherState.RadarBlocked; }
+        }
         private RobotHealthSystem _health;
         private RobotModuleSystem _modules;
-        private static VehicleSeat _seat;
 
-        /// <summary>Lo que sigue el minimapa: el rover, o el MarteCar si vas conduciendo.</summary>
+        /// <summary>Lo que sigue el minimapa: el rover.</summary>
         public static Transform FollowTarget()
         {
             RobotController rc;
             if (GameServices.TryGet(out rc) && rc.gameObject.activeInHierarchy) return rc.transform;
-            if (_seat == null) _seat = Object.FindAnyObjectByType<VehicleSeat>();
-            if (_seat != null && _seat.IsOccupied) return _seat.transform;
             return rc != null ? rc.transform : null;
         }
 
         private void Awake()
         {
+            Instance = this;
             _fog = gameObject.AddComponent<MinimapFogOfWar>();
 
             _rt = new RenderTexture(textureSize, textureSize, 16, RenderTextureFormat.Default) { name = "Minimapa", antiAliasing = 1 };
@@ -98,6 +127,11 @@ namespace MarsRobot.UI.Minimap
             if (_modules == null && _health != null) _modules = _health.GetComponent<RobotModuleSystem>();
             _fog.RevealMultiplier = _modules != null && _modules.HasModule(RoverModuleType.HighGainAntenna) ? 2f : 1f;
 
+            // Mapa en relieve de la zona: cuando está listo, ya no hace falta la cámara cenital.
+            if (_terrain == null) GameServices.TryGet(out _terrain);
+            if (_terrain != null) ZoneReliefMap.Ensure(_terrain);
+            if (ZoneReliefMap.Texture != null) return;
+
             Transform t = FollowTarget();
             if (t == null || SignalLost || SpaceWeatherState.RadarBlocked) return;
             if (++_frame % renderEveryFrames != 0) return;
@@ -116,6 +150,7 @@ namespace MarsRobot.UI.Minimap
 
         private void OnGUI()
         {
+            if (MarsMapScreen.IsOpen) return; // el mapa grande ya lo muestra todo
             Transform t = FollowTarget();
             if (t == null) return;
             EnsureStyles();
@@ -146,19 +181,21 @@ namespace MarsRobot.UI.Minimap
             LandingZoneData zone = null;
             MarsRobot.Base.RocketBase rb;
             if (GameServices.TryGet(out rb)) zone = rb.Zone;
-            GUI.Label(new Rect(frame.x + 12, frame.y + 3, frame.width - 24, 18), (zone != null ? zone.displayName.ToUpperInvariant() : "MARTE") + " · RADAR TÁCTICO", _title);
+            GUI.Label(new Rect(frame.x + 12, frame.y + 3, frame.width - 24, 18), (zone != null ? zone.displayName.ToUpperInvariant() : Tr.T("MARTE")) + Tr.T(" · RADAR TÁCTICO"), _title);
 
             // Sin señal / interferencia.
             if (SignalLost || SpaceWeatherState.RadarBlocked)
             {
                 GUI.DrawTextureWithTexCoords(map, _noise, new Rect(Random.value, Random.value, 2f, 2f));
-                GUI.Label(map, SignalLost ? "SIN SEÑAL\ncable del minimapa cortado" : "INTERFERENCIA SOLAR\nradar bloqueado", _center);
+                GUI.Label(map, SignalLost ? Tr.T("SIN SEÑAL\ncable del minimapa cortado") : Tr.T("INTERFERENCIA SOLAR\nradar bloqueado"), _center);
                 DrawFooter(frame, t);
                 return;
             }
 
             // Terreno + niebla + rejilla + líneas de barrido.
-            GUI.DrawTexture(map, _rt, ScaleMode.StretchToFill, false);
+            Texture2D relief = ZoneReliefMap.Texture;
+            if (relief != null) GUI.DrawTextureWithTexCoords(map, relief, ZoneReliefMap.UVRect(t.position, halfSizeMeters));
+            else GUI.DrawTexture(map, _rt, ScaleMode.StretchToFill, false);
             GUI.DrawTextureWithTexCoords(map, _fog.Texture, _fog.UVRect(t.position, halfSizeMeters));
             DrawGrid(map, t.position);
             GUI.color = new Color(1f, 1f, 1f, 0.25f);
@@ -217,9 +254,10 @@ namespace MarsRobot.UI.Minimap
 
         private void DrawFooter(Rect frame, Transform t)
         {
-            string footer = "X " + t.position.x.ToString("0") + "  Z " + t.position.z.ToString("0") + "  ·  explorado " +
+            string footer = "X " + t.position.x.ToString("0") + "  Z " + t.position.z.ToString("0") + Tr.T("  ·  explorado ") +
                             Mathf.RoundToInt(_fog.Explored01 * 100f) + " %";
-            if (SpaceWeatherState.CmeCountdownHours >= 0f) footer = "<color=#ff6060>¡CME EN CAMINO!</color>  " + footer;
+            footer += MarsRobot.Localization.Localizer.L("  ·  M: mapa grande", "  ·  M: big map");
+            if (SpaceWeatherState.CmeCountdownHours >= 0f) footer = Tr.T("<color=#ff6060>¡EYECCIÓN DE MASA CORONAL EN CAMINO!</color>  ") + footer;
             GUI.Label(new Rect(frame.x + 10, frame.yMax - 20, frame.width - 20, 18), footer, _small);
         }
 

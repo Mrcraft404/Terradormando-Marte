@@ -49,32 +49,25 @@ namespace MarsRobot.Dialogue
         {
             // Llegada: la IA del cohete se presenta y da la misión principal.
             DialogueNode intro = Node("intro_nav", DialogueSpeaker.RocketNavigationAI,
-                "Aterrizaje completado. Sistemas del rover en línea. Soy la IA de navegación del cohete nodriza. " +
-                "Nuestra tarea: preparar este lugar para la primera tripulación humana.", true);
+                "intro_nav_text", true);
             DialogueNode info = Node("intro_info", DialogueSpeaker.RocketNavigationAI,
-                "Necesitamos oxígeno, agua, energía estable, un refugio contra la radiación y una pista llana. " +
-                "Usa el taladro (X) y la pala para conseguir materiales; la fundición y la refinería harán el resto. " +
-                "Y apila regolito alrededor del cohete: la berma nos protegerá de la radiación.");
+                "intro_info_text");
             DialogueNode go = Node("intro_go", DialogueSpeaker.RocketNavigationAI,
-                "Entendido. Abriendo la bodega. Te mantendré informado del clima espacial: las erupciones solares " +
-                "no perdonan aquí, sin campo magnético.");
-            intro.choices.Add(new DialogueChoice { text = "¿Qué necesitamos exactamente?", next = info });
-            intro.choices.Add(new DialogueChoice { text = "Empecemos.", next = go });
+                "intro_go_text");
+            intro.choices.Add(new DialogueChoice { text = "intro_opt1", next = info });
+            intro.choices.Add(new DialogueChoice { text = "intro_opt2", next = go });
             info.next = go;
-            go.onFinish.Add(new DialogueEvent { type = DialogueEventType.StartMission, stringParam = "Preparar la zona para la tripulación (ver antena y terminal)" });
+            go.onFinish.Add(new DialogueEvent { type = DialogueEventType.StartMission, stringParam = Tr.T("Preparar la zona para la tripulación (ver antena y terminal)") });
 
             // Registro encontrado en los restos de una sonda antigua (ficticia).
             DialogueNode probe = Node("probe_archive", DialogueSpeaker.ProbeArchive,
-                "...registro recuperado... Sol 4127. Batería al 3 %. El polvo cubre los paneles. Último análisis: " +
-                "arcillas y sulfatos en este valle; el agua líquida estuvo aquí. Transmitiendo coordenadas de interés... " +
-                "fin del registro.", false, true);
+                "probe_text", false, true);
             probe.onFinish.Add(new DialogueEvent { type = DialogueEventType.GiveResource, stringParam = "Research", intParam = 5 });
-            probe.onFinish.Add(new DialogueEvent { type = DialogueEventType.AddLogEntry, stringParam = "Sonda antigua: el valle muestra arcillas y sulfatos (agua en el pasado)." });
+            probe.onFinish.Add(new DialogueEvent { type = DialogueEventType.AddLogEntry, stringParam = Tr.T("Sonda antigua: el valle muestra arcillas y sulfatos (agua en el pasado).") });
 
             // Mensaje del comandante cuando la base avanza.
             DialogueNode commander = Node("commander_hello", DialogueSpeaker.HumanCommander,
-                "Aquí la comandante de la tripulación. Hemos visto tus datos: buen trabajo. Seguimos entrenando para " +
-                "el viaje. Cuida esa berma: es lo que se interpondrá entre nosotros y la radiación.");
+                "commander_text");
             commander.onFinish.Add(new DialogueEvent { type = DialogueEventType.UnlockTechnology, stringParam = "condenser" });
         }
 

@@ -21,9 +21,9 @@ namespace MarsRobot.Base
             if (!GameServices.TryGet(out mgr)) return;
             GUILayout.Space(6);
             int methane = Owner.Inventory.Get(ResourceType.Methane);
-            GUILayout.Label("<b>Tanques de propelente:</b> " + methane + " / " + mgr.PropellantForLaunch + " de metano (" +
+            GUILayout.Label(Tr.T("<b>Tanques de propelente:</b> ") + methane + " / " + mgr.PropellantForLaunch + Tr.T(" de metano (") +
                             Mathf.RoundToInt(mgr.Propellant01 * 100f) + " %)");
-            GUILayout.Label("Con los tanques llenos, el cohete nodriza podría volver a despegar o reabastecer a la nave de la tripulación.");
+            GUILayout.Label(Tr.T("Con los tanques llenos, el cohete nodriza podría volver a despegar o reabastecer a la nave de la tripulación."));
         }
     }
 }

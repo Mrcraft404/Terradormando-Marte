@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manual del juego: Misión Marte</title>
+<style>
+  :root {
+    --fondo: #fff8f2;
+    --tarjeta: #ffffff;
+    --texto: #2b2420;
+    --suave: #6b5e57;
+    --marte: #c4532d;
+    --marte-claro: #fbe3d8;
+    --azul: #2a7fb8;
+    --azul-claro: #e1f0fa;
+    --verde: #2f8a4a;
+    --verde-claro: #e2f4e7;
+    --amarillo-claro: #fff4cc;
+    --borde: #ecdcd2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --fondo: #1d1714;
+      --tarjeta: #2a221e;
+      --texto: #f4ebe5;
+      --suave: #c4b5ab;
+      --marte: #ff8a5c;
+      --marte-claro: #3d2a22;
+      --azul: #7cc4f2;
+      --azul-claro: #1f3240;
+      --verde: #7fd69a;
+      --verde-claro: #1f3528;
+      --amarillo-claro: #3a3320;
+      --borde: #43362f;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--fondo);
+    color: var(--texto);
+    font-family: "Segoe UI", "Trebuchet MS", Arial, sans-serif;
+    font-size: 19px;
+    line-height: 1.6;
+  }
+  main { max-width: 860px; margin: 0 auto; padding: 24px 16px 60px; }
+  header {
+    background: linear-gradient(135deg, #c4532d, #e8875a);
+    color: #fff;
+    border-radius: 22px;
+    padding: 28px 24px;
+    text-align: center;
+  }
+  header h1 { margin: 0 0 6px; font-size: 2.1em; line-height: 1.2; }
+  header p { margin: 0; font-size: 1.1em; }
+  .planeta { font-size: 3em; line-height: 1; }
+  nav {
+    background: var(--tarjeta);
+    border: 2px solid var(--borde);
+    border-radius: 18px;
+    padding: 14px 20px;
+    margin: 22px 0;
+  }
+  nav b { display: block; margin-bottom: 6px; }
+  nav ol { margin: 0; padding-left: 22px; columns: 2; column-gap: 28px; }
+  nav a { color: var(--azul); text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  section {
+    background: var(--tarjeta);
+    border: 2px solid var(--borde);
+    border-radius: 18px;
+    padding: 6px 22px 16px;
+    margin: 18px 0;
+  }
+  h2 { color: var(--marte); font-size: 1.45em; margin: 16px 0 8px; }
+  h3 { font-size: 1.1em; margin: 16px 0 4px; }
+  p, li { margin: 6px 0; }
+  ul, ol { padding-left: 24px; }
+  table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+  th, td { padding: 8px 10px; border-bottom: 1px solid var(--borde); text-align: left; vertical-align: top; }
+  th { background: var(--marte-claro); }
+  kbd {
+    display: inline-block;
+    min-width: 1.8em;
+    padding: 1px 8px;
+    border: 2px solid var(--borde);
+    border-bottom-width: 4px;
+    border-radius: 8px;
+    background: var(--fondo);
+    font-family: inherit;
+    font-weight: bold;
+    text-align: center;
+  }
+  .consejo, .ojo, .bien {
+    border-radius: 14px;
+    padding: 10px 14px;
+    margin: 12px 0;
+  }
+  .consejo { background: var(--azul-claro); }
+  .ojo { background: var(--amarillo-claro); }
+  .bien { background: var(--verde-claro); }
+  .zonas { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin: 10px 0; }
+  .zona { border: 2px solid var(--borde); border-radius: 14px; padding: 10px 14px; }
+  .zona b { display: block; font-size: 1.05em; }
+  .nivel { display: inline-block; font-size: 0.85em; padding: 1px 10px; border-radius: 99px; margin: 4px 0; font-weight: bold; }
+  .f { background: var(--verde-claro); color: var(--verde); }
+  .m { background: var(--amarillo-claro); color: var(--suave); }
+  .d { background: var(--marte-claro); color: var(--marte); }
+  footer { text-align: center; color: var(--suave); margin-top: 30px; font-size: 0.9em; }
+  @media (max-width: 600px) {
+    body { font-size: 17px; }
+    nav ol { columns: 1; }
+    header h1 { font-size: 1.6em; }
+  }
+  @media print {
+    body { background: #fff; color: #000; }
+    section, nav { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="planeta">🪐🤖</div>
+  <h1>Misión Marte</h1>
+  <p>Manual del explorador · para jugar y aprender</p>
+</header>
+
+<nav>
+  <b>📖 Lo que vas a encontrar</b>
+  <ol>
+    <li><a href="#que-es">¿De qué va el juego?</a></li>
+    <li><a href="#empezar">Cómo empezar</a></li>
+    <li><a href="#tutorial">Tutorial: tu primera partida</a></li>
+    <li><a href="#metas">Las metas de la misión</a></li>
+    <li><a href="#quien">Tú y tu robot</a></li>
+    <li><a href="#robot">Cómo se maneja el robot</a></li>
+    <li><a href="#astronauta">Cómo se maneja el astronauta</a></li>
+    <li><a href="#explorar">Explorar y recoger cosas</a></li>
+    <li><a href="#bateria">La batería y el polvo</a></li>
+    <li><a href="#reparar">Reparar el robot</a></li>
+    <li><a href="#mejorar">Mejorar el robot</a></li>
+    <li><a href="#construir">Construir la base</a></li>
+    <li><a href="#aire">El aire y el oxígeno</a></li>
+    <li><a href="#clima">El clima de Marte y del Sol</a></li>
+    <li><a href="#zonas">Los sitios para aterrizar</a></li>
+    <li><a href="#consejos">Consejos de explorador</a></li>
+  </ol>
+</nav>
+
+<section id="que-es">
+  <h2>🚀 1. ¿De qué va el juego?</h2>
+  <p>Eres parte de una misión a <b>Marte</b>, el planeta rojo.</p>
+  <p>Algún día llegarán personas a vivir allí. Pero antes hay mucho trabajo.</p>
+  <p>Tu trabajo es <b>preparar Marte</b> para ellas: explorar, buscar materiales, construir casas y cultivar comida.</p>
+  <p>Para eso tienes un <b>robot explorador</b> muy listo. ¡Y un astronauta valiente en el cohete!</p>
+  <div class="bien">🌱 Lo más importante: <b>cuida a tu robot</b>, aprende cosas de Marte y diviértete.</div>
+</section>
+
+<section id="empezar">
+  <h2>🎮 2. Cómo empezar</h2>
+  <ol>
+    <li>Abre el juego con doble clic en <b>JUEGO.exe</b>.</li>
+    <li>En la pantalla de inicio, pulsa <b>JUGAR</b>.</li>
+    <li>Elige cómo quieres jugar:
+      <ul>
+        <li><b>Creativo</b>: no pasa nada malo. Tienes de todo para construir. ¡Ideal para empezar!</li>
+        <li><b>Supervivencia</b>: hay que cuidar la energía, las piezas y el aire. Puedes elegir <b>Fácil</b>, <b>Normal</b> o <b>Difícil</b>.</li>
+      </ul>
+    </li>
+    <li>Ponle nombre a tu mundo.</li>
+    <li>En el <b>mapa de Marte</b>, haz clic en el sitio donde quieres aterrizar. Los rombos dorados son sitios especiales con mapas de verdad.</li>
+    <li>¡Listo! Ya estás en Marte.</li>
+  </ol>
+  <div class="consejo">💡 Si es tu primera vez, prueba el modo <b>Creativo</b> y aterriza en <b>Elysium Planitia</b>. Es el sitio más tranquilo.</div>
+  <p>Para salir al menú, pulsa <kbd>Esc</kbd> y luego el botón <b>Menú principal</b>, abajo a la derecha.</p>
+</section>
+
+<section id="tutorial">
+  <h2>🧭 Tutorial: tu primera partida, paso a paso</h2>
+  <p>Sigue estos pasos en orden. ¡En unos minutos serás un explorador de verdad!</p>
+
+  <h3>Paso 1 · Elige dónde aterrizar</h3>
+  <ol>
+    <li>Pulsa <b>JUGAR</b>.</li>
+    <li>Elige el modo <b>Creativo</b>. Así no se rompe nada mientras aprendes.</li>
+    <li>En el mapa, haz clic en el rombo dorado de <b>Elysium Planitia</b>.</li>
+  </ol>
+
+  <h3>Paso 2 · Despierta en el cohete</h3>
+  <ol>
+    <li>Empiezas siendo el <b>astronauta</b>, dentro del cohete.</li>
+    <li>Haz clic en la pantalla para mover la cámara con el ratón.</li>
+    <li>Camina con <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>. Mira a tu alrededor.</li>
+  </ol>
+
+  <h3>Paso 3 · Baja al hangar</h3>
+  <ol>
+    <li>Busca el <b>montacargas</b>, en el centro del cohete.</li>
+    <li>Acércate y pulsa <kbd>F</kbd>.</li>
+    <li>Elige el <b>piso 1</b>: es el hangar, donde duerme el robot.</li>
+  </ol>
+
+  <h3>Paso 4 · Controla al robot</h3>
+  <ol>
+    <li>En el hangar, pulsa <kbd>P</kbd>. ¡Ahora eres el robot!</li>
+    <li>Ve hacia la puerta grande con <kbd>W</kbd>.</li>
+    <li>Súbete al <b>ascensor</b> y pulsa <kbd>F</kbd> para bajar al suelo de Marte.</li>
+  </ol>
+
+  <h3>Paso 5 · Muévete por Marte</h3>
+  <ol>
+    <li>Avanza con <kbd>W</kbd> y gira con <kbd>Q</kbd> y <kbd>E</kbd>.</li>
+    <li>Pulsa <kbd>V</kbd> para ver el robot desde detrás.</li>
+    <li>Mira el <b>mapa pequeño</b> de arriba a la izquierda. El cohete sale marcado.</li>
+  </ol>
+
+  <h3>Paso 6 · Mira la batería</h3>
+  <ol>
+    <li>Busca en la pantalla la <b>batería</b> del robot.</li>
+    <li>Si es de día, verás que se carga con el sol.</li>
+    <li>Fíjate también en el <b>polvo</b>: cuanto más polvo, menos se carga.</li>
+  </ol>
+
+  <h3>Paso 7 · Limpia el polvo</h3>
+  <ol>
+    <li>Pulsa <kbd>C</kbd> para limpiar los paneles solares.</li>
+    <li>Verás que el polvo baja y la carga sube.</li>
+    <li>¡Repítelo de vez en cuando!</li>
+  </ol>
+
+  <h3>Paso 8 · Recoge tu primera roca</h3>
+  <ol>
+    <li>Apunta con el punto del centro de la pantalla a una roca.</li>
+    <li>Pulsa (o mantén) <kbd>F</kbd> para recogerla.</li>
+    <li>Pulsa <kbd>I</kbd> para ver que está en la mochila del robot.</li>
+  </ol>
+
+  <h3>Paso 9 · Aprende a reparar</h3>
+  <p>En modo Creativo el robot no se rompe. Cuando juegues en <b>Supervivencia</b>, haz esto si una pieza se rompe:</p>
+  <ol>
+    <li><b>Para</b> el robot.</li>
+    <li>Pulsa <kbd>G</kbd> para elegir la pieza rota.</li>
+    <li>Pulsa <kbd>T</kbd> hasta tener la herramienta buena.</li>
+    <li>Mantén <kbd>R</kbd> hasta que quede arreglada.</li>
+  </ol>
+
+  <h3>Paso 10 · Vuelve al cohete</h3>
+  <ol>
+    <li>Conduce hasta el cohete (míralo en el mapa pequeño).</li>
+    <li>Súbete al ascensor y pulsa <kbd>F</kbd> para subir al hangar.</li>
+    <li>Deja las rocas en la <b>bodega</b> con <kbd>F</kbd>.</li>
+    <li>Aparca en el <b>puesto de carga</b> para llenar la batería.</li>
+    <li>Pulsa <kbd>P</kbd> para volver a ser el astronauta.</li>
+  </ol>
+
+  <h3>Paso 11 · Construye tu primera casita</h3>
+  <ol>
+    <li>Sal otra vez con el robot y pulsa <kbd>N</kbd>.</li>
+    <li>En <b>Cimientos y suelos</b>, elige el <b>Cimiento de regolito</b> y ponlo en el suelo.</li>
+    <li>En <b>Paredes</b>, pon una pared en cada lado. En uno de ellos, pon una <b>Puerta presurizada</b>.</li>
+    <li>En <b>Techos</b>, ponle un techo encima.</li>
+    <li>Cierra la puerta con <kbd>F</kbd>. ¡Tu casita ya tiene aire dentro!</li>
+  </ol>
+  <div class="bien">🎉 ¡Enhorabuena! Ya sabes lo básico. Ahora prueba a jugar en <b>Supervivencia</b> y a cumplir las metas de la misión.</div>
+</section>
+
+<section id="metas">
+  <h2>🏁 Las metas de la misión</h2>
+  <p>La Tierra te enviará mensajes. Para que llegue la primera tripulación, tienes que conseguir seis cosas:</p>
+  <ol>
+    <li>💨 Una <b>reserva de oxígeno</b> para respirar.</li>
+    <li>💧 Una <b>reserva de agua</b>.</li>
+    <li>⚡ <b>Energía</b> que no se acabe: paneles solares, baterías o un reactor.</li>
+    <li>🛡️ Un <b>refugio</b> que proteja de la radiación del espacio.</li>
+    <li>🛬 Una <b>pista de aterrizaje</b> lisa para la nave.</li>
+    <li>📡 Una <b>antena</b> para hablar con la Tierra.</li>
+  </ol>
+  <p>Cuando lo tengas todo… ¡la primera tripulación despegará hacia Marte!</p>
+</section>
+
+<section id="quien">
+  <h2>👩‍🚀 3. Tú y tu robot</h2>
+  <p>En el juego hay dos personajes:</p>
+  <ul>
+    <li><b>El astronauta</b> vive dentro del <b>cohete</b>. Allí fabrica cosas, cultiva plantas y cuida la base.</li>
+    <li><b>El robot</b> sale fuera a explorar. No necesita aire para respirar, así que puede ir a sitios peligrosos.</li>
+  </ul>
+  <p>Para <b>cambiar</b> de uno a otro, lleva el robot al <b>hangar</b> del cohete (el piso 1) y pulsa <kbd>P</kbd>.</p>
+  <p>El robot sube y baja del cohete con un <b>ascensor</b> que está fuera. Ponte encima y pulsa <kbd>F</kbd>.</p>
+  <p>El astronauta cambia de piso con el <b>montacargas</b> del centro del cohete. También con <kbd>F</kbd>.</p>
+</section>
+
+<section id="robot">
+  <h2>🤖 4. Cómo se maneja el robot</h2>
+  <p>Primero haz clic dentro del juego para que el ratón mueva la cámara.</p>
+  <table>
+    <tr><th>Tecla</th><th>Para qué sirve</th></tr>
+    <tr><td><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd></td><td>Moverse hacia delante, a los lados y hacia atrás</td></tr>
+    <tr><td><kbd>Q</kbd> <kbd>E</kbd></td><td>Girar a la izquierda o a la derecha</td></tr>
+    <tr><td>🖱️ Ratón</td><td>Mirar alrededor</td></tr>
+    <tr><td><kbd>V</kbd></td><td>Ver desde dentro del robot o desde detrás</td></tr>
+    <tr><td>🖱️ Rueda</td><td>Acercar o alejar la cámara</td></tr>
+    <tr><td><kbd>F</kbd></td><td>Usar lo que tienes delante (coger rocas, abrir puertas, usar máquinas)</td></tr>
+    <tr><td><kbd>X</kbd></td><td>Usar la herramienta del brazo (taladro, pala o soplador)</td></tr>
+    <tr><td><kbd>Z</kbd></td><td>Escanear: descubrir qué hay cerca</td></tr>
+    <tr><td><kbd>L</kbd></td><td>Encender o apagar la linterna</td></tr>
+    <tr><td><kbd>C</kbd></td><td>Limpiar el polvo de los paneles solares</td></tr>
+    <tr><td><kbd>R</kbd> (mantener)</td><td>Reparar una pieza rota</td></tr>
+    <tr><td><kbd>T</kbd> / <kbd>G</kbd></td><td>Cambiar de herramienta / elegir la pieza que vas a reparar</td></tr>
+    <tr><td><kbd>I</kbd></td><td>Ver lo que lleva el robot (su mochila)</td></tr>
+    <tr><td><kbd>J</kbd></td><td>Leer el diario de la misión</td></tr>
+    <tr><td><kbd>N</kbd></td><td>Abrir el menú de construcción</td></tr>
+    <tr><td><kbd>Esc</kbd></td><td>Soltar el ratón (para usar los botones)</td></tr>
+  </table>
+</section>
+
+<section id="astronauta">
+  <h2>🧑‍🚀 5. Cómo se maneja el astronauta</h2>
+  <table>
+    <tr><th>Tecla</th><th>Para qué sirve</th></tr>
+    <tr><td><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd></td><td>Caminar</td></tr>
+    <tr><td><kbd>Mayús</kbd></td><td>Correr</td></tr>
+    <tr><td><kbd>Espacio</kbd></td><td>Saltar (en Marte se salta muy alto y despacio)</td></tr>
+    <tr><td>🖱️ Ratón</td><td>Mirar</td></tr>
+    <tr><td><kbd>V</kbd></td><td>Cambiar la cámara</td></tr>
+    <tr><td><kbd>F</kbd></td><td>Usar máquinas, armarios, puertas y el montacargas</td></tr>
+    <tr><td><kbd>I</kbd></td><td>Abrir la mochila y fabricar cosas a mano</td></tr>
+  </table>
+  <h3>🛠️ ¿Qué hace el astronauta en el cohete?</h3>
+  <ul>
+    <li>En el <b>piso 2</b> hay máquinas para <b>fabricar</b>: piezas, cables, bloques…</li>
+    <li>En el <b>piso 4</b> hay un <b>huerto</b>. Pon semillas, agua y abono, ¡y crecerán lechugas, tomates y patatas!</li>
+    <li>En el <b>piso 5</b> se hace <b>agua</b>, <b>oxígeno</b> y <b>comida</b>.</li>
+  </ul>
+</section>
+
+<section id="explorar">
+  <h2>🔭 6. Explorar y recoger cosas</h2>
+  <ul>
+    <li>Sal con el robot y mira el <b>mapa pequeño</b> de arriba a la izquierda.</li>
+    <li>Pulsa <kbd>M</kbd> para ver el <b>mapa grande</b>. En la pestaña <b>Marte entero</b> ves las otras zonas donde puedes aterrizar: haz clic en una y elige <b>Viajar a esta zona</b>.</li>
+    <li>Apunta a una roca y pulsa <kbd>F</kbd> para recogerla. ¡Algunas tienen hierro o hielo!</li>
+    <li>Usa el <b>escáner</b> (<kbd>Z</kbd>) para encontrar cosas interesantes.</li>
+    <li>Cuando la mochila esté llena, vuelve al cohete y deja la carga en la <b>bodega</b>.</li>
+  </ul>
+  <div class="ojo">⚠️ Ve despacio por las cuestas y las rocas. ¡Si el robot choca fuerte, se puede romper!</div>
+</section>
+
+<section id="bateria">
+  <h2>🔋 7. La batería y el polvo</h2>
+  <p>El robot funciona con una <b>batería</b>. La batería se carga con la luz del Sol gracias a sus <b>paneles solares</b>.</p>
+  <ul>
+    <li>☀️ De día, el Sol carga la batería.</li>
+    <li>🌙 De noche no hay sol. Gasta poca energía y espera a la mañana.</li>
+    <li>💨 En Marte hay mucho <b>polvo</b>. El polvo tapa los paneles y cargan menos.</li>
+    <li>🧹 Pulsa <kbd>C</kbd> para <b>limpiar los paneles</b>. ¡Hazlo a menudo!</li>
+    <li>🌪️ A veces el viento hace remolinos que limpian los paneles solos. ¡Qué suerte!</li>
+    <li>🏠 En el hangar del cohete hay un <b>puesto de carga</b> para llenar la batería.</li>
+  </ul>
+  <div class="ojo">⚠️ Si la batería se acaba, el robot va muy, muy lento. ¡Vuelve a casa antes!</div>
+</section>
+
+<section id="reparar">
+  <h2>🔧 8. Reparar el robot</h2>
+  <p>El robot no tiene "vidas". Tiene <b>piezas</b> que se pueden romper:</p>
+  <ul>
+    <li>🛞 <b>Ruedas</b>: si se rompen, el robot va más lento y se tuerce hacia un lado.</li>
+    <li>🔌 <b>Cables</b>: si se cortan, la pantalla parpadea o el mapa deja de verse.</li>
+    <li>🧱 <b>Cuerpo</b> y ☀️ <b>panel solar</b>: si se dañan, todo funciona peor.</li>
+  </ul>
+  <h3>Cómo arreglarlo</h3>
+  <ol>
+    <li><b>Para</b> el robot. No se puede reparar en marcha.</li>
+    <li>Pulsa <kbd>G</kbd> para elegir la pieza rota.</li>
+    <li>Pulsa <kbd>T</kbd> para coger la herramienta buena:
+      <ul>
+        <li>🔧 <b>Llave</b> para ruedas y cuerpo.</li>
+        <li>🔌 <b>Kit de cables</b> para los cables.</li>
+        <li>🔥 <b>Soldador</b> para el cuerpo.</li>
+      </ul>
+    </li>
+    <li>Mantén pulsada <kbd>R</kbd> hasta que la pieza esté arreglada.</li>
+  </ol>
+  <div class="consejo">💡 Si usas la herramienta equivocada, el juego te avisa. ¡Prueba con otra!</div>
+</section>
+
+<section id="mejorar">
+  <h2>🛠️ 9. Mejorar el robot</h2>
+  <p>Tu robot es como un juguete de piezas: puedes <b>cambiarle las piezas</b> según lo que quieras hacer.
+     ¿Vas a minar? ¿A subir montañas? ¿A ir muy lejos? ¡Elige las piezas que mejor sirvan!</p>
+  <h3>Cómo cambiar una pieza</h3>
+  <ol>
+    <li>Lleva el robot al <b>hangar</b> del cohete y aparca debajo del arco del <b>Taller de modificaciones</b>.</li>
+    <li>Pulsa <kbd>F</kbd> para abrir el taller y elige la pestaña <b>Piezas del robot</b>.</li>
+    <li>Arriba eliges <b>para qué</b> lo quieres: Minar, Terreno, Energía, Carga o Explorar.</li>
+    <li>Pulsa <b>Instalar</b> (o <b>Cambiar</b>, en las ruedas) en la pieza que te guste.</li>
+    <li>Para quitar una pieza, pulsa su nombre en la lista de piezas puestas (la ✕).</li>
+  </ol>
+  <h3>Algunas piezas</h3>
+  <ul>
+    <li>🛞 <b>Ruedas rápidas</b>: corren mucho por el llano, pero se gastan antes.</li>
+    <li>🚜 <b>Orugas todoterreno</b>: más lentas, pero suben cuestas y casi no se gastan.</li>
+    <li>⛏️ <b>Taladro</b> y <b>pala</b>: para sacar piedras y minerales.</li>
+    <li>📡 <b>Escáner de minerales</b>: encuentras más hierro, hielo y muestras.</li>
+    <li>☀️ <b>Paneles solares extra</b> y 🔋 <b>batería extra</b>: más energía.</li>
+    <li>🏗️ <b>Brazo de carga</b> y <b>compartimento</b>: llevas más cosas.</li>
+  </ul>
+  <div class="consejo">💡 Cada pieza ocupa un hueco y no caben todas a la vez. Hacer una pieza nueva cuesta materiales
+     del almacén; volver a poner una que ya tienes cuesta solo 1 pieza metálica. ¡Piensa bien qué necesitas!</div>
+</section>
+
+<section id="construir">
+  <h2>🏗️ 10. Construir la base</h2>
+  <p>Pulsa <kbd>N</kbd> y se abre el <b>menú de construcción</b>. Verás las piezas con su <b>dibujo</b>.</p>
+  <table>
+    <tr><th>Pestaña</th><th>Qué hay</th></tr>
+    <tr><td>Cimientos y suelos</td><td>Las bases para empezar a construir y los suelos para los pisos de arriba</td></tr>
+    <tr><td>Paredes</td><td>Paredes de piedra marciana, con ventana o bajitas</td></tr>
+    <tr><td>Cristal</td><td>Paredes y techos de cristal, ¡perfectos para un invernadero!</td></tr>
+    <tr><td>Puertas</td><td>Una puerta para personas y un portón grande para el robot</td></tr>
+    <tr><td>Techos</td><td>Techos gordos que protegen del sol fuerte del espacio</td></tr>
+    <tr><td>Estructura</td><td>Columnas y escaleras</td></tr>
+    <tr><td>Módulos presurizados</td><td>Casas enteras ya preparadas: cúpula de cultivo, casa de la tripulación y más</td></tr>
+    <tr><td>Equipos de la base</td><td>Paneles solares, tanques, antenas…</td></tr>
+  </table>
+  <h3>Cómo se construye</h3>
+  <ol>
+    <li>Elige una pieza con un clic.</li>
+    <li>Aparece un <b>holograma</b> (una pieza transparente).</li>
+    <li>Si sale <b style="color:var(--azul)">azul</b>, ¡se puede poner! Haz clic.</li>
+    <li>Si sale <b style="color:var(--marte)">rojo</b>, no se puede. Abajo dice por qué.</li>
+  </ol>
+  <ul>
+    <li>Empieza siempre por un <b>cimiento</b>. Las piezas encajan solas, como bloques de construcción.</li>
+    <li>La <b>rueda del ratón</b> gira la pieza.</li>
+    <li>Si te equivocas, apunta a la pieza y pulsa <kbd>Supr</kbd> para quitarla. Te devuelve la mitad del material.</li>
+    <li>Las <b>puertas</b> se abren y se cierran con <kbd>F</kbd>.</li>
+  </ul>
+  <div class="bien">✅ Las casas grandes se construyen <b>por capas</b>, como una tarta: primero el suelo, luego el esqueleto, luego la pared que guarda el aire, luego un escudo de tierra o de hielo, y al final los muebles.</div>
+</section>
+
+<section id="aire">
+  <h2>🫧 11. El aire y el oxígeno</h2>
+  <p>En Marte <b>no se puede respirar</b>. El aire es muy fino y casi no tiene oxígeno.</p>
+  <ul>
+    <li>El astronauta lleva un <b>traje</b> con oxígeno. Arriba de la pantalla ves cuánto le queda.</li>
+    <li>Dentro del cohete y de las casas cerradas <b>sí</b> se puede respirar. Allí el traje se vuelve a llenar.</li>
+    <li>Una habitación tiene aire solo si está <b>cerrada del todo</b>: paredes, techo y puertas cerradas.</li>
+    <li>Si dejas una puerta abierta hacia fuera, ¡el aire se escapa!</li>
+    <li>Las casas se pueden unir con <b>pasillos</b> para ir de una a otra sin salir fuera.</li>
+  </ul>
+  <div class="ojo">⚠️ Si el oxígeno del traje se acaba, el astronauta se desmaya. Sus compañeros lo llevan al cohete, pero ¡mejor que no pase!</div>
+</section>
+
+<section id="clima">
+  <h2>🌪️ 12. El clima de Marte y del Sol</h2>
+  <p>En Marte hace mucho frío y a veces hay <b>tormentas de polvo</b>. Durante una tormenta casi no llega luz del Sol, así que los paneles cargan poco.</p>
+  <p>El Sol también tiene "tormentas". El juego usa datos de verdad de la NASA cuando hay internet:</p>
+  <ul>
+    <li>☀️ <b>Fulguración solar</b>: un destello enorme del Sol. Puede estropear el radar un rato.</li>
+    <li>💥 <b>Eyección de masa coronal</b>: una nube gigante que sale del Sol y viaja por el espacio. El juego te avisa antes de que llegue. ¡Busca refugio!</li>
+    <li>⚡ <b>Partículas solares energéticas</b>: radiación que desgasta los paneles solares.</li>
+    <li>🧲 <b>Tormenta geomagnética</b>: hace que las máquinas y los motores fallen un poco. Su fuerza va de 1 a 9.</li>
+  </ul>
+  <div class="consejo">💡 Cuando salga un aviso rojo, vuelve al cohete o a una casa con techo grueso.</div>
+</section>
+
+<section id="zonas">
+  <h2>🗺️ 13. Los sitios para aterrizar</h2>
+  <p>Hay seis sitios especiales. Cada uno es diferente:</p>
+  <div class="zonas">
+    <div class="zona"><b>Elysium Planitia</b><span class="nivel f">Fácil</span><br>Una llanura muy lisa con mucho sol. Perfecta para aprender.</div>
+    <div class="zona"><b>Acidalia Planitia</b><span class="nivel f">Bastante fácil</span><br>El suelo es cómodo, pero hay muchas tormentas de polvo. ¡Limpia los paneles!</div>
+    <div class="zona"><b>Cráter Jezero</b><span class="nivel m">Normal</span><br>Hace mucho tiempo aquí había un río y un lago. Hay rocas y cuestas.</div>
+    <div class="zona"><b>Cráter Gale</b><span class="nivel m">Algo difícil</span><br>Un cráter enorme con una montaña en medio. Cuestas largas y arena traicionera.</div>
+    <div class="zona"><b>Utopia Planitia</b><span class="nivel d">Difícil</span><br>Hay hielo bajo el suelo, ¡muy útil! Pero hace mucho frío y hay menos sol.</div>
+    <div class="zona"><b>Valles Marineris</b><span class="nivel d">Muy difícil</span><br>Unos cañones gigantes, mucho más grandes que cualquiera de la Tierra. ¡Solo para expertos!</div>
+  </div>
+</section>
+
+<section id="consejos">
+  <h2>⭐ 14. Consejos de explorador</h2>
+  <ol>
+    <li>Limpia los paneles solares a menudo (<kbd>C</kbd>).</li>
+    <li>Conduce despacio cerca de las rocas.</li>
+    <li>Repara las ruedas en cuanto se rompan.</li>
+    <li>Vuelve al cohete antes de que se haga de noche o se acabe la batería.</li>
+    <li>Construye primero una casa pequeña y bien cerrada.</li>
+    <li>Cultiva comida en el huerto: ¡los futuros marcianos tendrán hambre!</li>
+    <li>Si algo sale mal, no pasa nada. ¡Los exploradores aprenden probando!</li>
+  </ol>
+  <div class="bien">🚀 ¡Buena suerte, explorador! Marte te espera.</div>
+</section>
+
+<footer>Manual del explorador · Misión Marte</footer>
+</main>
+</body>
+</html>

@@ -116,7 +116,7 @@ namespace MarsRobot.Items
 
         public override string Prompt
         {
-            get { return "F: abrir " + DisplayName; }
+            get { return Tr.T("F: abrir ") + DisplayName; }
         }
 
         public override void DrawMenu(RobotBaseLink robot)
@@ -124,45 +124,45 @@ namespace MarsRobot.Items
             var inv = robot.GetComponent<RobotInventory>();
             if (inv == null)
             {
-                GUILayout.Label("Este robot no tiene bahía de carga.");
+                GUILayout.Label(Tr.T("Este robot no tiene bahía de carga."));
                 return;
             }
 
             if (convertToBaseResources)
             {
-                GUILayout.Label("Lo que entregues aquí se convierte en recursos del almacén de la base " +
-                                "(la mena de hierro, en hierro; el hielo, en hielo…).");
+                GUILayout.Label(Tr.T("Lo que entregues aquí se convierte en recursos del almacén de la base ") +
+                                Tr.T("(la mena de hierro, en hierro; el hielo, en hielo…)."));
             }
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button("Transferir todos los minerales", GUILayout.Width(260)))
+            if (GUILayout.Button(Tr.T("Transferir todos los minerales"), GUILayout.Width(260)))
             {
-                _lastAction = "Transferidas " + ReceiveAll(inv.Bay, true) + " unidades.";
+                _lastAction = Tr.T("Transferidas ") + ReceiveAll(inv.Bay, true) + Tr.T(" unidades.");
             }
-            if (!mineralsOnly && GUILayout.Button("Transferir todo", GUILayout.Width(160)))
+            if (!mineralsOnly && GUILayout.Button(Tr.T("Transferir todo"), GUILayout.Width(160)))
             {
-                _lastAction = "Transferidas " + ReceiveAll(inv.Bay, false) + " unidades.";
+                _lastAction = Tr.T("Transferidas ") + ReceiveAll(inv.Bay, false) + Tr.T(" unidades.");
             }
             GUILayout.EndHorizontal();
-            GUILayout.Label("Pulsa I para ver tu bahía y transferir objetos sueltos.");
+            GUILayout.Label(Tr.T("Pulsa I para ver tu bahía y transferir objetos sueltos."));
 
             if (!convertToBaseResources)
             {
                 GUILayout.Space(4);
-                GUILayout.Label("<b>Contenido</b> (" + Storage.TotalMassKg.ToString("0") + " kg, " + Storage.TotalVolumeLiters.ToString("0") + " L)");
+                GUILayout.Label(Tr.T("<b>Contenido</b> (") + Storage.TotalMassKg.ToString("0") + " kg, " + Storage.TotalVolumeLiters.ToString("0") + " L)");
                 var list = Storage.Slots;
                 for (int i = 0; i < list.Count && i < 12; i++)
                 {
                     ItemStack s = list[i];
                     GUILayout.BeginHorizontal();
                     GUILayout.Label(s.item.itemName + " ×" + s.count, GUILayout.Width(260));
-                    if (GUILayout.Button("Sacar al robot", GUILayout.Width(140)))
+                    if (GUILayout.Button(Tr.T("Sacar al robot"), GUILayout.Width(140)))
                     {
                         int moved = Storage.MoveTo(s, inv.Bay, s.count);
-                        _lastAction = moved > 0 ? "Recogidas " + moved + "." : "No cabe en la bahía (masa o volumen).";
+                        _lastAction = moved > 0 ? Tr.T("Recogidas ") + moved + "." : Tr.T("No cabe en la bahía (masa o volumen).");
                     }
                     GUILayout.EndHorizontal();
                 }
-                if (list.Count == 0) GUILayout.Label("(vacío)");
+                if (list.Count == 0) GUILayout.Label(Tr.T("(vacío)"));
             }
             if (_lastAction.Length > 0) GUILayout.Label("<b>" + _lastAction + "</b>");
         }

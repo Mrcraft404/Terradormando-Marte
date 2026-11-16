@@ -56,7 +56,7 @@ namespace MarsRobot.Dialogue
             }
             n._toasts.Add(new Toast { text = text, level = level, until = Time.unscaledTime + seconds });
             if (n._toasts.Count > MaxVisible) n._toasts.RemoveAt(0);
-            if (level != NotificationLevel.Info) LogTerminal.Add("Sistema del rover", text, level == NotificationLevel.Critical ? LogCategory.Alert : LogCategory.Warning);
+            if (level != NotificationLevel.Info) LogTerminal.Add(Tr.T("Sistema del rover"), text, level == NotificationLevel.Critical ? LogCategory.Alert : LogCategory.Warning);
             n.PlaySound(level);
         }
 

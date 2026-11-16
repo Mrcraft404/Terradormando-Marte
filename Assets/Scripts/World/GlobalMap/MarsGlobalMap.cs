@@ -69,23 +69,23 @@ namespace MarsRobot.World.GlobalMap
 
         public static readonly MarsLandmark[] Landmarks =
         {
-            new MarsLandmark("Olympus Mons", 18.65f, -133.8f, 9f, "El volcán más alto del sistema solar (unos 22 km). Vistas increíbles, aire muy fino y laderas enormes."),
-            new MarsLandmark("Montes Tharsis", 1.5f, -113f, 8f, "Tres grandes volcanes en fila. Basalto, tubos de lava y mucha radiación por la altitud."),
-            new MarsLandmark("Valles Marineris", -13.9f, -59.2f, 10f, "Un cañón de 4.000 km. Las paredes protegen del viento y dejan al descubierto capas de minerales."),
-            new MarsLandmark("Cráter Gale", -5.4f, 137.8f, 3.5f, "Cráter con una montaña de capas en el centro. Arcillas y sulfatos; pendientes largas."),
-            new MarsLandmark("Cráter Jezero", 18.4f, 77.7f, 3.5f, "Antiguo lago con un delta de río. Arcillas, carbonatos y posibles rastros de vida antigua."),
-            new MarsLandmark("Hellas Planitia", -42.4f, 70.5f, 16f, "La cuenca de impacto más profunda: mayor presión atmosférica y hielo cerca del borde."),
-            new MarsLandmark("Utopia Planitia", 49.7f, 117.5f, 14f, "Llanura inmensa con grandes depósitos de hielo bajo la superficie. Inviernos muy duros."),
-            new MarsLandmark("Elysium Planitia", 4.5f, 135.6f, 5f, "Llanura volcánica suave y segura. Buen lugar para empezar."),
-            new MarsLandmark("Elysium Mons", 25f, 147.2f, 5f, "Segundo gran complejo volcánico, rodeado de coladas de lava."),
-            new MarsLandmark("Argyre Planitia", -49.7f, -43.4f, 9f, "Cuenca de impacto antigua con hielo enterrado y montañas en su borde."),
-            new MarsLandmark("Arabia Terra", 19.8f, 30f, 12f, "Tierras altas muy antiguas y erosionadas, sembradas de cráteres."),
-            new MarsLandmark("Acidalia Planitia", 46.7f, -22.2f, 10f, "Llanura oscura del norte; terreno llano ideal para construir, con tormentas frecuentes."),
-            new MarsLandmark("Chryse Planitia", 22.5f, -48f, 7f, "Llanura donde desembocaban antiguos canales de inundación."),
-            new MarsLandmark("Meridiani Planum", -1.9f, -5.5f, 6f, "Llanura rica en hematites; terreno suave y seguro para aterrizar."),
-            new MarsLandmark("Syrtis Major", 8.4f, 69.5f, 6f, "Meseta volcánica oscura, rica en basalto."),
-            new MarsLandmark("Casquete polar norte", 85f, 0f, 9f, "Hielo de agua casi ilimitado, pero frío extremo y meses sin sol."),
-            new MarsLandmark("Casquete polar sur", -85f, 0f, 9f, "Hielo de agua y de CO₂. El lugar más frío y oscuro del planeta."),
+            new MarsLandmark("Olympus Mons", 18.65f, -133.8f, 9f, Tr.T("El volcán más alto del sistema solar (unos 22 km). Vistas increíbles, aire muy fino y laderas enormes.")),
+            new MarsLandmark(Tr.T("Montes Tharsis"), 1.5f, -113f, 8f, Tr.T("Tres grandes volcanes en fila. Basalto, tubos de lava y mucha radiación por la altitud.")),
+            new MarsLandmark("Valles Marineris", -13.9f, -59.2f, 10f, Tr.T("Un cañón de 4.000 km. Las paredes protegen del viento y dejan al descubierto capas de minerales.")),
+            new MarsLandmark(Tr.T("Cráter Gale"), -5.4f, 137.8f, 3.5f, Tr.T("Cráter con una montaña de capas en el centro. Arcillas y sulfatos; pendientes largas.")),
+            new MarsLandmark(Tr.T("Cráter Jezero"), 18.4f, 77.7f, 3.5f, Tr.T("Antiguo lago con un delta de río. Arcillas, carbonatos y posibles rastros de vida antigua.")),
+            new MarsLandmark("Hellas Planitia", -42.4f, 70.5f, 16f, Tr.T("La cuenca de impacto más profunda: mayor presión atmosférica y hielo cerca del borde.")),
+            new MarsLandmark("Utopia Planitia", 49.7f, 117.5f, 14f, Tr.T("Llanura inmensa con grandes depósitos de hielo bajo la superficie. Inviernos muy duros.")),
+            new MarsLandmark("Elysium Planitia", 4.5f, 135.6f, 5f, Tr.T("Llanura volcánica suave y segura. Buen lugar para empezar.")),
+            new MarsLandmark("Elysium Mons", 25f, 147.2f, 5f, Tr.T("Segundo gran complejo volcánico, rodeado de coladas de lava.")),
+            new MarsLandmark("Argyre Planitia", -49.7f, -43.4f, 9f, Tr.T("Cuenca de impacto antigua con hielo enterrado y montañas en su borde.")),
+            new MarsLandmark("Arabia Terra", 19.8f, 30f, 12f, Tr.T("Tierras altas muy antiguas y erosionadas, sembradas de cráteres.")),
+            new MarsLandmark("Acidalia Planitia", 46.7f, -22.2f, 10f, Tr.T("Llanura oscura del norte; terreno llano ideal para construir, con tormentas frecuentes.")),
+            new MarsLandmark("Chryse Planitia", 22.5f, -48f, 7f, Tr.T("Llanura donde desembocaban antiguos canales de inundación.")),
+            new MarsLandmark("Meridiani Planum", -1.9f, -5.5f, 6f, Tr.T("Llanura rica en hematites; terreno suave y seguro para aterrizar.")),
+            new MarsLandmark("Syrtis Major", 8.4f, 69.5f, 6f, Tr.T("Meseta volcánica oscura, rica en basalto.")),
+            new MarsLandmark(Tr.T("Casquete polar norte"), 85f, 0f, 9f, Tr.T("Hielo de agua casi ilimitado, pero frío extremo y meses sin sol.")),
+            new MarsLandmark(Tr.T("Casquete polar sur"), -85f, 0f, 9f, Tr.T("Hielo de agua y de CO₂. El lugar más frío y oscuro del planeta.")),
         };
 
         /// <summary>Empieza a generar el mapa en segundo plano (no bloquea).</summary>
@@ -192,28 +192,28 @@ namespace MarsRobot.World.GlobalMap
             }
             else if (a > 75f)
             {
-                info.Region = lat > 0f ? "Región polar norte" : "Región polar sur";
-                info.Description = "Hielo por todas partes, pero frío extremo y largas noches polares.";
+                info.Region = lat > 0f ? Tr.T("Región polar norte") : Tr.T("Región polar sur");
+                info.Description = Tr.T("Hielo por todas partes, pero frío extremo y largas noches polares.");
             }
             else if (e > 5f)
             {
-                info.Region = "Mesetas volcánicas";
-                info.Description = "Terreno alto y volcánico: aire muy fino y más radiación, pero roca rica en metales.";
+                info.Region = Tr.T("Mesetas volcánicas");
+                info.Description = Tr.T("Terreno alto y volcánico: aire muy fino y más radiación, pero roca rica en metales.");
             }
             else if (e < -2.5f && lat > 15f)
             {
-                info.Region = "Llanuras del norte";
-                info.Description = "Llanuras bajas y suaves, fáciles para construir. Posible hielo bajo el suelo.";
+                info.Region = Tr.T("Llanuras del norte");
+                info.Description = Tr.T("Llanuras bajas y suaves, fáciles para construir. Posible hielo bajo el suelo.");
             }
             else if (lat < -10f)
             {
-                info.Region = "Tierras altas del sur";
-                info.Description = "Terreno muy antiguo, lleno de cráteres y rocas. Duro para las ruedas.";
+                info.Region = Tr.T("Tierras altas del sur");
+                info.Description = Tr.T("Terreno muy antiguo, lleno de cráteres y rocas. Duro para las ruedas.");
             }
             else
             {
-                info.Region = "Planicies ecuatoriales";
-                info.Description = "Clima más templado y buena luz solar, pero poca agua accesible.";
+                info.Region = Tr.T("Planicies ecuatoriales");
+                info.Description = Tr.T("Clima más templado y buena luz solar, pero poca agua accesible.");
             }
 
             // Dificultad 0..5: frío, altura, rugosidad y falta de agua.

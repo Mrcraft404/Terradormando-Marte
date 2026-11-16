@@ -137,17 +137,17 @@ namespace MarsRobot.Base.Ship
             if (RobotOnPlatform(local))
             {
                 bool up = !_atTop;
-                _prompt = up ? "F: subir al hangar" : "F: bajar al suelo";
+                _prompt = up ? Tr.T("F: subir al hangar") : Tr.T("F: bajar al suelo");
                 if (RobotInput.InteractPressed) StartCoroutine(Ride(up ? _topY : _bottomY, true));
             }
             else if (!_atTop && RobotAtHangarDoor(local))
             {
-                _prompt = "F: llamar al ascensor";
+                _prompt = Tr.T("F: llamar al ascensor");
                 if (RobotInput.InteractPressed) StartCoroutine(Ride(_topY, false));
             }
             else if (_atTop && RobotAtGroundEntrance(local))
             {
-                _prompt = "F: llamar al ascensor (está arriba, en el hangar)";
+                _prompt = Tr.T("F: llamar al ascensor (está arriba, en el hangar)");
                 if (RobotInput.InteractPressed) StartCoroutine(Ride(_bottomY, false));
             }
         }
@@ -220,7 +220,7 @@ namespace MarsRobot.Base.Ship
 
         private void OnGUI()
         {
-            string text = _moving ? "Ascensor en marcha…" : _prompt;
+            string text = _moving ? Tr.T("Ascensor en marcha…") : _prompt;
             if (string.IsNullOrEmpty(text)) return;
             if (_style == null)
             {

@@ -95,13 +95,13 @@ namespace MarsRobot.Base
 
         public override void DrawMenu(RobotBaseLink robot)
         {
-            GUILayout.Label("Funde menas y procesa regolito. El resultado va al almacén de la base. Gasta " +
-                            powerWatts.ToString("0") + " W de la red mientras trabaja.");
-            GUILayout.Label("Mena de hierro → 3 hierro · 5 regolito → 1 bloque · percloratos → regolito + oxígeno · " +
-                            "arcillas → silicio · sulfatos → muestras · hielo → agua");
+            GUILayout.Label(Tr.T("Funde menas y procesa regolito. El resultado va al almacén de la base. Gasta ") +
+                            powerWatts.ToString("0") + Tr.T(" W de la red mientras trabaja."));
+            GUILayout.Label(Tr.T("Mena de hierro → 3 hierro · 5 regolito → 1 bloque · percloratos → regolito + oxígeno · ") +
+                            Tr.T("arcillas → silicio · sulfatos → muestras · hielo → agua"));
 
             var inv = robot.GetComponent<RobotInventory>();
-            if (inv != null && GUILayout.Button("Transferir todos los minerales a la fundición", GUILayout.Width(360)))
+            if (inv != null && GUILayout.Button(Tr.T("Transferir todos los minerales a la fundición"), GUILayout.Width(360)))
             {
                 int moved = 0;
                 var list = inv.Bay.Slots;
@@ -112,7 +112,7 @@ namespace MarsRobot.Base
                     if (s.item.itemCategory != ItemCategory.Mineral && s.item.itemCategory != ItemCategory.Volatile) continue;
                     moved += inv.Bay.MoveTo(s, _queue, s.count);
                 }
-                _lastAction = moved > 0 ? "Cargadas " + moved + " unidades en la tolva." : "No llevas minerales.";
+                _lastAction = moved > 0 ? Tr.T("Cargadas ") + moved + Tr.T(" unidades en la tolva.") : Tr.T("No llevas minerales.");
             }
 
             GUILayout.Space(4);
@@ -125,12 +125,12 @@ namespace MarsRobot.Base
                 queued.TryGetValue(s.item.itemName, out n);
                 queued[s.item.itemName] = n + s.count;
             }
-            GUILayout.Label("<b>En la tolva:</b> " + (pending == 0 ? "vacía" : pending + " unidades"));
+            GUILayout.Label(Tr.T("<b>En la tolva:</b> ") + (pending == 0 ? Tr.T("vacía") : pending + Tr.T(" unidades")));
             foreach (var kv in queued) GUILayout.Label("  · " + kv.Key + " ×" + kv.Value);
             if (IsWorking)
             {
-                GUILayout.Label("Procesando… " + Mathf.RoundToInt(_progress * 100f) + " %" +
-                                (Owner.Grid.SupplyRatio < 0.99f ? "  <color=#ff8080>(falta energía en la red)</color>" : ""));
+                GUILayout.Label(Tr.T("Procesando… ") + Mathf.RoundToInt(_progress * 100f) + " %" +
+                                (Owner.Grid.SupplyRatio < 0.99f ? Tr.T("  <color=#ff8080>(falta energía en la red)</color>") : ""));
             }
             if (_lastAction.Length > 0) GUILayout.Label("<b>" + _lastAction + "</b>");
         }

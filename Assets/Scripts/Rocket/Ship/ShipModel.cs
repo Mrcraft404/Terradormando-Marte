@@ -28,12 +28,12 @@ namespace MarsRobot.Base.Ship
 
         public static readonly string[] LevelNames =
         {
-            "Nivel 1 · Hangar robótico",
-            "Nivel 2 · Talleres de fabricación",
-            "Nivel 3 · Industria",
-            "Nivel 4 · Ciencia y agricultura",
-            "Nivel 5 · Recursos y supervivencia",
-            "Nivel 6 · Control y comunicaciones",
+            Tr.T("Nivel 1 · Hangar robótico"),
+            Tr.T("Nivel 2 · Talleres de fabricación"),
+            Tr.T("Nivel 3 · Industria"),
+            Tr.T("Nivel 4 · Ciencia y agricultura"),
+            Tr.T("Nivel 5 · Recursos y supervivencia"),
+            Tr.T("Nivel 6 · Control y comunicaciones"),
         };
 
         /// <summary>Altura (local de la nave) del suelo del hangar, donde se acopla el robot.</summary>

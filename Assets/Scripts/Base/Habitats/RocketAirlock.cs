@@ -137,7 +137,7 @@ namespace MarsRobot.Base
         private void Bind()
         {
             // El vestíbulo comparte el aire de la nave: siempre a presión terrestre.
-            Atmosphere = PressurizedVolume.Attach(gameObject, "Esclusa de la base",
+            Atmosphere = PressurizedVolume.Attach(gameObject, Tr.T("Esclusa de la base"),
                 new Vector3(0f, Slab + VestibuleSize.y * 0.5f, 0f), VestibuleSize + new Vector3(0f, 0f, 0.6f),
                 () => 101.3f, () => 0.21f);
             ShipAirlockHatch.EnsureShipAtmosphere(rocket);
@@ -162,7 +162,7 @@ namespace MarsRobot.Base
 
         public string CrewPrompt
         {
-            get { return "F: subir a la nave por la esclusa"; }
+            get { return Tr.T("F: subir a la nave por la esclusa"); }
         }
 
         public Vector3 CrewPoint

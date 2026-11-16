@@ -63,7 +63,7 @@ namespace MarsRobot.Dialogue
         {
             if (Entries.Count == 0)
             {
-                GUILayout.Label("La bitácora está vacía.");
+                GUILayout.Label(Tr.T("La bitácora está vacía."));
                 return;
             }
             for (int i = Entries.Count - 1, shown = 0; i >= 0 && shown < max; i--, shown++)
@@ -119,12 +119,12 @@ namespace MarsRobot.Dialogue
         {
             if (!IsOpen) return;
             GUI.skin.label.richText = true;
-            _window = GUILayout.Window(WindowId, _window, DrawWindow, "Bitácora del rover (J para cerrar)");
+            _window = GUILayout.Window(WindowId, _window, DrawWindow, Tr.T("Bitácora del rover (J para cerrar)"));
         }
 
         private void DrawWindow(int id)
         {
-            string[] tabs = { "Todo", "Mensajes", "Descubrimientos", "Misiones", "Alertas" };
+            string[] tabs = { Tr.T("Todo"), Tr.T("Mensajes"), Tr.T("Descubrimientos"), Tr.T("Misiones"), Tr.T("Alertas") };
             int sel = GUILayout.Toolbar(_filter + 1, tabs);
             _filter = sel - 1;
 
@@ -135,7 +135,7 @@ namespace MarsRobot.Dialogue
                 if (!Matches(e)) continue;
                 GUILayout.Label(Format(e));
             }
-            if (Entries.Count == 0) GUILayout.Label("Aún no hay registros. Explora y habla con la IA del cohete.");
+            if (Entries.Count == 0) GUILayout.Label(Tr.T("Aún no hay registros. Explora y habla con la IA del cohete."));
             GUILayout.EndScrollView();
             GUI.DragWindow(new Rect(0, 0, 10000, 20));
         }

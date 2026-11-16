@@ -287,10 +287,10 @@ namespace MarsRobot.Base
 
             if ((appeared & HabitatIssue.Depressurized) != 0)
                 Debug.LogWarning(who + "falta o está rota la Capa 2 (contención neumática y térmica). RIESGO DE DESPRESURIZACIÓN: " +
-                                 "la presión interna caerá desde " + design.ToString("0.#") + " kPa hasta la de Marte (~0,6 kPa).", this);
+                                 Tr.T("la presión interna caerá desde ") + design.ToString("0.#") + Tr.T(" kPa hasta la de Marte (~0,6 kPa)."), this);
             if ((appeared & HabitatIssue.RadiationExposed) != 0)
-                Debug.LogWarning(who + "falta o está rota la Capa 3 (escudo). Interior VULNERABLE a la radiación cósmica (GCR), " +
-                                 "a las tormentas solares (SPE) y a los micrometeoritos.", this);
+                Debug.LogWarning(who + "falta o está rota la Capa 3 (escudo). Interior VULNERABLE a la radiación cósmica galáctica, " +
+                                 Tr.T("a las tormentas de partículas solares y a los micrometeoritos."), this);
             if ((appeared & HabitatIssue.NoFoundation) != 0)
                 Debug.LogWarning(who + "falta la Capa 0 (cimentación): sin losa ni zapatas el módulo se asentará de forma desigual.", this);
             if ((appeared & HabitatIssue.NoSkeleton) != 0)
@@ -308,13 +308,13 @@ namespace MarsRobot.Base
 
         public static string Describe(HabitatIssue issues)
         {
-            if (issues == HabitatIssue.None) return "sin problemas";
+            if (issues == HabitatIssue.None) return Tr.T("sin problemas");
             var sb = new StringBuilder();
-            if ((issues & HabitatIssue.NoFoundation) != 0) sb.Append("cimentación, ");
-            if ((issues & HabitatIssue.NoSkeleton) != 0) sb.Append("esqueleto, ");
-            if ((issues & HabitatIssue.Depressurized) != 0) sb.Append("contención/presión, ");
-            if ((issues & HabitatIssue.RadiationExposed) != 0) sb.Append("escudo de radiación, ");
-            if ((issues & HabitatIssue.NoInternalSystems) != 0) sb.Append("sistemas internos, ");
+            if ((issues & HabitatIssue.NoFoundation) != 0) sb.Append(Tr.T("cimentación, "));
+            if ((issues & HabitatIssue.NoSkeleton) != 0) sb.Append(Tr.T("esqueleto, "));
+            if ((issues & HabitatIssue.Depressurized) != 0) sb.Append(Tr.T("contención/presión, "));
+            if ((issues & HabitatIssue.RadiationExposed) != 0) sb.Append(Tr.T("escudo de radiación, "));
+            if ((issues & HabitatIssue.NoInternalSystems) != 0) sb.Append(Tr.T("sistemas internos, "));
             return sb.ToString(0, sb.Length - 2);
         }
 
@@ -455,14 +455,14 @@ namespace MarsRobot.Base
         {
             var sb = new StringBuilder();
             sb.Append(name).Append(": ");
-            sb.Append(IsComplete ? "completo" : "problemas: " + Describe(_issues));
+            sb.Append(IsComplete ? "completo" : Tr.T("problemas: ") + Describe(_issues));
             if (data != null)
             {
-                sb.Append(" · presión ").Append(InternalPressureKPa.ToString("0.0")).Append('/').Append(data.designPressureKPa.ToString("0.#")).Append(" kPa");
+                sb.Append(Tr.T(" · presión ")).Append(InternalPressureKPa.ToString("0.0")).Append('/').Append(data.designPressureKPa.ToString("0.#")).Append(" kPa");
             }
-            sb.Append(" · radiación dentro ").Append(InsideDoseMilliGyPerDay().ToString("0.000")).Append(" mGy/día");
+            sb.Append(Tr.T(" · radiación dentro ")).Append(InsideDoseMilliGyPerDay().ToString("0.000")).Append(Tr.T(" mGy/día"));
             float heat = HeatLossWatts();
-            sb.Append(" · pérdidas ").Append(float.IsInfinity(heat) ? "sin aislamiento" : (heat / 1000f).ToString("0.0") + " kW");
+            sb.Append(Tr.T(" · pérdidas ")).Append(float.IsInfinity(heat) ? Tr.T("sin aislamiento") : (heat / 1000f).ToString("0.0") + " kW");
             return sb.ToString();
         }
     }

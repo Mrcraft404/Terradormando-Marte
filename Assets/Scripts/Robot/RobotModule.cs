@@ -100,7 +100,7 @@ namespace MarsRobot.Robot
     {
         public RobotModuleId id;
         public ModuleCategory category;
-        public string displayName = "Módulo";
+        public string displayName = Tr.T("Módulo");
         [Min(1f)] public float maxIntegrity = 100f;
         public RobotSide side = RobotSide.Center;
 

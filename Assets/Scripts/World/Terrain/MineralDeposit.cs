@@ -40,10 +40,10 @@ namespace MarsRobot.World.TerrainSystem
         {
             switch (type)
             {
-                case MineralType.Clays: return "Arcillas";
-                case MineralType.Sulfates: return "Sulfatos";
-                case MineralType.SubsurfaceIce: return "Hielo";
-                default: return "Óxidos de hierro";
+                case MineralType.Clays: return Tr.T("Arcillas");
+                case MineralType.Sulfates: return Tr.T("Sulfatos");
+                case MineralType.SubsurfaceIce: return Tr.T("Hielo");
+                default: return Tr.T("Óxidos de hierro");
             }
         }
 

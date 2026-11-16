@@ -1,0 +1,642 @@
+2|Mineral
+3|Metal
+4|Life support
+5|Fuel
+6|Science
+7|Material
+8|Regolith
+9|Iron
+10|Silicon
+11|Ice
+12|Metal parts
+13|Wiring
+14|Solar cells
+15|Regolith blocks
+16|Water
+17|Oxygen
+18|Samples
+19|Research
+20|Methane (propellant)
+21|<b>Research</b>  (you have
+22| points;
+23|get samples with the robot's drill: X key)
+24|Unlock
+25| points
+26|There is nothing left to research.
+27|Locked: needs
+28| research points (lab).
+29|Missing materials:
+30|Too far from the rocket (max.
+31|Ground too steep (max.
+32|It bumps into
+33|Choose a structure with the numbers.
+34|Missing materials.
+35| built.
+36|Oxygen reserve:
+37| units
+38|Water reserve:
+39|Steady energy:
+40| W of installed power
+41|Radiation shelter built
+42|Level landing pad built
+43|Communications antenna built
+44|Mission Control: signal received with a 12-minute delay. Good work on the base. Priority: oxygen and water.
+45|Mission Control: the reserves are growing. Remember that storms block the Sun: you will need batteries or a reactor.
+46|Mission Control: the crew is already training. We need a radiation shelter before launch.
+47|Mission Control: the ship is almost ready. It still needs a flat pad to land on.
+48|Mission Control: all green! The first crew is lifting off to Mars. Thank you, explorer.
+49|<b>Getting ready for the crew:
+52|Missing
+53|Storage full: build tanks
+54|Generating
+55|Running at
+56| (little ice in this zone)
+57|<b>Status:</b>
+58|Generating now:
+59|Uses:
+60| W  (power received
+61|Stores up to
+63| of capacity of
+64|Turn off
+65|Turn on
+66|Clean the panel (
+67|% dust)
+68|Panel clean.
+69|Unclog the hopper
+70|Hopper unclogged: the regolith flows again.
+71|Take apart (you get back half of the materials)
+72|Running
+73|Off
+74|Energy
+75|Air and water
+76|Building
+77|Fixed solar panel
+78|Makes up to 600 W in direct sunlight. It gets dusty: clean it with F.
+79|Base battery
+80|Stores 5000 Wh for the night and for storms.
+81|Small fission reactor
+82|8 kW all the time: day, night and during storms. Expensive and needs research.
+83|Oxygen extractor
+84|Takes oxygen out of the CO₂ in the air (like the real MOXIE experiment). Uses a lot of energy.
+85|Ice drill
+86|Drills the ice under the ground and melts it into water. Works better where there is more ice.
+87|Atmospheric condenser
+88|Takes a little water out of the air in any zone. Works very little during storms.
+89|Oxygen tank
+90|+200 oxygen capacity.
+91|Water tank
+92|+200 water capacity.
+93|Regolith 3D printer
+94|Turns regolith into blocks by itself. Regolith gets lumpy: sometimes the hopper clogs and you have to unclog it with F.
+95|Regolith wall
+96|Protects from the wind and marks the edge of the base.
+97|Regolith floor
+98|Flat platform to walk on and build on top of.
+99|Radiation shelter
+100|Vault covered with a thick layer of regolith. A must for the settlers.
+101|Level landing pad
+102|Where the ship with the first crew will land. It needs almost flat ground.
+103|Sample lab
+104|Studies the samples from the robot's drill and gives research points to unlock machines.
+105|Communications antenna
+106|Gets messages from Earth (a few minutes late) and the checklist to get ready for the crew.
+107|ISRU refinery (Sabatier)
+108|Splits water and combines it with CO₂ from the air (Sabatier reaction): methane for the rocket, and oxygen. 2 water → 1 methane + 2 oxygen.
+109|Communications beacon
+110|Solar relay that works on its own: reveals the minimap 120 m around it. It can be placed far from the base.
+115|Layer 0 · Foundation
+116|Layer 1 · Frame
+117|Layer 2 · Pressure and heat shell
+118|Layer 3 · Regolith shield
+119|Layer 4 · Inside systems
+143|Habitats mode: 1–4 or Tab to choose, wheel to rotate, click to build.
+146|Point at the ground (max.
+147|Ground too steep (
+148|°, max.
+149|Height difference of
+150| m: the slab would be floating in the air.
+151|: under construction, joined to the rocket's airlock. From the hangar, F at the hatch takes you down to the base.
+152|: under construction, joined to
+153| with a pressurized corridor.
+154|: under construction (5 layers).
+157|<b>HABITATS MODE</b> —
+158|<color=#80d8ff>Snaps to the rocket's airlock (entrance from the ship)</color>\n
+159|<color=#80d8ff>Snaps to
+160| (corridor of
+162|Bring it close to the door of another module or to the back of the rocket to connect it.\n
+163|\nBuilt in stages: each layer is paid when it starts.
+164|\n1–4 / Tab choose · Wheel rotate · Alt no snapping · N or Esc exit
+165|Release Tab
+168|<b>Construction sites</b>\n
+169| m · height
+170|: waiting for materials
+171|Building
+172|Finished
+180|Build the module here
+183|Check integrity
+185|the pressure inside will drop from
+186| kPa down to Mars pressure (~0.6 kPa).
+187|to solar particle storms and to micrometeorites.
+188|no problems
+189|foundation,
+190|frame,
+191|containment/pressure,
+192|radiation shield,
+193|inside systems,
+195|problems:
+196| · pressure
+197| · radiation inside
+198| mGy/day
+199| · heat loss
+200|no insulation
+202|Module
+203|aerogel and glass → silicon; ice → ice.
+204|Sintered regolith (slab)
+205|Anchor footings
+206|Vectran straps
+207|Titanium (base ring)
+208|Titanium (geodesic bars)
+209|Titanium (ribs)
+210|Laminated silicate glass (panels)
+211|ETFE sheets (2 layers)
+212|Low-emissivity film
+213|Kevlar fabric
+214|Aerogel
+215|Airtight bladder (polyurethane)
+216|Water ice
+217|Containment membrane (ETFE)
+218|Packed regolith
+219|Hydroponic racks with LEDs
+220|Bunks, kitchen and workstations
+221|Tanks, electrolyzer and Sabatier reactor
+222|Workbenches, robotic arm and shelves
+223|Growing dome
+224|Geodesic dome 12 m wide and 5.5 m tall, glazed and at low pressure
+225|(55 kPa). A shield of water ice lets the light in and stops radiation.
+226|Main habitat (crew)
+227|Rigid tube at Earth pressure (101.3 kPa) with bunks, kitchen and workstations.
+228|ISRU plant
+229|Processing hall: water electrolysis, Sabatier reactor (CO₂ + H₂ → CH₄) and tanks.
+230|Robotics workshop
+231|Hall to repair and build robots: workbenches, robotic arm and charging pad.
+232|Layer
+234|Base airlock
+235|F: go up to the ship through the airlock
+238|F: go down to the base through the airlock
+239|Regolith foundation
+240|4 × 4 m slab of sintered regolith. If the ground is uneven, it stands on piles.
+241|Floor slab
+242|Floor for an upper story; it is also the ceiling of the story below. Airtight.
+243|Metal grate
+244|Titanium walkway: you can walk on it but air goes through (not airtight).
+245|Regolith wall
+246|Wall made of regolith blocks: airtight and protects from radiation.
+247|Wall with window
+248|Regolith wall with a laminated glass window.
+249|Pressurized panel
+250|Light panel of Kevlar and aerogel with a titanium frame. Airtight.
+251|Low wall
+252|1 m low wall (railing or divider). Not airtight.
+253|Glass panel
+254|Laminated glass with a titanium frame: lets the light in and is airtight.
+255|Glass roof
+256|4 × 4 m glazed roof (greenhouses). Airtight.
+257|Geodesic skylight
+258|Small geodesic glass dome over one cell. Airtight.
+259|Pressurized door
+260|Airtight sliding door, 1.4 m wide. F to open or close (robot or astronaut).
+261|Rover gate
+262|3.6 m roll-up gate so the robot can come in. F to open or close.
+263|Armored roof
+264|Thick regolith slab: airtight and stops radiation.
+265|Titanium pillar
+266|Pillar in a corner: holds up roofs and floors without walls.
+267|Stairs
+268|One-story stairs (leave the cell above without a slab to go through). The wheel rotates them.
+269|Foundations and floors
+270|Walls
+271|Glass
+272|Doors
+273|Roofs
+274|Structure
+275|Pressurized modules
+276|Base equipment
+277|Close
+278|Open
+279|the gate
+280|the door
+281|close
+282|open
+285|That spot is already taken.
+286|The foundation must touch another foundation.
+287|Slabs go on upper stories (use foundations on the ground).
+288|It needs a wall or pillar below, or a slab next to it.
+289|Walls stand on a foundation or a slab.
+290|The pillar stands on a foundation or a slab.
+291|The stairs need a floor.
+293|Pressurized room (
+299|  (not airtight)
+300| kPa, built in layers)
+301|Free
+302|Move the mouse over a piece to see what it is and what it costs. Click to choose it.\n
+303|To make a house: first the floor (foundation), then walls, a door and a roof.
+304|Point at the ground or at your structure (max.
+305|Start with a foundation (or point at your structure).
+306|The ground sticks out above the foundation.
+307|Too high above the ground (piles of 4 m at most).
+308|New structure:
+309| placed.
+310|Point at a piece to take it apart.
+311|Piece
+312| taken apart (half of the material comes back).
+313|F or Esc: close · numbers: choose option
+314|<b>Base storage</b>\n
+315|\n<b>Energy</b>\n+
+316| W\nBatteries:
+317|\n<color=#ff8080>Not enough energy! (
+319|\n\n<b>Getting ready:</b>
+320|<b>Tool:</b>
+321|  <color=#ffd060>working…
+323|\n<b>Cargo:</b>
+325|\nX tool · F use · I cargo · J logbook · L light · Z scanner · B build
+326|Not enough battery to scan.
+327|  (CRISM orbital data)\n
+328|  (zone estimate)\n
+329|Ice under the ground:
+330|Iron oxides:
+331|Sulfates:
+332|   Clays:
+333|Useful rocks nearby:
+334| (marked on the minimap)\n
+335|Normal ground: good for regolith.
+336|Hangar charging station
+337|Robot workshop
+338|Fabricator
+339|Smelter
+340|Chemical refinery
+341|Workbench
+342|Base storage
+343|3D printer
+344|Electronics workshop
+345|mineral containers (storage)
+346|Hydroponic garden A
+347|Hydroponic garden B
+348|Laboratory
+349|Water plant
+350|Oxygen generator
+351|Kitchen
+352|pantry (storage)
+353|Machine
+354|F: use
+355|Charging pad: stop on top of it to charge.
+356|Charging pad: battery full.
+357|Charging battery…
+358|Bigger battery
+359|+1000 Wh per level: you can go farther from the base.
+360|Folding panels
+361|+1 m² of solar panel per level: charges faster in the sun.
+362|Stronger motors
+363|+1 m/s top speed per level.
+364|Stronger wheels
+365|-25 % damage and +25 % toughness on the wheels per level.
+366|Chassis armor
+367|-25 % damage to the chassis and panel per level.
+368|Panel brush
+369|+15 % more dust removed in each hand cleaning (C key) per level.
+370|Shielded cables
+371|Half the chance of a cable getting cut per level.
+372|R. Full repair (free at the base)
+373|Robot repaired to 100 %.
+374|Integrity:
+375|<b>Upgrades</b> (level N costs N times the base price):
+376| installed (level
+377|Could not install
+378|  <color=#ff8080>not enough resources</color>
+379|\n   Cost:
+380|New colony
+381|Creative
+382|Survival
+383|Easy
+384|Hard
+385|Normal
+389|Low
+390|Medium
+391|High
+392|Ultra
+396|Inventory full: take things out to keep going.
+397|All the trays are busy: wait for the harvest.
+398|Missing materials for
+399|Inventory (by hand)
+400|Hydroponic garden
+401|from clays
+402|from regolith
+403|melt ice
+404|from perchlorates
+405|capture from the air
+406|electrolysis
+409|study sample
+410|study clays
+411|melt and filter ice
+412|extract from regolith
+413|F: open
+414| (making…)
+415|PERSONAL INVENTORY
+416|Click: select · Right click / Shift+click: transfer · Drag: move between inventories · Double click on a blueprint: make it · Esc: close
+417|INVENTORY · ASTRONAUT
+418|Weight
+420| slots
+421|INVENTORY
+422|CRAFTING
+423|HAND CRAFTING
+424| slots   ·
+426|Blueprints of
+427| · uses what is in ITS inventory
+428| · uses your inventory
+429|DETAILS
+430|Select an item to see its information, or a blueprint in the CRAFTING tab to see which materials it needs.\n\n
+431|Machines make things with what is in THEIR inventory: drag the materials there, make it and pick up the result.\n\n
+432|Basic chain: iron ore → ingot (Smelter) → parts (Fabricator). CO₂ (Refinery) + water → methane → polymer.
+433| s per unit
+434|MATERIALS NEEDED
+435|None: it is captured from the air.
+437|You can make
+438| right now.
+439|Missing materials in
+440|the machine's inventory.
+441|your inventory.
+442|MAX (
+443| kg/u   ·   max stack
+444|Total mass:
+445|   ·   Condition:
+446|USE ON THE ROBOT
+447|TRANSFER →
+448|← TAKE
+449|SPLIT
+450|There are no free slots to split the stack.
+451|CRAFTING QUEUE
+452| · empty
+453|Tray
+454|waiting
+455|Cancel
+456|Order canceled: materials returned.
+457|TRANSFER ALL →
+458|← TAKE ALL
+459|CLOSE (Esc)
+461|  (missing materials)
+462|Ordered:
+463|Open the inventory of a machine or storage to transfer.
+464|Transferred:
+465|It doesn't fit (no slots or too heavy).
+466|Transferred
+467| units.
+468|Nothing could be transferred.
+469|The robot must be in the hangar to use this on it.
+470|Search…
+471|Volatile / fluid
+472|Robot part
+473|Tool
+474|Garden
+475|Consumable
+476|Hand crafting
+477|This item can't be used directly.
+478|There is no robot.
+479|The robot has no damage.
+480|Repaired:
+481|Wheels replaced: mobility at 100 %.
+482|The wheels are already like new.
+483|The panels are already clean.
+484|Solar panels clean.
+485|The robot's battery is already full.
+486|Robot battery at
+487|<color=#9fe8ff>WASD</color> walk · <color=#9fe8ff>Shift</color> run · <color=#9fe8ff>F</color> use · <color=#9fe8ff>I</color> inventory · <color=#9fe8ff>V</color> camera · <color=#9fe8ff>Esc</color> free the mouse
+489|You fainted from lack of oxygen. The team carried you back to the ship.
+491| kPa · <color=#80ff80>breathable air</color>
+492| NO PRESSURE (
+493| kPa) · breathing from the suit</color>
+494|Suit: O₂
+496|Suit oxygen at 25 %. Go back to a pressurized module.
+497|OXYGEN CRITICAL (10 %)!
+498|robot cargo bay
+499|CARGO LIFT · choose a level
+500|   ◄ here
+501|Close (Esc)
+502|F: cargo lift (you are on level
+503|Get the zone ready for the crew (see the antenna and terminal)
+505|Old probe: the valley shows clays and sulfates (water in the past).
+506|PROBE
+507|EARTH
+509|Mission
+510|New mission:
+511|Remote repair completed.
+512|Technology unlocked:
+513| in storage
+514|Log
+515|Unknown
+516|Marti, your guide
+517|Probe Historical Log
+518|Human Commander
+519|Mission Control (Earth)
+520|Remains of an old probe
+522| (log already downloaded)
+523|: download log [hold F]
+524|Discovery
+525| found.
+526|Rover logbook (J to close)
+527|All
+528|Messages
+529|Discoveries
+530|Missions
+531|Alerts
+532|No entries yet. Explore and talk to the rocket's AI.
+533|The logbook is empty.
+538|Rover system
+539| (cold box missing).
+540|Dust on the solar panels at
+541| %. Clean them (C) or use the blower.
+542|Overload: the servos are heating up. Risk of damage on rough ground.
+543|Alert! High radiation levels detected by the RAD sensor (
+544| mGy/day). Find shelter behind the berm.
+545|Dust storm: less visibility and less solar energy.
+546|Cable cut:
+547|! Repair it with the splice kit (R).
+548| out of order.
+549|: critical integrity.
+550|Low battery: go back to the charging pad or find the sun.
+551|Real data from NASA's space weather database (
+554|Partial real NASA data + simulation
+555|No connection with NASA: simulated space weather
+557|Solar flare of class
+558|Coronal mass ejection at
+560|Geomagnetic storm of strength
+561| of 9
+562| (simulated)
+563| km/s (simulated)
+564|Solar energetic particles (simulated)
+565| of 9 (simulated)
+566|Solar flare
+567|Coronal mass ejection
+568|Solar energetic particles
+569|Geomagnetic storm
+575|⚠ CORONAL MASS EJECTION COMING · impact in
+576| min · find shelter
+577|GLOBAL STORM · minimum visibility · no solar energy
+578|<color=#ff8080>INTERFERENCE FROM SOLAR FLARE</color>
+579|<color=#ffd060>RADIATION FROM SOLAR PARTICLES</color>
+580|<b>Source:</b>
+581|Source: NASA's space weather database (solar flares, coronal mass ejections, solar energetic particles and geomagnetic storms). The last 30 days are spread over the next sols.
+582|  No active events.
+583|  <color=#ff8080>Coronal mass ejection coming: impact in
+585|<b>Forecast</b> (game hours)
+586| — in
+587|  Nothing expected.
+588|  Loading data…
+589|Space weather link:
+590| (test)
+591|: electromagnetic interference, radar blocked.
+592|WARNING: coronal mass ejection detected! Estimated impact in
+593| h. Find shelter.
+594|Solar particle storm: high radiation, the panels wear out.
+595|: power flickers in the base and in the motors.
+596|Coronal mass ejection impact: global dust storm. No solar energy.
+597|Connecting to NASA's space weather database…
+598|dense rock
+599|loose rock
+600|Bay full: empty the cargo at the rocket
+601|Dense rock: you need the hammer drill (change it in the rocket's workshop)
+602|You need the shovel or the drill
+603|Mine
+604|) [hold F]  ·  left:
+605|Got
+606|Nothing else fits in the bay.
+607|rich in iron
+608|Drill
+609|Item:
+610|Pick up
+611|It doesn't fit: bay full (mass or volume).
+612|Picked up:
+613|Shift
+614|Move faster
+615|1–5 / Shift+1–5 / 0
+616|Show up to that level / only that level / all
+617|Hull cut / labels / measurements
+619|Dialogues
+620|Enter / Space
+621|Show all the text / continue
+622|Choose an answer
+623|Test keys (development)
+624|Big map (and travel to another zone)
+625|+10 of each resource
+626|Heavy hit / repair everything
+627|Dust storm / space weather event
+628|Hide the debug panel
+629|STRONG
+630|NONE
+631|GLOBAL
+632|  |  MARS — SOL
+633|  |  DUST STORM:
+634|Management
+635|Ship Inventory
+636|Robot Inventory
+637|Robot Status
+638|Settings
+639|Minerals
+640|Metals
+641|X  Close
+642|<color=#60ff80>Link status: stable</color> — synced with the mothership (
+643|<color=#ff8080>No link with the ship</color> — get closer than
+644| m to transfer (
+645|Resources stored in the mothership
+646|No ship.
+647|Storage capacity:
+648| • Mass:
+649|Rover cargo •
+650|% mass ·
+651|Weight:
+652| (equipped)</b>\nFront arm
+653|←  Transfer to Ship
+654|Throw away (drop on the ground)
+655| • Mars • System status
+656|Battery:
+657|SHIP INVENTORY
+658|Resources and materials — total weight:
+659|No ship
+660|CAPACITY:
+661|% USED —
+662|choose a resource
+663|Selected: <b>
+664|[ TRANSFER TO ROBOT >> ]
+665|ROBOT INVENTORY
+666|Rover cargo —
+667|Mass
+668|%  (weight on Mars
+669|Volume
+670|Select an item.
+671|Stack mass:
+672| kg · Volume:
+673|Storage condition:
+674|<< TRANSFER TO SHIP
+675|Split stack
+676|There is no free slot to split.
+677|Drop on the ground
+678|ROBOT STATUS
+679|Integrity of each part — no single health bar
+680|Astronaut (inside the ship)
+681|Performance:
+682|Repaired with:
+683|Switch between astronaut and robot (only with the robot in the hangar)
+684|Mobility:
+685|Structural integrity:
+686|WASD · Shift · Space
+687|Walk · run · jump
+688|(empty)
+689|Use a machine, locker or cargo lift
+690|Personal inventory and hand crafting
+691|Optimal
+692|Partial
+693| systems optimal
+694|First / third person
+695|●  Battery
+696| (equipped)
+697|Robot movement
+698|Working
+699|Repair
+700|Diagnostics
+701|Forward / back
+702|Calibrate
+703|Full repair at the assembly workshop (free at the base).
+704|Left / right (sideways, wheels at 90°)
+705|Outside the workshop: repair by hand with R and the right tool (T changes the tool, G the part).
+706|Turn the robot
+707| · steering pulls to the
+708|Diagnostics: all systems optimal.
+709|Diagnostics:
+710| · mobility
+711|Mouse
+712|Look around (click on the view to capture the mouse)
+713|Not enough battery to calibrate (20 Wh).
+714|Sensors recalibrated (+10 on wiring that isn't cut).
+715|Calibration done: there was nothing to adjust (cut cables are spliced by hand).
+716|Mouse wheel
+717|Zoom the camera in or out (3rd person)
+718|SETTINGS
+719|Saved on this computer
+720|All the game keys
+721|Options
+722|Controls
+724|Free the mouse / close menus
+725|Graphics quality
+726|Main volume
+727|Music (when there is some)
+728|Effects
+729|Brightness
+730|Mouse sensitivity
+731|Robot actions
+732|Language
+733|Use what you point at or the nearest machine
+734|  Show FPS
+735|F (in the elevator)
+736|Go up to the hangar / down to the ground · call the elevator
+737|F (hold)
+738|Mine rocks, dump regolith on the berm, download logs
+739|EXPLORER ROBOT
+740|EXPLORER ROBOT\n

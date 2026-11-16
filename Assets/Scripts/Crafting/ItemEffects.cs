@@ -21,13 +21,13 @@ namespace MarsRobot.Crafting
             message = "";
             if (!IsUsable(item))
             {
-                message = "Este objeto no se puede usar directamente.";
+                message = Tr.T("Este objeto no se puede usar directamente.");
                 return false;
             }
             var health = Object.FindAnyObjectByType<RobotHealthSystem>();
             if (health == null)
             {
-                message = "No hay robot.";
+                message = Tr.T("No hay robot.");
                 return false;
             }
 
@@ -40,11 +40,11 @@ namespace MarsRobot.Crafting
                         if (worst == null || m.Integrity01 < worst.Integrity01) worst = m;
                     if (worst == null || worst.Integrity01 >= 0.999f)
                     {
-                        message = "El robot no tiene daños.";
+                        message = Tr.T("El robot no tiene daños.");
                         return false;
                     }
                     health.RepairModule(worst.Id);
-                    message = "Reparado: " + worst.Definition.displayName + ".";
+                    message = Tr.T("Reparado: ") + worst.Definition.displayName + ".";
                     return true;
                 }
                 case ItemDatabase.SpareWheel:
@@ -56,7 +56,7 @@ namespace MarsRobot.Crafting
                         health.RepairModule(m.Id);
                         any = true;
                     }
-                    message = any ? "Ruedas sustituidas: movilidad al 100 %." : "Las ruedas ya están como nuevas.";
+                    message = any ? Tr.T("Ruedas sustituidas: movilidad al 100 %.") : Tr.T("Las ruedas ya están como nuevas.");
                     return any;
                 }
                 case ItemDatabase.CleaningBrush:
@@ -64,11 +64,11 @@ namespace MarsRobot.Crafting
                     var dust = health.GetComponent<DustingSystem>();
                     if (dust == null || dust.Dust01 < 0.01f)
                     {
-                        message = "Los paneles ya están limpios.";
+                        message = Tr.T("Los paneles ya están limpios.");
                         return false;
                     }
                     dust.CleanPanels(1f);
-                    message = "Paneles solares limpios.";
+                    message = Tr.T("Paneles solares limpios.");
                     return true;
                 }
                 default:
@@ -76,11 +76,11 @@ namespace MarsRobot.Crafting
                     var battery = health.GetComponent<BatterySystem>();
                     if (battery == null || battery.Charge01 > 0.98f)
                     {
-                        message = "La batería del robot ya está llena.";
+                        message = Tr.T("La batería del robot ya está llena.");
                         return false;
                     }
                     battery.AddEnergy(battery.CapacityWh * 0.5f);
-                    message = "Batería del robot al " + Mathf.RoundToInt(battery.Charge01 * 100f) + " %.";
+                    message = Tr.T("Batería del robot al ") + Mathf.RoundToInt(battery.Charge01 * 100f) + " %.";
                     return true;
                 }
             }

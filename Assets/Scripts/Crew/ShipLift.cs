@@ -43,7 +43,7 @@ namespace MarsRobot.Crew
 
         public string CrewPrompt
         {
-            get { return "F: montacargas (estás en el nivel " + (_level + 1) + ")"; }
+            get { return Tr.T("F: montacargas (estás en el nivel ") + (_level + 1) + ")"; }
         }
 
         public Vector3 CrewPoint
@@ -109,17 +109,17 @@ namespace MarsRobot.Crew
             GUI.color = new Color(0.03f, 0.1f, 0.15f, 0.94f);
             GUI.DrawTexture(r, Texture2D.whiteTexture);
             GUI.color = Color.white;
-            GUI.Label(new Rect(r.x, r.y + 10, r.width, 30), "MONTACARGAS · elige nivel", _title);
+            GUI.Label(new Rect(r.x, r.y + 10, r.width, 30), Tr.T("MONTACARGAS · elige nivel"), _title);
             for (int i = ShipModel.LevelCount - 1; i >= 0; i--)
             {
                 int row = ShipModel.LevelCount - 1 - i;
                 var br = new Rect(r.x + 20, r.y + 52 + row * 52, r.width - 40, 44);
-                string label = ShipModel.LevelNames[i] + (i == _level ? "   ◄ aquí" : "");
+                string label = ShipModel.LevelNames[i] + (i == _level ? Tr.T("   ◄ aquí") : "");
                 GUI.enabled = i != _level;
                 if (GUI.Button(br, label, _button)) Travel(i);
                 GUI.enabled = true;
             }
-            if (GUI.Button(new Rect(r.x + 20, r.yMax - 52, r.width - 40, 40), "Cerrar (Esc)")) Close();
+            if (GUI.Button(new Rect(r.x + 20, r.yMax - 52, r.width - 40, 40), Tr.T("Cerrar (Esc)"))) Close();
         }
     }
 }

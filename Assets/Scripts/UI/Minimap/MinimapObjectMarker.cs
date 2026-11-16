@@ -11,7 +11,7 @@ namespace MarsRobot.UI.Minimap
         Ice,        // hielo subterráneo detectado
         Structure,  // estructura construida
         Beacon,     // baliza de comunicaciones
-        Vehicle,    // MarteCar
+        Vehicle,    // vehículos (ahora no hay ninguno en la escena)
         Alert,      // aviso (clima espacial, peligro)
         Discovery   // punto de interés con registro (sonda antigua…)
     }

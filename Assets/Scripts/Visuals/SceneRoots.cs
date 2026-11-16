@@ -56,8 +56,8 @@ namespace MarsRobot.Visuals
         {
             string[] environment = { "Sol", "Clima", "Terreno" };
             string[] structures = { "Base (cohete)" };
-            string[] props = { "Rocas", "MarteCar", "Restos de una sonda antigua", "Módulo de aterrizaje abandonado" };
-            string[] systems = { "Arranque", "Clima espacial", "Minimapa", "Modo de juego", "Control de la tripulación", "Gestor de diálogos",
+            string[] props = { "Rocas", Tr.T("Restos de una sonda antigua"), Tr.T("Módulo de aterrizaje abandonado") };
+            string[] systems = { "Arranque", Tr.T("Clima espacial"), "Minimapa", Tr.T("Modo de juego"), "Control de la tripulación", "Gestor de diálogos",
                 "Ventana de inventario y fabricación", "Sistema de avisos" };
             foreach (string n in environment) Move(n, SceneRoot.Environment);
             foreach (string n in structures) Move(n, SceneRoot.Structures);

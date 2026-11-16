@@ -51,7 +51,7 @@ namespace MarsRobot.Base
 
         public string CrewPrompt
         {
-            get { return "F: bajar a la base por la esclusa"; }
+            get { return Tr.T("F: bajar a la base por la esclusa"); }
         }
 
         public Vector3 CrewPoint

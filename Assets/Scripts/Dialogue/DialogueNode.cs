@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using MarsRobot.Localization;
 
 namespace MarsRobot.Dialogue
 {
@@ -33,6 +34,8 @@ namespace MarsRobot.Dialogue
     {
         public string text;
         public DialogueNode next;
+
+        public string LocalizedText => Localizer.T(text);
     }
 
     /// <summary>Evento al terminar el nodo.</summary>
@@ -78,19 +81,24 @@ namespace MarsRobot.Dialogue
 
         public string SpeakerName
         {
-            get { return SpeakerLabel(speaker, customSpeakerName); }
+            get { return Localizer.T(SpeakerLabel(speaker, customSpeakerName)); }
         }
+
+        public string LocalizedText => Localizer.T(text);
+
+        /// <summary>¿Habla Marti, la mascota guía? (la IA del cohete y el sistema del rover son ella).</summary>
+        public bool IsMascot => speaker == DialogueSpeaker.RocketNavigationAI || speaker == DialogueSpeaker.RoverSystem;
 
         public static string SpeakerLabel(DialogueSpeaker s, string custom)
         {
             switch (s)
             {
-                case DialogueSpeaker.RocketNavigationAI: return "IA de Navegación del Cohete";
-                case DialogueSpeaker.ProbeArchive: return "Registro Histórico de la Sonda";
-                case DialogueSpeaker.HumanCommander: return "Comandante Humano";
-                case DialogueSpeaker.MissionControl: return "Control de Misión (Tierra)";
-                case DialogueSpeaker.RoverSystem: return "Sistema del rover";
-                default: return string.IsNullOrEmpty(custom) ? "Desconocido" : custom;
+                case DialogueSpeaker.RocketNavigationAI: return Tr.T("Marti, tu guía");
+                case DialogueSpeaker.ProbeArchive: return Tr.T("Registro Histórico de la Sonda");
+                case DialogueSpeaker.HumanCommander: return Tr.T("Comandante Humano");
+                case DialogueSpeaker.MissionControl: return Tr.T("Control de Misión (Tierra)");
+                case DialogueSpeaker.RoverSystem: return Tr.T("Marti, tu guía");
+                default: return string.IsNullOrEmpty(custom) ? Tr.T("Desconocido") : custom;
             }
         }
     }

@@ -17,7 +17,7 @@ namespace MarsRobot.Base.Ship
             Metal = ShipMesh.Mat("Aluminio", new Color(0.7f, 0.71f, 0.74f), 0.85f, 0.55f);
             Frost = ShipMesh.Mat("Tanque LOX", new Color(0.82f, 0.88f, 0.95f), 0.4f, 0.5f);
             TankDark = ShipMesh.Mat("Tanque CH4", new Color(0.45f, 0.47f, 0.5f), 0.8f, 0.5f);
-            Glass = ShipMesh.Mat("Cristal", new Color(0.05f, 0.08f, 0.12f), 0.3f, 0.95f);
+            Glass = ShipMesh.Mat(Tr.T("Cristal"), new Color(0.05f, 0.08f, 0.12f), 0.3f, 0.95f);
             Floor = ShipMesh.Mat("Suelo de rejilla", Color.white, 0.7f, 0.4f, ShipMesh.GratingTexture(), new Vector2(8f, 8f));
             Wall = ShipMesh.Mat("Panel interior", new Color(0.88f, 0.89f, 0.9f), 0.1f, 0.45f);
             Hazard = ShipMesh.Mat("Señalización", Color.white, 0.1f, 0.3f, ShipMesh.HazardTexture(), new Vector2(2f, 1f));
@@ -29,7 +29,7 @@ namespace MarsRobot.Base.Ship
             Plant = ShipMesh.Mat("Plantas", new Color(0.2f, 0.55f, 0.2f), 0f, 0.3f);
             Grow = ShipMesh.Mat("LED de cultivo", new Color(0.8f, 0.3f, 0.8f), 0f, 0.5f, null, default(Vector2), new Color(1.4f, 0.4f, 1.4f));
             Furnace = ShipMesh.Mat("Horno", new Color(0.9f, 0.4f, 0.1f), 0f, 0.6f, null, default(Vector2), new Color(2f, 0.7f, 0.15f));
-            Water = ShipMesh.Mat("Agua", new Color(0.3f, 0.6f, 0.9f), 0.2f, 0.9f);
+            Water = ShipMesh.Mat(Tr.T("Agua"), new Color(0.3f, 0.6f, 0.9f), 0.2f, 0.9f);
             Orange = ShipMesh.Mat("Naranja", new Color(0.95f, 0.5f, 0.12f), 0.3f, 0.5f);
 
             // Materiales PBR generados (texturas con albedo, normal, metálico/suavidad y oclusión) si
@@ -149,7 +149,7 @@ namespace MarsRobot.Base.Ship
                 var go = new GameObject("Sector " + s);
                 go.transform.SetParent(hull, false);
                 Material mat = belly ? ShipMaterials.HeatShield : ShipMaterials.Steel;
-                for (int k = 0; k < parts.Count; k++) ShipMesh.MeshObject(go.transform, "Tramo " + k, parts[k], mat);
+                for (int k = 0; k < parts.Count; k++) ShipMesh.MeshObject(go.transform, Tr.T("Tramo ") + k, parts[k], mat);
                 model.HullSectors.Add(new ShipModel.HullSector { go = go, centerDeg = center });
             }
         }
@@ -285,10 +285,10 @@ namespace MarsRobot.Base.Ship
                 var prof = new[] { new Vector2(r, y - 0.1f), new Vector2(r - 0.3f, y - 0.1f), new Vector2(r - 0.3f, y), new Vector2(r, y) };
                 ShipMesh.MeshObject(p, "Anillo", ShipMesh.Lathe(prof, 0f, 360f, 48, true, 0.01f), ShipMaterials.DarkMetal);
             }
-            model.AddLabel(0, new Vector3(0f, 10f, 0f), "Tanque de oxígeno líquido (LOX) · 5–15 m");
-            model.AddLabel(0, new Vector3(0f, 19.5f, 0f), "Tanque de metano (CH₄) · refinería ISRU · 16–23 m");
-            model.AddLabel(0, new Vector3(0f, 3f, 0f), "Motores: 3 de nivel del mar + 3 de vacío");
-            model.AddLabel(0, new Vector3(0f, 46f, 0f), "Nariz técnica: antenas y tanques de cabecera");
+            model.AddLabel(0, new Vector3(0f, 10f, 0f), Tr.T("Tanque de oxígeno líquido (LOX) · 5–15 m"));
+            model.AddLabel(0, new Vector3(0f, 19.5f, 0f), Tr.T("Tanque de metano (CH₄) · refinería ISRU · 16–23 m"));
+            model.AddLabel(0, new Vector3(0f, 3f, 0f), Tr.T("Motores: 3 de nivel del mar + 3 de vacío"));
+            model.AddLabel(0, new Vector3(0f, 46f, 0f), Tr.T("Nariz técnica: antenas y tanques de cabecera"));
         }
 
         private static void Tank(Transform p, float bottom, float top, Material mat, string name)

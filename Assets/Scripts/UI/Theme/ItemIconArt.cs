@@ -85,6 +85,22 @@ namespace MarsRobot.UI
                 case ItemDatabase.Flour: FlourSack(); break;
                 case ItemDatabase.Ration: RationPack(); break;
                 case ItemDatabase.Salad: SaladBowl(); break;
+                // Piezas intercambiables del robot (taller de modificaciones).
+                case "rover_PercussionDrill": Drill(); break;
+                case "rover_Shovel": Shovel(); break;
+                case "rover_DustBlower": Brush(); break;
+                case "rover_HighGainAntenna": Antenna(); break;
+                case "rover_ExtraSolarPanels": SolarCell(); break;
+                case "rover_StorageBay": PartsBin(); break;
+                case "rover_AuxBattery": BatteryPack(); break;
+                case "rover_CryoContainer": IceChunk(); break;
+                case "rover_SealedContainer": GasTank(new Color(0.6f, 0.62f, 0.66f), new Color(0.95f, 0.55f, 0.15f), false); break;
+                case "rover_DualArmAdapter": GearAndBolt(); break;
+                case "rover_StandardWheels": Wheel(); break;
+                case "rover_AllTerrainTracks": Tracks(); break;
+                case "rover_FastWheels": FastWheel(); break;
+                case "rover_MineralScanner": Scanner(); break;
+                case "rover_CargoArm": CargoArm(); break;
                 default: return null;
             }
             var t = new Texture2D(N, N, TextureFormat.RGBA32, true);
@@ -714,6 +730,107 @@ namespace MarsRobot.UI
                 float tx = bx + Mathf.Sin(a) * 16f, ty = by - Mathf.Cos(a) * 16f;
                 Part((x, y) => Segment(x, y, bx, by, tx, ty, 1.5f), Solid(new Color(0.75f, 0.92f, 1f)), 1f, 0.6f, 30f); // cerdas
             }
+        }
+
+        // ==================================================================
+        // Piezas del robot
+        // ==================================================================
+
+        private static readonly Color RoverOrange = new Color(0.95f, 0.55f, 0.15f);
+        private static readonly Color RoverSteel = new Color(0.7f, 0.72f, 0.76f);
+
+        /// <summary>Taladro: cuerpo naranja y broca en espiral apuntando abajo a la derecha.</summary>
+        private static void Drill()
+        {
+            Shadow(64, 16, 48, 8);
+            Part((x, y) => Box(x, y, 46, 78, 26, 18, 8, -30f), Solid(RoverOrange), 7f, 0.6f, 30f);            // motor
+            Part((x, y) => Box(x, y, 30, 96, 10, 8, 3, -30f), Solid(new Color(0.25f, 0.25f, 0.28f)), 3f, 0.4f); // tapa
+            Part((x, y) => Segment(x, y, 66, 64, 108, 22, 9f), Solid(RoverSteel), 4f, 0.9f, 40f);              // broca
+            for (int k = 0; k < 6; k++)
+            {
+                float t = 0.12f + k * 0.14f, cx = Mathf.Lerp(66, 108, t), cy = Mathf.Lerp(64, 22, t);
+                Flat((x, y) => Segment(x, y, cx - 7, cy - 5, cx + 5, cy + 7, 1.6f), new Color(0.35f, 0.36f, 0.4f));
+            }
+            Part((x, y) => Poly(x, y, new[] { V(102, 30), V(116, 14), V(112, 26) }), Solid(RoverSteel), 2f, 0.9f, 40f);
+        }
+
+        /// <summary>Pala: mango y cuchara metálica.</summary>
+        private static void Shovel()
+        {
+            Shadow(64, 16, 46, 8);
+            Part((x, y) => Segment(x, y, 30, 104, 70, 56, 5f), Solid(new Color(0.55f, 0.35f, 0.2f)), 4f, 0.4f);
+            Part((x, y) => Box(x, y, 26, 108, 12, 5, 2, -50f), Solid(new Color(0.2f, 0.2f, 0.22f)), 3f, 0.3f);
+            Part((x, y) => Poly(x, y, new[] { V(62, 62), V(84, 76), V(110, 40), V(96, 16), V(66, 34) }), Solid(RoverSteel), 6f, 1f, 45f);
+            Glint(86, 44, 10f, 0.5f);
+        }
+
+        /// <summary>Antena parabólica en un mástil.</summary>
+        private static void Antenna()
+        {
+            Shadow(64, 14, 40, 8);
+            Part((x, y) => Box(x, y, 64, 22, 26, 8, 3), Solid(new Color(0.3f, 0.32f, 0.36f)), 3f, 0.5f);
+            Part((x, y) => Segment(x, y, 64, 26, 64, 62, 5f), Solid(RoverSteel), 3f, 0.8f, 40f);
+            Part((x, y) => Mathf.Max(Ellipse(x, y, 64, 82, 46, 30), -Ellipse(x, y, 64, 92, 40, 24)),
+                Solid(new Color(0.92f, 0.93f, 0.95f)), 6f, 0.9f, 40f);
+            Part((x, y) => Segment(x, y, 64, 70, 64, 100, 2.5f), Solid(new Color(0.4f, 0.4f, 0.44f)), 2f, 0.6f);
+            Part((x, y) => Circle(x, y, 64, 104, 6f), Solid(new Color(0.2f, 0.85f, 1f)), 3f, 0.9f, 40f);
+        }
+
+        /// <summary>Orugas: banda dentada alrededor de tres ruedas.</summary>
+        private static void Tracks()
+        {
+            Shadow(64, 18, 56, 8);
+            Sdf band = (x, y) => Mathf.Max(Box(x, y, 64, 56, 54, 28, 26), -Box(x, y, 64, 56, 44, 18, 18));
+            Part(band, (x, y) => Mathf.Repeat(x * 0.35f, 2f) < 1f ? new Color(0.25f, 0.26f, 0.28f) : new Color(0.33f, 0.34f, 0.37f), 5f, 0.5f, 30f);
+            for (int k = 0; k < 3; k++)
+            {
+                float cx = 32 + k * 32;
+                Part((x, y) => Circle(x, y, cx, 56, 15f), Solid(RoverSteel), 4f, 0.9f, 40f);
+                Part((x, y) => Circle(x, y, cx, 56, 5f), Solid(RoverOrange), 2f, 0.6f);
+            }
+        }
+
+        /// <summary>Rueda rápida: rueda fina azul con rayas de velocidad.</summary>
+        private static void FastWheel()
+        {
+            Shadow(70, 12, 44, 7);
+            Part((x, y) => Mathf.Max(Circle(x, y, 74, 64, 44), 34f - new Vector2(x - 74, y - 64).magnitude), Solid(new Color(0.18f, 0.18f, 0.2f)), 5f, 0.6f, 30f);
+            Part((x, y) => Mathf.Max(Circle(x, y, 74, 64, 34), 12f - new Vector2(x - 74, y - 64).magnitude), Solid(new Color(0.2f, 0.75f, 1f)), 3f, 1f, 50f);
+            Part((x, y) => Circle(x, y, 74, 64, 10), Solid(RoverSteel), 3f, 0.9f, 40f);
+            for (int k = 0; k < 3; k++)
+            {
+                float ly = 44 + k * 20, lx = 26 - k * 4;
+                Flat((x, y) => Segment(x, y, 6, ly, lx, ly, 3f), new Color(1f, 0.85f, 0.2f, 0.9f));
+            }
+        }
+
+        /// <summary>Escáner: pantalla verde con ondas y un punto amarillo (veta encontrada).</summary>
+        private static void Scanner()
+        {
+            Shadow(64, 16, 46, 8);
+            Part((x, y) => Box(x, y, 64, 60, 42, 36, 10), Solid(new Color(0.22f, 0.24f, 0.28f)), 6f, 0.6f, 35f);
+            Part((x, y) => Box(x, y, 64, 62, 32, 26, 6), Solid(new Color(0.05f, 0.25f, 0.18f)), 2f, 1f, 60f);
+            for (int r = 8; r <= 24; r += 8)
+            {
+                float rr = r;
+                Flat((x, y) => Mathf.Abs(Circle(x, y, 64, 62, rr)) - 1.2f, new Color(0.3f, 1f, 0.55f, 0.75f));
+            }
+            Flat((x, y) => Circle(x, y, 74, 70, 4f), new Color(1f, 0.85f, 0.2f));
+            Part((x, y) => Segment(x, y, 96, 94, 108, 116, 3f), Solid(RoverSteel), 2f, 0.8f);
+            Part((x, y) => Circle(x, y, 108, 116, 5f), Solid(new Color(0.9f, 0.2f, 0.15f)), 2f, 0.8f);
+        }
+
+        /// <summary>Brazo de carga: grúa naranja con gancho y una caja.</summary>
+        private static void CargoArm()
+        {
+            Shadow(64, 14, 50, 8);
+            Part((x, y) => Box(x, y, 30, 22, 18, 8, 3), Solid(new Color(0.3f, 0.32f, 0.36f)), 3f, 0.5f);
+            Part((x, y) => Segment(x, y, 30, 26, 44, 86, 7f), Solid(RoverOrange), 5f, 0.6f, 30f);
+            Part((x, y) => Segment(x, y, 44, 86, 96, 96, 6f), Solid(RoverOrange), 5f, 0.6f, 30f);
+            Part((x, y) => Circle(x, y, 44, 86, 7f), Solid(RoverSteel), 3f, 0.9f);
+            Flat((x, y) => Segment(x, y, 96, 96, 96, 62, 1.2f), new Color(0.2f, 0.2f, 0.22f));
+            Part((x, y) => Box(x, y, 96, 42, 20, 18, 3), Grain(new Color(0.75f, 0.6f, 0.38f), new Color(0.6f, 0.45f, 0.28f), 0.15f), 4f, 0.3f);
+            Flat((x, y) => Box(x, y, 96, 42, 20, 2), new Color(0.45f, 0.32f, 0.2f));
         }
 
         // ==================================================================

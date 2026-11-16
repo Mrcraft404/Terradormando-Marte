@@ -79,12 +79,12 @@ namespace MarsRobot.Base
             // Bodega del hangar: el robot entrega aquí su carga. Comparte las casillas con el almacén
             // de la base (lo que entrega el robot lo ve el astronauta en los talleres).
             int hangar = MarsRobot.Base.Ship.ShipModel.HangarLevel;
-            Hold = rocketBase.AddStationInside<StorageContainer>("Bodega del hangar",
+            Hold = rocketBase.AddStationInside<StorageContainer>(Tr.T("Bodega del hangar"),
                 MarsRobot.Base.Ship.ShipLayout.OnLevel(hangar, MarsRobot.Base.Ship.ShipLayout.Hold), 2.2f);
             Hold.UseContainer(rocketBase.Inventory.Storage);
 
             // Terminal del cohete, en el banco de trabajo del hangar.
-            rocketBase.AddStationInside<RocketTerminalStation>("Terminal del cohete",
+            rocketBase.AddStationInside<RocketTerminalStation>(Tr.T("Terminal del cohete"),
                 MarsRobot.Base.Ship.ShipLayout.OnLevel(hangar, MarsRobot.Base.Ship.ShipLayout.Terminal), 1.8f);
 
             // La fundición y la refinería están ahora dentro de la nave (nivel de talleres, ver
@@ -106,7 +106,7 @@ namespace MarsRobot.Base
             }
 
             var marker = gameObject.AddComponent<MinimapObjectMarker>();
-            marker.Setup(MinimapMarkerType.Rocket, false, "Cohete nodriza");
+            marker.Setup(MinimapMarkerType.Rocket, false, Tr.T("Cohete nodriza"));
         }
 
         private static void Prop(Transform parent, Vector3 pos, Vector3 scale, Color color, bool glow = false)
@@ -130,8 +130,8 @@ namespace MarsRobot.Base
         {
             int done = 0;
             for (int i = 0; i < _berm.Count; i++) if (_berm[i].Fill01 >= 0.999f) done++;
-            return "Berma de blindaje: " + done + "/" + _berm.Count + " tramos completos · " +
-                   Mathf.RoundToInt(Shielding01 * 100f) + " % · −" + Mathf.RoundToInt(RadiationReduction01 * 100f) + " % de radiación en la base";
+            return Tr.T("Berma de blindaje: ") + done + "/" + _berm.Count + Tr.T(" tramos completos · ") +
+                   Mathf.RoundToInt(Shielding01 * 100f) + " % · −" + Mathf.RoundToInt(RadiationReduction01 * 100f) + Tr.T(" % de radiación en la base");
         }
     }
 }

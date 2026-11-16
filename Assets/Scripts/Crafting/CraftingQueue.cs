@@ -64,13 +64,13 @@ namespace MarsRobot.Crafting
             bool free = GameModeState.IsCreative;
             if (Lanes > 1 && _entries.Count >= Lanes)
             {
-                Status = "Todas las bandejas están ocupadas: espera a la cosecha.";
+                Status = Tr.T("Todas las bandejas están ocupadas: espera a la cosecha.");
                 return 0;
             }
             int n = free ? count : Mathf.Min(count, recipe.MaxCraftable(source));
             if (n <= 0)
             {
-                Status = "Faltan materiales para " + recipe.DisplayName + ".";
+                Status = Tr.T("Faltan materiales para ") + recipe.DisplayName + ".";
                 return 0;
             }
             if (!free)
@@ -111,7 +111,7 @@ namespace MarsRobot.Crafting
                 ItemData item = e.Recipe.Output;
                 if (item == null || output.HowManyFit(item, e.Recipe.OutputCount) < e.Recipe.OutputCount)
                 {
-                    Status = "Inventario lleno: saca objetos para seguir.";
+                    Status = Tr.T("Inventario lleno: saca objetos para seguir.");
                     e.Progress = Duration(e.Recipe); // espera con la unidad terminada
                     continue;
                 }

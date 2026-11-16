@@ -34,7 +34,8 @@ namespace MarsRobot.Base
         [SerializeField] private List<MarsModuleData> modules = new List<MarsModuleData>();
 
         [Header("Colocación")]
-        [SerializeField] private KeyCode toggleKey = KeyCode.N;
+        [Tooltip("Tecla propia para abrir este modo. Por defecto ninguna: se entra desde el menú de construcción (N).")]
+        [SerializeField] private KeyCode toggleKey = KeyCode.None;
         [SerializeField, Min(5f)] private float maxDistance = 120f;
         [Tooltip("Distancia a la que el holograma salta al anclaje de otro módulo.")]
         [SerializeField, Min(0f)] private float snapDistance = 9f;
@@ -128,7 +129,7 @@ namespace MarsRobot.Base
                 if (IsActive) SetActive(false);
                 return;
             }
-            if (Input.GetKeyDown(toggleKey)) SetActive(!IsActive);
+            if (toggleKey != KeyCode.None && Input.GetKeyDown(toggleKey)) SetActive(!IsActive);
             if (!IsActive) return;
             if (Input.GetKeyDown(KeyCode.Escape)) { SetActive(false); return; }
 
@@ -145,6 +146,25 @@ namespace MarsRobot.Base
 #endif
         }
 
+        /// <summary>Módulos disponibles (para el menú de construcción).</summary>
+        public IReadOnlyList<MarsModuleData> Modules
+        {
+            get { return modules; }
+        }
+
+        /// <summary>Entra en el modo con un módulo ya elegido (desde el menú de construcción).</summary>
+        public void BeginPlacing(int moduleIndex)
+        {
+            if (!IsActive) SetActive(true);
+            Select(Mathf.Clamp(moduleIndex, 0, modules.Count - 1));
+        }
+
+        /// <summary>Sale del modo (si estaba activo).</summary>
+        public void Stop()
+        {
+            if (IsActive) SetActive(false);
+        }
+
         private void SetActive(bool active)
         {
             IsActive = active;
@@ -159,7 +179,7 @@ namespace MarsRobot.Base
             else
             {
                 CreateGhost();
-                Show("Modo hábitats: 1–4 o Tab para elegir, rueda para girar, clic para construir.");
+                Show(Tr.T("Modo hábitats: 1–4 o Tab para elegir, rueda para girar, clic para construir."));
             }
         }
 
@@ -275,7 +295,7 @@ namespace MarsRobot.Base
             {
                 _ghost.SetActive(false);
                 _valid = false;
-                _reason = "Apunta al suelo (máx. " + maxDistance.ToString("0") + " m).";
+                _reason = Tr.T("Apunta al suelo (máx. ") + maxDistance.ToString("0") + " m).";
                 return;
             }
 
@@ -411,7 +431,7 @@ namespace MarsRobot.Base
             ResourceAmount[] needed = payPerLayer ? d.GetLayerCost(HabitatLayer.Foundation) : d.gameCost;
             if (inv != null && needed != null && needed.Length > 0 && !inv.Has(needed))
             {
-                reason = "Faltan materiales: " + BaseInventory.Describe(needed);
+                reason = Tr.T("Faltan materiales: ") + BaseInventory.Describe(needed);
                 return false;
             }
 
@@ -424,7 +444,7 @@ namespace MarsRobot.Base
                 toBase.y = 0f;
                 if (toBase.magnitude > RocketBase.BuildRadius + Mathf.Max(fp.x, fp.z))
                 {
-                    reason = "Demasiado lejos del cohete (máx. " + RocketBase.BuildRadius.ToString("0") + " m).";
+                    reason = Tr.T("Demasiado lejos del cohete (máx. ") + RocketBase.BuildRadius.ToString("0") + " m).";
                     return false;
                 }
             }
@@ -450,12 +470,12 @@ namespace MarsRobot.Base
             float slopeDeg = Mathf.Atan2(maxH - minH, span) * Mathf.Rad2Deg;
             if (slopeDeg > d.maxSlopeDegrees)
             {
-                reason = "Terreno demasiado inclinado (" + slopeDeg.ToString("0.0") + "°, máx. " + d.maxSlopeDegrees.ToString("0") + "°).";
+                reason = Tr.T("Terreno demasiado inclinado (") + slopeDeg.ToString("0.0") + Tr.T("°, máx. ") + d.maxSlopeDegrees.ToString("0") + "°).";
                 return false;
             }
             if (maxH - minH > d.foundationThickness + d.footingDepth)
             {
-                reason = "Desnivel de " + (maxH - minH).ToString("0.0") + " m: la losa quedaría en el aire.";
+                reason = Tr.T("Desnivel de ") + (maxH - minH).ToString("0.0") + Tr.T(" m: la losa quedaría en el aire.");
                 return false;
             }
 
@@ -469,7 +489,7 @@ namespace MarsRobot.Base
                 if (c == null || c.GetComponent<TerrainChunk>() != null) continue;
                 if (_robotBody != null && c.attachedRigidbody == _robotBody) continue;
                 if (c.transform.IsChildOf(transform)) continue;
-                reason = "Choca con " + c.transform.root.name + ".";
+                reason = Tr.T("Choca con ") + c.transform.root.name + ".";
                 return false;
             }
 
@@ -502,7 +522,7 @@ namespace MarsRobot.Base
                 }
                 else if (!inv.TrySpend(data.gameCost))
                 {
-                    Show("Faltan materiales.");
+                    Show(Tr.T("Faltan materiales."));
                     return;
                 }
             }
@@ -516,16 +536,16 @@ namespace MarsRobot.Base
             {
                 RocketAirlock airlock = RocketAirlock.GetOrCreate(_base);
                 if (MarsHabitatBuilder.ConnectToRocket(habitat, _snapMyAnchor, airlock) != null) airlock.MarkConnected();
-                Show(data.displayName + ": en obra, unido a la esclusa del cohete. Desde el hangar, F en la escotilla baja a la base.");
+                Show(data.displayName + Tr.T(": en obra, unido a la esclusa del cohete. Desde el hangar, F en la escotilla baja a la base."));
             }
             else if (_snapTarget != null)
             {
                 MarsHabitatBuilder.ConnectHabitats(_snapTarget, _snapOtherAnchor, habitat, _snapMyAnchor);
-                Show(data.displayName + ": en obra, unido a " + _snapTarget.name + " con un pasillo presurizado.");
+                Show(data.displayName + Tr.T(": en obra, unido a ") + _snapTarget.name + Tr.T(" con un pasillo presurizado."));
             }
             else
             {
-                Show(data.displayName + ": en obra (5 capas).");
+                Show(data.displayName + Tr.T(": en obra (5 capas)."));
             }
         }
 
@@ -551,7 +571,7 @@ namespace MarsRobot.Base
 
         private void DrawHotbar()
         {
-            const float slotW = 190f, slotH = 72f, gap = 6f;
+            const float slotW = 250f, slotH = 76f, gap = 6f;
             float total = modules.Count * slotW + (modules.Count - 1) * gap;
             float x0 = (Screen.width - total) * 0.5f, y = Screen.height - slotH - 12f;
             BaseInventory inv = _base != null ? _base.Inventory : null;
@@ -564,6 +584,12 @@ namespace MarsRobot.Base
                 GUI.color = Color.white;
                 bool affordable = inv == null || inv.Has(payPerLayer ? m.GetLayerCost(HabitatLayer.Foundation) : m.gameCost);
                 string col = affordable ? "white" : "#ff9090";
+                Texture2D img = StructureArt.ForModule(m.moduleId);
+                if (img != null)
+                {
+                    GUI.DrawTexture(new Rect(r.x + 4, r.y + 4, r.height - 8, r.height - 8), img, ScaleMode.ScaleAndCrop);
+                    r = new Rect(r.x + r.height - 4, r.y, r.width - r.height + 4, r.height);
+                }
                 GUI.Label(new Rect(r.x + 6, r.y + 4, r.width - 12, r.height - 8),
                     "<b>" + (i + 1) + ". " + m.displayName + "</b>\n<color=" + col + ">" +
                     m.designPressureKPa.ToString("0.#") + " kPa · " + DimensionsLabel(m) + "</color>\n<size=10>" +
@@ -576,26 +602,33 @@ namespace MarsRobot.Base
             MarsModuleData d = SelectedModule;
             if (d == null) return;
             var sb = new StringBuilder();
-            sb.Append("<b>MODO HÁBITATS</b> — ").Append(d.displayName).Append("  (").Append(DimensionsLabel(d)).Append(")\n");
+            sb.Append(Tr.T("<b>MODO HÁBITATS</b> — ")).Append(d.displayName).Append("  (").Append(DimensionsLabel(d)).Append(")\n");
             sb.Append(d.description).Append('\n');
-            if (_snapRocket) sb.Append("<color=#80d8ff>Encaja con la esclusa del cohete (entrada desde la nave)</color>\n");
-            else if (_snapTarget != null) sb.Append("<color=#80d8ff>Encaja con ").Append(_snapTarget.name).Append(" (pasillo de ")
+            if (_snapRocket) sb.Append(Tr.T("<color=#80d8ff>Encaja con la esclusa del cohete (entrada desde la nave)</color>\n"));
+            else if (_snapTarget != null) sb.Append(Tr.T("<color=#80d8ff>Encaja con ")).Append(_snapTarget.name).Append(Tr.T(" (pasillo de "))
                                             .Append(d.connectorLength.ToString("0")).Append(" m)</color>\n");
-            else sb.Append("Acércalo a la puerta de otro módulo o a la parte trasera del cohete para conectarlo.\n");
+            else sb.Append(Tr.T("Acércalo a la puerta de otro módulo o a la parte trasera del cohete para conectarlo.\n"));
             sb.Append(_valid ? "<color=#80d8ff>Clic izquierdo: construir</color>" : "<color=#ff8080>" + _reason + "</color>");
-            if (payPerLayer) sb.Append("\nObra por fases: cada capa se paga al empezarla.");
-            sb.Append("\n1–4 / Tab elegir · Rueda girar · Alt sin encaje · N o Esc salir");
+            if (payPerLayer) sb.Append(Tr.T("\nObra por fases: cada capa se paga al empezarla."));
+            sb.Append(Tr.T("\n1–4 / Tab elegir · Rueda girar · Alt sin encaje · N o Esc salir"));
             if (Time.time - _messageTime < 4f && _message.Length > 0) sb.Append("\n<b>").Append(_message).Append("</b>");
             var r = new Rect(10f, Screen.height - 210f - 84f, 560f, 205f);
             GUI.Box(r, "");
-            GUI.Label(new Rect(r.x + 8, r.y + 6, r.width - 16, r.height - 12), sb.ToString());
+            Texture2D img = StructureArt.ForModule(d.moduleId);
+            float tx = 8f;
+            if (img != null)
+            {
+                GUI.DrawTexture(new Rect(r.x + 6, r.y + 6, 150f, 150f), img, ScaleMode.ScaleAndCrop);
+                tx = 164f;
+            }
+            GUI.Label(new Rect(r.x + tx, r.y + 6, r.width - tx - 8, r.height - 12), sb.ToString());
         }
 
         private void DrawRadial()
         {
             var center = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
             const float radius = 150f;
-            GUI.Box(new Rect(center.x - 60f, center.y - 18f, 120f, 36f), "Suelta Tab");
+            GUI.Box(new Rect(center.x - 60f, center.y - 18f, 120f, 36f), Tr.T("Suelta Tab"));
             for (int i = 0; i < modules.Count; i++)
             {
                 float a = i * Mathf.PI * 2f / modules.Count; // 0 = arriba, sentido horario
@@ -627,15 +660,15 @@ namespace MarsRobot.Base
             if (sb.Length == 0) return;
             var r = new Rect(Screen.width - 420f, 10f, 410f, 22f + 18f * Mathf.Min(8, all.Count));
             GUI.Box(r, "");
-            GUI.Label(new Rect(r.x + 8, r.y + 4, r.width - 16, r.height - 8), "<b>Obras</b>\n" + sb);
+            GUI.Label(new Rect(r.x + 8, r.y + 4, r.width - 16, r.height - 8), Tr.T("<b>Obras</b>\n") + sb);
         }
 
         private static string DimensionsLabel(MarsModuleData d)
         {
             if (d.IsDomeLike)
-                return "Ø " + (d.radius * 2f).ToString("0.#") + " m · alto " + d.DomeHeight.ToString("0.#") + " m";
+                return "Ø " + (d.radius * 2f).ToString("0.#") + Tr.T(" m · alto ") + d.DomeHeight.ToString("0.#") + " m";
             Vector3 s = d.ShellSize;
-            return s.x.ToString("0.#") + " × " + s.z.ToString("0.#") + " m · alto " + s.y.ToString("0.#") + " m";
+            return s.x.ToString("0.#") + " × " + s.z.ToString("0.#") + Tr.T(" m · alto ") + s.y.ToString("0.#") + " m";
         }
     }
 }

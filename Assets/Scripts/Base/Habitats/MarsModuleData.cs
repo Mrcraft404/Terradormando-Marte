@@ -94,7 +94,7 @@ namespace MarsRobot.Base
 
         public override string ToString()
         {
-            return "Capa " + (int)layer + " · " + material + ": " + amount.ToString("0.#") + " " + unit;
+            return Tr.T("Capa ") + (int)layer + " · " + material + ": " + amount.ToString("0.#") + " " + unit;
         }
     }
 
@@ -135,7 +135,7 @@ namespace MarsRobot.Base
 
         [Header("Identidad")]
         public string moduleId = "modulo";
-        public string displayName = "Módulo";
+        public string displayName = Tr.T("Módulo");
         [TextArea(2, 5)] public string description;
         public MarsModuleType type;
         public MarsModuleShape shape;
@@ -456,22 +456,22 @@ namespace MarsRobot.Base
                 : (shell.x + 2f) * (shell.z + 2f);
 
             // Capa 0: losa de regolito sinterizado + zapatas.
-            list.Add(new HabitatMaterialRequirement(HabitatLayer.Foundation, "Regolito sinterizado (losa)",
+            list.Add(new HabitatMaterialRequirement(HabitatLayer.Foundation, Tr.T("Regolito sinterizado (losa)"),
                 footprintArea * foundationThickness * SinteredRegolithDensityTonPerM3, "t"));
-            list.Add(new HabitatMaterialRequirement(HabitatLayer.Foundation, "Zapatas de anclaje", FootingCount(), "uds"));
+            list.Add(new HabitatMaterialRequirement(HabitatLayer.Foundation, Tr.T("Zapatas de anclaje"), FootingCount(), "uds"));
 
             // Capa 1: longitud total de costillas o barras → masa de titanio.
             float ribLength = EstimateRibLength();
             float ribSection = Mathf.PI * Mathf.Pow(ribThickness * 0.5f, 2f) * 0.35f; // perfil hueco (~35 % macizo)
             if (skeleton == HabitatSkeletonKind.InflatableCore)
             {
-                list.Add(new HabitatMaterialRequirement(HabitatLayer.Skeleton, "Cinchas de Vectran", ribLength, "m"));
-                list.Add(new HabitatMaterialRequirement(HabitatLayer.Skeleton, "Titanio (anillo de base)",
+                list.Add(new HabitatMaterialRequirement(HabitatLayer.Skeleton, Tr.T("Cinchas de Vectran"), ribLength, "m"));
+                list.Add(new HabitatMaterialRequirement(HabitatLayer.Skeleton, Tr.T("Titanio (anillo de base)"),
                     2f * Mathf.PI * radius * ribSection * 4f * TitaniumDensityKgPerM3, "kg"));
             }
             else
             {
-                string what = shape == MarsModuleShape.GeodesicDome ? "Titanio (barras geodésicas)" : "Titanio (costillas)";
+                string what = shape == MarsModuleShape.GeodesicDome ? Tr.T("Titanio (barras geodésicas)") : Tr.T("Titanio (costillas)");
                 list.Add(new HabitatMaterialRequirement(HabitatLayer.Skeleton, what, ribLength * ribSection * TitaniumDensityKgPerM3, "kg"));
             }
 
@@ -479,27 +479,27 @@ namespace MarsRobot.Base
             float area = ShellArea;
             if (shellKind == HabitatShellKind.TransparentLaminate)
             {
-                list.Add(new HabitatMaterialRequirement(HabitatLayer.PressureShell, "Vidrio laminado de silicato (paneles)", area, "m²"));
-                list.Add(new HabitatMaterialRequirement(HabitatLayer.PressureShell, "Láminas de ETFE (2 capas)", area * 2f, "m²"));
-                list.Add(new HabitatMaterialRequirement(HabitatLayer.PressureShell, "Película de baja emisividad", area, "m²"));
+                list.Add(new HabitatMaterialRequirement(HabitatLayer.PressureShell, Tr.T("Vidrio laminado de silicato (paneles)"), area, "m²"));
+                list.Add(new HabitatMaterialRequirement(HabitatLayer.PressureShell, Tr.T("Láminas de ETFE (2 capas)"), area * 2f, "m²"));
+                list.Add(new HabitatMaterialRequirement(HabitatLayer.PressureShell, Tr.T("Película de baja emisividad"), area, "m²"));
             }
             else
             {
-                list.Add(new HabitatMaterialRequirement(HabitatLayer.PressureShell, "Tejido de Kevlar", area * kevlarLayers, "m²"));
+                list.Add(new HabitatMaterialRequirement(HabitatLayer.PressureShell, Tr.T("Tejido de Kevlar"), area * kevlarLayers, "m²"));
                 list.Add(new HabitatMaterialRequirement(HabitatLayer.PressureShell, "Aerogel", area * aerogelMm / 1000f, "m³"));
-                list.Add(new HabitatMaterialRequirement(HabitatLayer.PressureShell, "Vejiga hermética (poliuretano)", area, "m²"));
+                list.Add(new HabitatMaterialRequirement(HabitatLayer.PressureShell, Tr.T("Vejiga hermética (poliuretano)"), area, "m²"));
             }
 
             // Capa 3: escudo.
             float shieldTons = EstimateShieldVolume() * ShieldDensity;
             if (shieldKind == HabitatShieldKind.WaterIce)
             {
-                list.Add(new HabitatMaterialRequirement(HabitatLayer.RegolithShield, "Hielo de agua", shieldTons, "t"));
-                list.Add(new HabitatMaterialRequirement(HabitatLayer.RegolithShield, "Membrana contenedora (ETFE)", area * 2.2f, "m²"));
+                list.Add(new HabitatMaterialRequirement(HabitatLayer.RegolithShield, Tr.T("Hielo de agua"), shieldTons, "t"));
+                list.Add(new HabitatMaterialRequirement(HabitatLayer.RegolithShield, Tr.T("Membrana contenedora (ETFE)"), area * 2.2f, "m²"));
             }
             else
             {
-                list.Add(new HabitatMaterialRequirement(HabitatLayer.RegolithShield, "Regolito compactado", shieldTons, "t"));
+                list.Add(new HabitatMaterialRequirement(HabitatLayer.RegolithShield, Tr.T("Regolito compactado"), shieldTons, "t"));
             }
 
             // Capa 4: equipamiento.
@@ -553,10 +553,10 @@ namespace MarsRobot.Base
         {
             switch (type)
             {
-                case MarsModuleType.CropDome: return "Racks hidropónicos con LED";
-                case MarsModuleType.CrewHabitat: return "Literas, cocina y estaciones de trabajo";
-                case MarsModuleType.IsruPlant: return "Tanques, electrolizador y reactor Sabatier";
-                default: return "Bancos de trabajo, brazo robótico y estanterías";
+                case MarsModuleType.CropDome: return Tr.T("Racks hidropónicos con LED");
+                case MarsModuleType.CrewHabitat: return Tr.T("Literas, cocina y estaciones de trabajo");
+                case MarsModuleType.IsruPlant: return Tr.T("Tanques, electrolizador y reactor Sabatier");
+                default: return Tr.T("Bancos de trabajo, brazo robótico y estanterías");
             }
         }
 
@@ -606,9 +606,9 @@ namespace MarsRobot.Base
             {
                 case MarsModuleType.CropDome:
                     d.moduleId = "domo_cultivo";
-                    d.displayName = "Domo de cultivo";
-                    d.description = "Cúpula geodésica de 12 m de diámetro y 5,5 m de alto, acristalada y a baja presión " +
-                                    "(55 kPa). Un escudo de hielo de agua deja pasar la luz y frena la radiación.";
+                    d.displayName = Tr.T("Domo de cultivo");
+                    d.description = Tr.T("Cúpula geodésica de 12 m de diámetro y 5,5 m de alto, acristalada y a baja presión ") +
+                                    Tr.T("(55 kPa). Un escudo de hielo de agua deja pasar la luz y frena la radiación.");
                     d.shape = MarsModuleShape.GeodesicDome;
                     d.radius = 6f;
                     d.domeHeight = 5.5f;
@@ -627,8 +627,8 @@ namespace MarsRobot.Base
                     break;
                 case MarsModuleType.CrewHabitat:
                     d.moduleId = "habitat_tripulacion";
-                    d.displayName = "Hábitat principal (tripulación)";
-                    d.description = "Tubo rígido a presión terrestre (101,3 kPa) con literas, cocina y estaciones de trabajo.";
+                    d.displayName = Tr.T("Hábitat principal (tripulación)");
+                    d.description = Tr.T("Tubo rígido a presión terrestre (101,3 kPa) con literas, cocina y estaciones de trabajo.");
                     d.shape = MarsModuleShape.HorizontalTube;
                     d.radius = 3f;
                     d.length = 12f;
@@ -641,8 +641,8 @@ namespace MarsRobot.Base
                     break;
                 case MarsModuleType.IsruPlant:
                     d.moduleId = "planta_isru";
-                    d.displayName = "Planta ISRU";
-                    d.description = "Nave de procesado: electrólisis de agua, reactor Sabatier (CO₂ + H₂ → CH₄) y tanques.";
+                    d.displayName = Tr.T("Planta ISRU");
+                    d.description = Tr.T("Nave de procesado: electrólisis de agua, reactor Sabatier (CO₂ + H₂ → CH₄) y tanques.");
                     d.shape = MarsModuleShape.Box;
                     d.width = 10f;
                     d.length = 14f;
@@ -655,8 +655,8 @@ namespace MarsRobot.Base
                     break;
                 default:
                     d.moduleId = "taller_robotica";
-                    d.displayName = "Taller de robótica";
-                    d.description = "Nave para reparar y fabricar robots: bancos, brazo robótico y plataforma de carga.";
+                    d.displayName = Tr.T("Taller de robótica");
+                    d.description = Tr.T("Nave para reparar y fabricar robots: bancos, brazo robótico y plataforma de carga.");
                     d.shape = MarsModuleShape.Box;
                     d.width = 12f;
                     d.length = 12f;

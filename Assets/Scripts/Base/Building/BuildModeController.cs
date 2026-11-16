@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using MarsRobot.Core;
 using MarsRobot.Robot;
+using MarsRobot.UI;
 using MarsRobot.World.TerrainSystem;
 using UnityEngine;
 
@@ -57,9 +58,18 @@ namespace MarsRobot.Base
 
             if (RobotInput.BuildModePressed && (_link == null || !_link.IsMenuOpen))
             {
-                SetActive(!IsActive);
+                if (IsActive) SetActive(false);
+                else
+                {
+                    // Como en los juegos de supervivencia: B abre la cuadrícula con fotos de lo que
+                    // se puede construir (pestaña Equipos). Si no hay menú, el modo clásico.
+                    var grid = GetComponent<SpaceBuildMenu>();
+                    if (grid != null && grid.enabled) grid.OpenMenuAt(PieceCategory.Equipment);
+                    else SetActive(true);
+                }
             }
             if (!IsActive) return;
+            PieceThumbnails.Process(1); // foto de la tarjeta (si aún no estaba hecha)
             if (RobotInput.ReleaseCursorPressed)
             {
                 SetActive(false);
@@ -88,6 +98,22 @@ namespace MarsRobot.Base
         }
 
         private bool _wasLocked;
+
+        /// <summary>Entra en el modo B con una estructura ya elegida (lo usa el menú de construcción en cuadrícula).</summary>
+        public void BeginPlacing(StructureDefinition def)
+        {
+            if (def == null) return;
+            if (!IsActive) SetActive(true);
+            _category = def.category;
+            RefreshCategory();
+            Select(def);
+        }
+
+        /// <summary>Sale del modo B (si estaba activo).</summary>
+        public void Stop()
+        {
+            if (IsActive) SetActive(false);
+        }
 
         private void SetActive(bool active)
         {
@@ -173,12 +199,12 @@ namespace MarsRobot.Base
 
             if (!_base.Research.IsUnlocked(def))
             {
-                reason = "Bloqueado: necesita " + def.researchCost + " puntos de investigación (laboratorio).";
+                reason = Tr.T("Bloqueado: necesita ") + def.researchCost + Tr.T(" puntos de investigación (laboratorio).");
                 return false;
             }
             if (!_base.Inventory.Has(def.cost))
             {
-                reason = "Faltan materiales: " + BaseInventory.Describe(def.cost);
+                reason = Tr.T("Faltan materiales: ") + BaseInventory.Describe(def.cost);
                 return false;
             }
 
@@ -186,7 +212,7 @@ namespace MarsRobot.Base
             toBase.y = 0f;
             if (!def.ignoreBuildRadius && toBase.magnitude > RocketBase.BuildRadius)
             {
-                reason = "Demasiado lejos del cohete (máx. " + RocketBase.BuildRadius.ToString("0") + " m).";
+                reason = Tr.T("Demasiado lejos del cohete (máx. ") + RocketBase.BuildRadius.ToString("0") + " m).";
                 return false;
             }
 
@@ -203,7 +229,7 @@ namespace MarsRobot.Base
             float allowed = Mathf.Tan(def.maxSlopeDegrees * Mathf.Deg2Rad) * Mathf.Max(def.size.x, def.size.z);
             if (maxH - minH > allowed)
             {
-                reason = "Terreno demasiado inclinado (máx. " + def.maxSlopeDegrees.ToString("0") + "°).";
+                reason = Tr.T("Terreno demasiado inclinado (máx. ") + def.maxSlopeDegrees.ToString("0") + "°).";
                 return false;
             }
 
@@ -216,7 +242,7 @@ namespace MarsRobot.Base
                 Collider c = _overlaps[i];
                 if (c.GetComponent<TerrainChunk>() != null) continue;
                 if (_robotBody != null && c.attachedRigidbody == _robotBody) continue;
-                reason = "Choca con " + c.transform.root.name + ".";
+                reason = Tr.T("Choca con ") + c.transform.root.name + ".";
                 return false;
             }
 
@@ -228,16 +254,16 @@ namespace MarsRobot.Base
         {
             if (_selected == null || !_valid)
             {
-                Show(_reason.Length > 0 ? _reason : "Elige una estructura con los números.");
+                Show(_reason.Length > 0 ? _reason : Tr.T("Elige una estructura con los números."));
                 return;
             }
             if (!_base.Inventory.TrySpend(_selected.cost))
             {
-                Show("Faltan materiales.");
+                Show(Tr.T("Faltan materiales."));
                 return;
             }
             _base.PlaceStructure(_selected, _ghost.transform.position, _ghost.transform.rotation);
-            Show(_selected.name + " construido.");
+            Show(_selected.name + Tr.T(" construido."));
         }
 
         private void Show(string text)
@@ -250,41 +276,34 @@ namespace MarsRobot.Base
         // Interfaz (IMGUI provisional)
         // ------------------------------------------------------------------
 
+        /// <summary>Tarjeta pequeña mientras colocas: foto, nombre, coste y si se puede poner ahí.</summary>
         private void OnGUI()
         {
-            if (!IsActive || _base == null) return;
-            GUI.skin.label.richText = true;
+            if (!IsActive || _base == null || _selected == null) return;
+            HudTheme.BeginScaled();
+            var r = new Rect(20f, 900f - 190f, 640f, 170f);
+            HudTheme.Frame(r, HudTheme.PanelBg, _valid ? HudTheme.Accent : HudTheme.Bad, 3f);
 
-            var sb = new System.Text.StringBuilder();
-            sb.Append("<b>MODO CONSTRUCCIÓN</b>   Categoría: <b>").Append(StructureCatalog.CategoryLabel(_category))
-              .Append("</b>  (Tab cambia)\n\n");
-            for (int i = 0; i < _inCategory.Count; i++)
-            {
-                StructureDefinition d = _inCategory[i];
-                bool locked = !_base.Research.IsUnlocked(d);
-                bool affordable = _base.Inventory.Has(d.cost);
-                string color = d == _selected ? "#ffd060" : (locked ? "#888888" : (affordable ? "white" : "#ff9090"));
-                sb.Append("<color=").Append(color).Append('>').Append(i + 1).Append(". ").Append(d.name);
-                if (locked) sb.Append("  [investigación: ").Append(d.researchCost).Append(']');
-                sb.Append("  —  ").Append(BaseInventory.Describe(d.cost)).Append("</color>\n");
-            }
-            if (_selected != null)
-            {
-                sb.Append('\n').Append(_selected.description).Append('\n');
-                sb.Append(_valid ? "<color=#80ff80>Clic o Intro: construir</color>" : "<color=#ff8080>" + _reason + "</color>");
-            }
-            sb.Append("\nR girar · B o Esc salir");
-            if (Time.time - _messageTime < 3f) sb.Append("\n\n<b>").Append(_message).Append("</b>");
-
-            const float w = 560f, h = 330f;
-            Rect r = new Rect(10, Screen.height - h - 10, w, h);
-            GUI.Box(r, "");
-            GUI.Label(new Rect(r.x + 8, r.y + 6, w - 16, h - 12), sb.ToString());
+            StructureDefinition def = _selected;
+            Texture2D icon = StructureArt.ForEquipment(def.id) ?? PieceThumbnails.Get("equipo:" + def.id, t => StructureModels.Build(def, t, null));
+            if (icon != null) GUI.DrawTexture(new Rect(r.x + 8f, r.y + 8f, 154f, 154f), icon, ScaleMode.ScaleAndCrop);
+            float tx = r.x + 172f, tw = r.width - 186f;
+            GUI.Label(new Rect(tx, r.y + 8f, tw, 30f), def.name, HudTheme.Title);
+            bool affordable = _base.Inventory.Has(def.cost);
+            Color prev = GUI.contentColor;
+            GUI.contentColor = affordable ? HudTheme.Good : HudTheme.Bad;
+            GUI.Label(new Rect(tx, r.y + 44f, tw, 24f), Localization.Localizer.L("Cuesta: ", "Costs: ") + BaseInventory.Describe(def.cost), HudTheme.Body);
+            GUI.contentColor = _valid ? HudTheme.Good : HudTheme.Bad;
+            GUI.Label(new Rect(tx, r.y + 72f, tw, 48f), _valid ? Localization.Localizer.L("¡Aquí cabe! Haz clic para construir.", "It fits here! Click to build.") : _reason, HudTheme.Body);
+            GUI.contentColor = prev;
+            string msg = Time.time - _messageTime < 3f ? _message : Localization.Localizer.L("R girar  ·  B elegir otra cosa  ·  Esc salir", "R rotate  ·  B pick something else  ·  Esc exit");
+            GUI.Label(new Rect(tx, r.y + 126f, tw, 36f), msg, HudTheme.Small);
+            HudTheme.EndScaled();
         }
 
         private void OnDisable()
         {
-            // Por ejemplo, al subir al MarteCar: se sale del modo construcción.
+            // Por ejemplo, al desactivar el robot: se sale del modo construcción.
             if (IsActive) SetActive(false);
             DestroyGhost();
         }

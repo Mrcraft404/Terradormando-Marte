@@ -57,7 +57,7 @@ namespace MarsRobot.Visuals
                 case "rabano":
                     for (int i = 0; i < 6; i++)
                         Leaf(p.Root, new Vector3(0f, 0.05f, 0f), i * 60f + R() * 20f, 55f, new Vector3(0.06f, 0.015f, 0.22f), M("Hoja de rábano", new Color(0.3f, 0.55f, 0.18f)));
-                    var root = Part(PrimitiveType.Sphere, p.Root, new Vector3(0f, 0.03f, 0f), new Vector3(0.07f, 0.065f, 0.07f), Vector3.zero, M("Rábano", new Color(0.85f, 0.12f, 0.28f), 0.6f));
+                    var root = Part(PrimitiveType.Sphere, p.Root, new Vector3(0f, 0.03f, 0f), new Vector3(0.07f, 0.065f, 0.07f), Vector3.zero, M(Tr.T("Rábano"), new Color(0.85f, 0.12f, 0.28f), 0.6f));
                     p.Fruits.Add(root);
                     break;
 

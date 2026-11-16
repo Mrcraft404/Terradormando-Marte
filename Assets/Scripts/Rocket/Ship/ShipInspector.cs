@@ -245,14 +245,14 @@ namespace MarsRobot.Base.Ship
             }
 
             float r = ShipModel.OuterRadius;
-            AddDim(new Vector3(r + 3f, 0f, 0f), new Vector3(r + 3f, ShipModel.TotalHeight, 0f), "Altura 52,5 m");
-            AddDim(new Vector3(-r, 0.4f, r + 2f), new Vector3(r, 0.4f, r + 2f), "Ø exterior 9 m");
-            AddDim(new Vector3(-r - 2.5f, 0f, 0f), new Vector3(-r - 2.5f, ShipModel.FirstLevelFloor, 0f), "Tanques y motores 0–24,5 m");
+            AddDim(new Vector3(r + 3f, 0f, 0f), new Vector3(r + 3f, ShipModel.TotalHeight, 0f), Tr.T("Altura 52,5 m"));
+            AddDim(new Vector3(-r, 0.4f, r + 2f), new Vector3(r, 0.4f, r + 2f), Tr.T("Ø exterior 9 m"));
+            AddDim(new Vector3(-r - 2.5f, 0f, 0f), new Vector3(-r - 2.5f, ShipModel.FirstLevelFloor, 0f), Tr.T("Tanques y motores 0–24,5 m"));
             if (_selected > 0)
             {
                 float y = ShipModel.LevelFloorY(_selected - 1);
-                AddDim(new Vector3(r + 1.2f, y, 0f), new Vector3(r + 1.2f, y + ShipModel.LevelHeight, 0f), "3,2 m entre niveles");
-                AddDim(new Vector3(-ShipModel.InnerRadius, y + 0.15f, 0f), new Vector3(ShipModel.InnerRadius, y + 0.15f, 0f), "Ø interior 8,2 m");
+                AddDim(new Vector3(r + 1.2f, y, 0f), new Vector3(r + 1.2f, y + ShipModel.LevelHeight, 0f), Tr.T("3,2 m entre niveles"));
+                AddDim(new Vector3(-ShipModel.InnerRadius, y + 0.15f, 0f), new Vector3(ShipModel.InnerRadius, y + 0.15f, 0f), Tr.T("Ø interior 8,2 m"));
             }
             foreach (LineRenderer l in _lines) l.enabled = _dims;
         }
@@ -297,23 +297,23 @@ namespace MarsRobot.Base.Ship
             _panelRect = new Rect(Screen.width - 380, Screen.height - 360, 370, 350);
             GUI.Box(_panelRect, "");
             GUILayout.BeginArea(new Rect(_panelRect.x + 10, _panelRect.y + 8, _panelRect.width - 20, _panelRect.height - 16));
-            GUILayout.Label("<b>Inspección del cohete nodriza</b>  (52,5 × Ø 9 m)", _panel);
-            GUILayout.Label(_selected == 0 ? "Vista: todos los niveles" : "Vista: " + ShipModel.LevelNames[_selected - 1] + (_isolate ? " (aislado)" : ""), _panel);
+            GUILayout.Label(Tr.T("<b>Inspección del cohete nodriza</b>  (52,5 × Ø 9 m)"), _panel);
+            GUILayout.Label(_selected == 0 ? Tr.T("Vista: todos los niveles") : Tr.T("Vista: ") + ShipModel.LevelNames[_selected - 1] + (_isolate ? Tr.T(" (aislado)") : ""), _panel);
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button("Todos")) SelectLevel(0, false);
+            if (GUILayout.Button(Tr.T("Todos"))) SelectLevel(0, false);
             for (int i = 1; i <= ShipModel.LevelCount; i++) if (GUILayout.Button("N" + i)) SelectLevel(i, false);
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
-            _cut = GUILayout.Toggle(_cut, " Corte (C)");
-            _labels = GUILayout.Toggle(_labels, " Etiquetas (L)");
-            bool d = GUILayout.Toggle(_dims, " Cotas (M)");
+            _cut = GUILayout.Toggle(_cut, Tr.T(" Corte (C)"));
+            _labels = GUILayout.Toggle(_labels, Tr.T(" Etiquetas (L)"));
+            bool d = GUILayout.Toggle(_dims, Tr.T(" Cotas (M)"));
             if (d != _dims)
             {
                 _dims = d;
                 foreach (LineRenderer l in _lines) l.enabled = _dims;
             }
             GUILayout.EndHorizontal();
-            GUILayout.Label("Ratón izq.: rotar · der.: desplazar · rueda: zoom\nWASD mover · Q/E bajar/subir · Mayús rápido\n1–5 nivel (Mayús+n: aislar) · 0 todos · K/Esc salir\n\n<i>Distribución interior ficticia para el juego: la nave real no tiene estas plantas.</i>", _panel);
+            GUILayout.Label(Tr.T("Ratón izq.: rotar · der.: desplazar · rueda: zoom\nWASD mover · Q/E bajar/subir · Mayús rápido\n1–5 nivel (Mayús+n: aislar) · 0 todos · K/Esc salir\n\n<i>Distribución interior ficticia para el juego: la nave real no tiene estas plantas.</i>"), _panel);
             GUILayout.EndArea();
         }
 

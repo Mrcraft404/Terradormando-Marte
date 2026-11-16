@@ -25,19 +25,19 @@ namespace MarsRobot.Base
             {
                 GUILayout.BeginHorizontal();
                 GUI.enabled = health.StructuralIntegrity01 < 0.999f;
-                if (GUILayout.Button("R. Reparación completa (gratis en la base)", GUILayout.Width(330)) ||
+                if (GUILayout.Button(Tr.T("R. Reparación completa (gratis en la base)"), GUILayout.Width(330)) ||
                     (GUI.enabled && KeyPressed(KeyCode.R)))
                 {
                     health.RepairAll();
-                    _lastResult = "Robot reparado al 100 %.";
+                    _lastResult = Tr.T("Robot reparado al 100 %.");
                 }
                 GUI.enabled = true;
-                GUILayout.Label("Integridad: " + Mathf.RoundToInt(health.StructuralIntegrity01 * 100f) + " %");
+                GUILayout.Label(Tr.T("Integridad: ") + Mathf.RoundToInt(health.StructuralIntegrity01 * 100f) + " %");
                 GUILayout.EndHorizontal();
                 GUILayout.Space(6);
             }
 
-            GUILayout.Label("<b>Mejoras</b> (el nivel N cuesta N veces el precio base):");
+            GUILayout.Label(Tr.T("<b>Mejoras</b> (el nivel N cuesta N veces el precio base):"));
             for (int i = 0; i < catalog.Count; i++)
             {
                 RobotUpgradeDefinition def = catalog[i];
@@ -51,13 +51,13 @@ namespace MarsRobot.Base
                 if (GUILayout.Button(label, GUILayout.Width(260)) || (GUI.enabled && NumberPressed(i)))
                 {
                     _lastResult = upgrades.TryInstall(def, inv)
-                        ? def.name + " instalada (nivel " + upgrades.GetLevel(def) + ")."
-                        : "No se pudo instalar " + def.name + ".";
+                        ? def.name + Tr.T(" instalada (nivel ") + upgrades.GetLevel(def) + ")."
+                        : Tr.T("No se pudo instalar ") + def.name + ".";
                 }
                 GUI.enabled = true;
                 string cost = maxed ? "<color=#80ff80>nivel máximo</color>"
-                    : BaseInventory.Describe(def.baseCost, level + 1) + (affordable ? "" : "  <color=#ff8080>faltan recursos</color>");
-                GUILayout.Label(def.description + "\n   Coste: " + cost);
+                    : BaseInventory.Describe(def.baseCost, level + 1) + (affordable ? "" : Tr.T("  <color=#ff8080>faltan recursos</color>"));
+                GUILayout.Label(def.description + Tr.T("\n   Coste: ") + cost);
                 GUILayout.EndHorizontal();
             }
 

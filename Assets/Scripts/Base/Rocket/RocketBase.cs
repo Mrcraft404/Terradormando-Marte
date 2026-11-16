@@ -188,30 +188,30 @@ namespace MarsRobot.Base
 
             // Hangar (nivel 1): puesto de carga, taller de modificaciones y terminal del robot.
             int hangar = MarsRobot.Base.Ship.ShipModel.HangarLevel;
-            AddStationInside<ChargingPad>("Puesto de carga del hangar", MarsRobot.Base.Ship.ShipLayout.OnLevel(hangar, MarsRobot.Base.Ship.ShipLayout.RobotDock), 2.6f);
-            AddStationInside<RobotAssemblyBay>("Taller de modificaciones", MarsRobot.Base.Ship.ShipLayout.OnLevel(hangar, MarsRobot.Base.Ship.ShipLayout.AssemblyBay), 2.2f);
+            AddStationInside<ChargingPad>(Tr.T("Puesto de carga del hangar"), MarsRobot.Base.Ship.ShipLayout.OnLevel(hangar, MarsRobot.Base.Ship.ShipLayout.RobotDock), 2.6f);
+            AddStationInside<RobotAssemblyBay>(Tr.T("Taller de modificaciones"), MarsRobot.Base.Ship.ShipLayout.OnLevel(hangar, MarsRobot.Base.Ship.ShipLayout.AssemblyBay), 2.2f);
 
             // Talleres (nivel 2): estaciones de fabricación del astronauta.
             int shop = MarsRobot.Base.Ship.ShipModel.WorkshopLevel;
             Transform shipRoot = Mothership.transform;
-            MarsRobot.Crafting.CraftingStation.Create(shipRoot, "Fabricador", MarsRobot.Crafting.CraftStation.Fabricator, MarsRobot.Base.Ship.ShipLayout.OnLevel(shop, MarsRobot.Base.Ship.ShipLayout.Fabricator), MarsRobot.Base.Ship.ShipLayout.FabricatorFacing);
-            MarsRobot.Crafting.CraftingStation.Create(shipRoot, "Fundición", MarsRobot.Crafting.CraftStation.Smelter, MarsRobot.Base.Ship.ShipLayout.OnLevel(shop, MarsRobot.Base.Ship.ShipLayout.Smelter), MarsRobot.Base.Ship.ShipLayout.SmelterFacing);
-            MarsRobot.Crafting.CraftingStation.Create(shipRoot, "Refinería química", MarsRobot.Crafting.CraftStation.Refinery, MarsRobot.Base.Ship.ShipLayout.OnLevel(shop, MarsRobot.Base.Ship.ShipLayout.Refinery), MarsRobot.Base.Ship.ShipLayout.RefineryFacing);
-            MarsRobot.Crafting.CraftingStation.Create(shipRoot, "Banco de trabajo", MarsRobot.Crafting.CraftStation.Workbench, MarsRobot.Base.Ship.ShipLayout.OnLevel(shop, MarsRobot.Base.Ship.ShipLayout.Workbench), MarsRobot.Base.Ship.ShipLayout.WorkbenchFacing);
-            MarsRobot.Crafting.ContainerAccess.Create(shipRoot, "Almacén de la base", MarsRobot.Base.Ship.ShipLayout.OnLevel(shop, MarsRobot.Base.Ship.ShipLayout.Lockers), () => Inventory.Storage);
+            MarsRobot.Crafting.CraftingStation.Create(shipRoot, Tr.T("Fabricador"), MarsRobot.Crafting.CraftStation.Fabricator, MarsRobot.Base.Ship.ShipLayout.OnLevel(shop, MarsRobot.Base.Ship.ShipLayout.Fabricator), MarsRobot.Base.Ship.ShipLayout.FabricatorFacing);
+            MarsRobot.Crafting.CraftingStation.Create(shipRoot, Tr.T("Fundición"), MarsRobot.Crafting.CraftStation.Smelter, MarsRobot.Base.Ship.ShipLayout.OnLevel(shop, MarsRobot.Base.Ship.ShipLayout.Smelter), MarsRobot.Base.Ship.ShipLayout.SmelterFacing);
+            MarsRobot.Crafting.CraftingStation.Create(shipRoot, Tr.T("Refinería química"), MarsRobot.Crafting.CraftStation.Refinery, MarsRobot.Base.Ship.ShipLayout.OnLevel(shop, MarsRobot.Base.Ship.ShipLayout.Refinery), MarsRobot.Base.Ship.ShipLayout.RefineryFacing);
+            MarsRobot.Crafting.CraftingStation.Create(shipRoot, Tr.T("Banco de trabajo"), MarsRobot.Crafting.CraftStation.Workbench, MarsRobot.Base.Ship.ShipLayout.OnLevel(shop, MarsRobot.Base.Ship.ShipLayout.Workbench), MarsRobot.Base.Ship.ShipLayout.WorkbenchFacing);
+            MarsRobot.Crafting.ContainerAccess.Create(shipRoot, Tr.T("Almacén de la base"), MarsRobot.Base.Ship.ShipLayout.OnLevel(shop, MarsRobot.Base.Ship.ShipLayout.Lockers), () => Inventory.Storage);
 
             // Niveles 3–5: impresora 3D, electrónica, huerto, laboratorio, agua, oxígeno y cocina.
-            Station(shipRoot, 2, "Impresora 3D", MarsRobot.Crafting.CraftStation.Printer3D, MarsRobot.Base.Ship.ShipLayout.Printer3D);
-            Station(shipRoot, 2, "Taller de electrónica", MarsRobot.Crafting.CraftStation.Electronics, MarsRobot.Base.Ship.ShipLayout.ElectronicsBench);
-            MarsRobot.Crafting.ContainerAccess.Create(shipRoot, "contenedores de minerales (almacén)",
+            Station(shipRoot, 2, Tr.T("Impresora 3D"), MarsRobot.Crafting.CraftStation.Printer3D, MarsRobot.Base.Ship.ShipLayout.Printer3D);
+            Station(shipRoot, 2, Tr.T("Taller de electrónica"), MarsRobot.Crafting.CraftStation.Electronics, MarsRobot.Base.Ship.ShipLayout.ElectronicsBench);
+            MarsRobot.Crafting.ContainerAccess.Create(shipRoot, Tr.T("contenedores de minerales (almacén)"),
                 MarsRobot.Base.Ship.ShipLayout.OnLevel(2, MarsRobot.Base.Ship.ShipLayout.MineralBins.Position), () => Inventory.Storage);
-            Station(shipRoot, 3, "Huerto hidropónico A", MarsRobot.Crafting.CraftStation.Garden, MarsRobot.Base.Ship.ShipLayout.GardenA).gameObject.AddComponent<MarsRobot.Crafting.GardenVisual>();
-            Station(shipRoot, 3, "Huerto hidropónico B", MarsRobot.Crafting.CraftStation.Garden, MarsRobot.Base.Ship.ShipLayout.GardenB).gameObject.AddComponent<MarsRobot.Crafting.GardenVisual>();
-            Station(shipRoot, 3, "Laboratorio", MarsRobot.Crafting.CraftStation.Lab, MarsRobot.Base.Ship.ShipLayout.Laboratory);
-            Station(shipRoot, 4, "Planta de agua", MarsRobot.Crafting.CraftStation.WaterPlant, MarsRobot.Base.Ship.ShipLayout.WaterPlant);
-            Station(shipRoot, 4, "Generador de oxígeno", MarsRobot.Crafting.CraftStation.OxygenPlant, MarsRobot.Base.Ship.ShipLayout.OxygenPlant);
-            Station(shipRoot, 4, "Cocina", MarsRobot.Crafting.CraftStation.Kitchen, MarsRobot.Base.Ship.ShipLayout.Kitchen);
-            MarsRobot.Crafting.ContainerAccess.Create(shipRoot, "despensa (almacén)",
+            Station(shipRoot, 3, Tr.T("Huerto hidropónico A"), MarsRobot.Crafting.CraftStation.Garden, MarsRobot.Base.Ship.ShipLayout.GardenA).gameObject.AddComponent<MarsRobot.Crafting.GardenVisual>();
+            Station(shipRoot, 3, Tr.T("Huerto hidropónico B"), MarsRobot.Crafting.CraftStation.Garden, MarsRobot.Base.Ship.ShipLayout.GardenB).gameObject.AddComponent<MarsRobot.Crafting.GardenVisual>();
+            Station(shipRoot, 3, Tr.T("Laboratorio"), MarsRobot.Crafting.CraftStation.Lab, MarsRobot.Base.Ship.ShipLayout.Laboratory);
+            Station(shipRoot, 4, Tr.T("Planta de agua"), MarsRobot.Crafting.CraftStation.WaterPlant, MarsRobot.Base.Ship.ShipLayout.WaterPlant);
+            Station(shipRoot, 4, Tr.T("Generador de oxígeno"), MarsRobot.Crafting.CraftStation.OxygenPlant, MarsRobot.Base.Ship.ShipLayout.OxygenPlant);
+            Station(shipRoot, 4, Tr.T("Cocina"), MarsRobot.Crafting.CraftStation.Kitchen, MarsRobot.Base.Ship.ShipLayout.Kitchen);
+            MarsRobot.Crafting.ContainerAccess.Create(shipRoot, Tr.T("despensa (almacén)"),
                 MarsRobot.Base.Ship.ShipLayout.OnLevel(4, MarsRobot.Base.Ship.ShipLayout.Pantry.Position), () => Inventory.Storage);
 
             // Ascensor exterior: lleva al robot del suelo al hangar.

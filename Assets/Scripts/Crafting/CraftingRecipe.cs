@@ -100,6 +100,12 @@ namespace MarsRobot.Crafting
     {
         private static List<CraftingRecipe> _all;
 
+        /// <summary>Vuelve a crear las recetas (p. ej. tras cambiar de idioma, al empezar partida).</summary>
+        public static void ResetCache()
+        {
+            _all = null;
+        }
+
         public static IReadOnlyList<CraftingRecipe> All
         {
             get
@@ -113,18 +119,18 @@ namespace MarsRobot.Crafting
         {
             switch (s)
             {
-                case CraftStation.Hand: return "Inventario (a mano)";
-                case CraftStation.Workbench: return "Banco de trabajo";
-                case CraftStation.Fabricator: return "Fabricador";
-                case CraftStation.Smelter: return "Fundición";
-                case CraftStation.Refinery: return "Refinería química";
-                case CraftStation.Printer3D: return "Impresora 3D";
-                case CraftStation.Electronics: return "Taller de electrónica";
-                case CraftStation.Garden: return "Huerto hidropónico";
-                case CraftStation.Lab: return "Laboratorio";
-                case CraftStation.WaterPlant: return "Planta de agua";
-                case CraftStation.OxygenPlant: return "Generador de oxígeno";
-                default: return "Cocina";
+                case CraftStation.Hand: return Tr.T("Inventario (a mano)");
+                case CraftStation.Workbench: return Tr.T("Banco de trabajo");
+                case CraftStation.Fabricator: return Tr.T("Fabricador");
+                case CraftStation.Smelter: return Tr.T("Fundición");
+                case CraftStation.Refinery: return Tr.T("Refinería química");
+                case CraftStation.Printer3D: return Tr.T("Impresora 3D");
+                case CraftStation.Electronics: return Tr.T("Taller de electrónica");
+                case CraftStation.Garden: return Tr.T("Huerto hidropónico");
+                case CraftStation.Lab: return Tr.T("Laboratorio");
+                case CraftStation.WaterPlant: return Tr.T("Planta de agua");
+                case CraftStation.OxygenPlant: return Tr.T("Generador de oxígeno");
+                default: return Tr.T("Cocina");
             }
         }
 
@@ -153,16 +159,16 @@ namespace MarsRobot.Crafting
 
             // Fundición: minerales → materiales.
             Add("lingote", S, ItemDatabase.IronIngot, 1, 8f, null, I(ItemDatabase.IronOre, 2));
-            Add("silicio_arcilla", S, ItemDatabase.SiliconRefined, 1, 10f, "de arcillas", I(ItemDatabase.Clays, 2));
-            Add("silicio_regolito", S, ItemDatabase.SiliconRefined, 1, 14f, "de regolito", I(ItemDatabase.Regolith, 4));
+            Add("silicio_arcilla", S, ItemDatabase.SiliconRefined, 1, 10f, Tr.T("de arcillas"), I(ItemDatabase.Clays, 2));
+            Add("silicio_regolito", S, ItemDatabase.SiliconRefined, 1, 14f, Tr.T("de regolito"), I(ItemDatabase.Regolith, 4));
             Add("vidrio", S, ItemDatabase.Glass, 1, 8f, null, I(ItemDatabase.Regolith, 3));
             Add("azufre", S, ItemDatabase.Sulfur, 1, 6f, null, I(ItemDatabase.Sulfates, 2));
-            Add("agua_hielo", S, ItemDatabase.Water, 2, 4f, "fundir hielo", I(ItemDatabase.Ice, 1));
-            Add("lingote_perclorato", S, ItemDatabase.Oxygen, 1, 10f, "de percloratos", I(ItemDatabase.PerchlorateRegolith, 2));
+            Add("agua_hielo", S, ItemDatabase.Water, 2, 4f, Tr.T("fundir hielo"), I(ItemDatabase.Ice, 1));
+            Add("lingote_perclorato", S, ItemDatabase.Oxygen, 1, 10f, Tr.T("de percloratos"), I(ItemDatabase.PerchlorateRegolith, 2));
 
             // Refinería química: atmósfera y volátiles.
-            Add("co2", R, ItemDatabase.Co2, 1, 10f, "captar de la atmósfera");
-            Add("oxigeno", R, ItemDatabase.Oxygen, 1, 8f, "electrólisis", I(ItemDatabase.Water, 1));
+            Add("co2", R, ItemDatabase.Co2, 1, 10f, Tr.T("captar de la atmósfera"));
+            Add("oxigeno", R, ItemDatabase.Oxygen, 1, 8f, Tr.T("electrólisis"), I(ItemDatabase.Water, 1));
             Add("metano", R, ItemDatabase.Methane, 2, 12f, "Sabatier", I(ItemDatabase.Co2, 1), I(ItemDatabase.Water, 1));
             Add("polimero", R, ItemDatabase.Polymer, 1, 10f, null, I(ItemDatabase.Methane, 2));
             Add("carbono", R, ItemDatabase.Carbon, 1, 12f, "Bosch", I(ItemDatabase.Co2, 2));
@@ -208,17 +214,17 @@ namespace MarsRobot.Crafting
 
             // Laboratorio: ciencia, nutrientes y semillas a partir de la cosecha.
             const CraftStation L = CraftStation.Lab;
-            Add("lab_muestra", L, ItemDatabase.ResearchData, 3, 30f, "analizar muestra", I(ItemDatabase.Sample, 1));
-            Add("lab_arcillas", L, ItemDatabase.ResearchData, 1, 20f, "analizar arcillas", I(ItemDatabase.Clays, 2));
+            Add("lab_muestra", L, ItemDatabase.ResearchData, 3, 30f, Tr.T("analizar muestra"), I(ItemDatabase.Sample, 1));
+            Add("lab_arcillas", L, ItemDatabase.ResearchData, 1, 20f, Tr.T("analizar arcillas"), I(ItemDatabase.Clays, 2));
             Add("lab_nutrientes", L, ItemDatabase.Nutrients, 2, 12f, null, I(ItemDatabase.Sulfates, 1), I(ItemDatabase.Water, 1));
             for (int i = 0; i < ItemDatabase.Crops.Length; i++)
                 Add("lab_semillas_" + ItemDatabase.Crops[i], L, ItemDatabase.SeedOf(ItemDatabase.Crops[i]), 3, 15f, null, I(ItemDatabase.Crops[i], 1));
 
             // Planta de agua y generador de oxígeno.
-            Add("agua_planta", CraftStation.WaterPlant, ItemDatabase.Water, 3, 8f, "fundir y filtrar hielo", I(ItemDatabase.Ice, 1));
-            Add("agua_perclorato", CraftStation.WaterPlant, ItemDatabase.Water, 1, 20f, "extraer del regolito", I(ItemDatabase.PerchlorateRegolith, 3));
-            Add("o2_electrolisis", CraftStation.OxygenPlant, ItemDatabase.Oxygen, 2, 10f, "electrólisis", I(ItemDatabase.Water, 1));
-            Add("o2_perclorato", CraftStation.OxygenPlant, ItemDatabase.Oxygen, 1, 14f, "de percloratos", I(ItemDatabase.PerchlorateRegolith, 2));
+            Add("agua_planta", CraftStation.WaterPlant, ItemDatabase.Water, 3, 8f, Tr.T("fundir y filtrar hielo"), I(ItemDatabase.Ice, 1));
+            Add("agua_perclorato", CraftStation.WaterPlant, ItemDatabase.Water, 1, 20f, Tr.T("extraer del regolito"), I(ItemDatabase.PerchlorateRegolith, 3));
+            Add("o2_electrolisis", CraftStation.OxygenPlant, ItemDatabase.Oxygen, 2, 10f, Tr.T("electrólisis"), I(ItemDatabase.Water, 1));
+            Add("o2_perclorato", CraftStation.OxygenPlant, ItemDatabase.Oxygen, 1, 14f, Tr.T("de percloratos"), I(ItemDatabase.PerchlorateRegolith, 2));
 
             // Cocina.
             const CraftStation K = CraftStation.Kitchen;

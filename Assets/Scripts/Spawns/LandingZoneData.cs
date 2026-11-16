@@ -24,7 +24,7 @@ namespace MarsRobot.Spawns
     {
         [Header("Identidad")]
         public string zoneId = "zona";
-        public string displayName = "Zona";
+        public string displayName = Tr.T("Zona");
         [TextArea(3, 6)] public string description;
         public ZoneDifficulty difficulty = ZoneDifficulty.Medium;
         [Tooltip("Latitud aproximada (grados, + norte).")]
@@ -86,12 +86,12 @@ namespace MarsRobot.Spawns
         {
             switch (d)
             {
-                case ZoneDifficulty.Easy: return "Fácil";
-                case ZoneDifficulty.Low: return "Baja";
-                case ZoneDifficulty.Medium: return "Media";
-                case ZoneDifficulty.ModerateHigh: return "Moderada-alta";
-                case ZoneDifficulty.High: return "Alta";
-                default: return "Extrema";
+                case ZoneDifficulty.Easy: return Tr.T("Fácil");
+                case ZoneDifficulty.Low: return Tr.T("Baja");
+                case ZoneDifficulty.Medium: return Tr.T("Media");
+                case ZoneDifficulty.ModerateHigh: return Tr.T("Moderada-alta");
+                case ZoneDifficulty.High: return Tr.T("Alta");
+                default: return Tr.T("Extrema");
             }
         }
     }

@@ -12,7 +12,7 @@ namespace MarsRobot.Dialogue
     public sealed class DiscoveryPoint : MonoBehaviour, IInteractable
     {
         [SerializeField] private string dialogueNodeId = "probe_archive";
-        [SerializeField] private string displayName = "Restos de una sonda antigua";
+        [SerializeField] private string displayName = Tr.T("Restos de una sonda antigua");
 
         private bool _read;
 
@@ -67,7 +67,7 @@ namespace MarsRobot.Dialogue
 
         public string GetInteractionPrompt()
         {
-            return _read ? displayName + " (registro ya descargado)" : displayName + ": descargar registro [mantén F]";
+            return _read ? displayName + Tr.T(" (registro ya descargado)") : displayName + Tr.T(": descargar registro [mantén F]");
         }
 
         public void Interact(Interactor interactor)
@@ -75,7 +75,7 @@ namespace MarsRobot.Dialogue
             if (_read) return;
             _read = true;
             DialogueManager.Play(dialogueNodeId);
-            LogTerminal.Add("Descubrimiento", displayName + " encontrado.", LogCategory.Discovery);
+            LogTerminal.Add(Tr.T("Descubrimiento"), displayName + Tr.T(" encontrado."), LogCategory.Discovery);
             var marker = GetComponent<MinimapObjectMarker>();
             if (marker != null) marker.Setup(MinimapMarkerType.Discovery, false, displayName);
         }
