@@ -1,0 +1,251 @@
+741|EXPLORATION ROVER — MODEL XR-1
+742|X (hold, stopped)
+743|Arm tool: drill, shovel or blower
+744|<color=#ffd060>STATUS:</color>
+745|ENERGY:
+746|% | BATTERY
+747|OUTSIDE TEMPERATURE:
+748|Geological scanner
+749|LOCATION:
+750|LINKED TO:
+751|<color=#ff8080>NO LINK (
+753|Light
+754|Clean the solar panels
+755|Mars
+756|R (hold)
+757|Repair the selected part by hand
+758| — SECTOR
+759|Change repair tool
+760|Choose the part to repair
+761|There is no
+762| left in the ship.
+763|It doesn't fit in the robot: mass or volume at the limit.
+764|Panels and menus
+765|Moved
+766| of
+767| to the robot.
+768|Management panel (this panel)
+769|The ship is full (
+771| to the ship.
+772|The ship can't take more of that resource (tanks full).
+773|Logbook
+774| dropped in front of the rover (you can pick it up with F).
+775|Inspect the mothership
+776|Build mode
+777|Choose an option in a machine's menu
+778|Build mode (B)
+779|Worn
+780|Needs repair
+781|Broken
+783|Change category
+784|Choose structure
+785|Rotate the piece 90°
+786|splice kit
+787|servo kit
+788|Left click / Enter
+789|Build
+791|Exit
+792|Rocket inspection (K)
+793|Left mouse
+794|Rotate the view
+795|Right mouse
+796|Move the view
+797|Wheel
+798|Zoom
+800|Move the camera / down / up
+801|Item
+802|Resource from the ship's storage, ready to carry.
+803|Loose Martian soil: dust and basalt sand. Raw material for blocks and shielding.
+804|Basalt with iron oxides (nanophase) that give it its red color.
+805|Regolith with perchlorates
+806|Regolith with perchlorate salts: toxic for people and plants. Corrosive if not sealed.
+807|Calcium and magnesium perchlorates (~0.5–1 % by weight, as the Phoenix lander measured).
+808|When heated they release oxygen.
+809|Iron ore
+810|Rock rich in iron oxides. It is melted in the rocket's smelter.
+811|Hematite and magnetite detected by orbital spectrometry (CRISM).
+812|Utopia Planitia ice
+813|Water ice from under the ground. It turns into gas if it isn't carried in a cold box.
+814|H₂O with some dust and salts. Ice spectral signature at 1.5 and 2.0 µm.
+815|Clays (phyllosilicates)
+816|Minerals formed with liquid water. A source of silicon and a clue of past habitability.
+817|Iron/magnesium smectites detected by CRISM (2.3 µm band).
+818|Sulfates
+819|Sulfate salts. Interesting for science and, once treated, as fertilizer.
+820|Kieserite and gypsum (CRISM, bands at 1.9–2.4 µm).
+821|Geological sample
+822|Sample chosen for the lab. Delicate: it degrades without heat insulation.
+823|Rock core in a sealed tube.
+824|Spare battery
+825|Spare battery for the rover's inside bay.
+826|Lithium-ion, 1 kWh.
+827|Spare parts
+828|Screws, small servos and plates for repairs.
+829|Aluminum and steel alloy.
+830|Iron ingot
+831|Iron reduced from ore in the smelter. The base of almost everything metal.
+832|Reduction of hematite (Fe₂O₃) with hydrogen or CO at ~1000 °C.
+833|Steel plate
+834|Rolled steel: structures, chassis and wheels.
+835|Iron with ~0.3 % carbon.
+836|Refined silicon for electronics and solar cells.
+837|Carbothermal reduction of the silica (SiO₂) in clays.
+838|Glass
+839|Glass melted from regolith: windows, optics and panel covers.
+840|Regolith is ~45 % silica.
+841|Sulfur
+842|Sulfur taken from sulfates. Binder for sulfur concrete.
+843|Sulfur concrete: it needs no water, ideal for Mars.
+844|Carbon
+845|Carbon taken from the CO₂ in the air. Needed for steel.
+846|Bosch reaction: CO₂ + 2 H₂ → C + 2 H₂O.
+847|CO₂ canister
+848|Compressed carbon dioxide captured from the Martian air (95 % CO₂).
+849|Compressed from 0.6 kPa.
+850|Water drum
+851|Purified liquid water. Life support and raw material for oxygen and fuel.
+852|Oxygen bottle
+853|Oxygen for the suit and life support.
+854|Water electrolysis (or MOXIE: CO₂ → CO + O).
+855|Methane canister
+856|Liquid methane: rocket propellant and raw material for polymers.
+857|Sabatier: CO₂ + 4 H₂ → CH₄ + 2 H₂O.
+858|Polymer
+859|Technical plastic made from methane: insulation, seals and light parts.
+860|Polyethylene made from methane.
+861|Screws, brackets and gears.
+862|Machined from iron ingots.
+863|Insulated wire for circuits and structures.
+864|Metal conductor with a polymer sleeve.
+865|Electronics
+866|Circuit boards for machines, batteries and sensors.
+867|Doped silicon wafers.
+868|Solar cell
+869|Photovoltaic cell for solar panels.
+870|Crystalline silicon under a glass cover.
+871|Regolith block
+872|Sulfur-concrete and regolith block for building.
+873|Regolith + sulfur melted at ~140 °C.
+874|Sealing tape
+875|Polymer tape to seal joints against dust.
+876|Glue that works at −120 °C.
+877|Research data
+878|Scientific results from the lab, saved in memory.
+879|Research points.
+880|Repair kit
+881|Fully repairs the robot's most damaged part.
+882|Parts, wiring and polymer.
+883|Spare wheel
+884|Makes all the robot's wheels like new.
+885|0.5 m wheel with grousers.
+886|Antistatic brush
+887|Cleans all the dust off the robot's solar panels.
+888|Polymer bristles with electrostatic discharge.
+889|Power cell
+890|Charges 50 % of the robot's battery when used.
+891|Single-use lithium-ion battery.
+892|Lettuce
+893|Radish
+894|Dwarf tomato
+895|Potato
+896|Dwarf wheat
+897|Soybean
+898|Red Lactuca sativa 'Outredgeous': the first lettuce astronauts ate on the ISS (Veggie, 2015).
+899|Raphanus sativus: grows in about 30 days; it was grown on the ISS (Plant Habitat-02).
+900|'Red Robin' dwarf tomato, grown on the ISS in 2023 (VEG-05).
+901|Solanum tuberosum: planted with seed tubers; lots of calories per square meter.
+902|'USU-Apogee' dwarf wheat, developed with NASA for life support systems.
+903|Glycine max: protein and oil; it fixes nitrogen.
+904|Fresh leaves: vitamins and good spirits for the crew.
+905|Spicy root and edible leaves. Quick harvest.
+906|Small, juicy tomatoes, rich in lycopene.
+907|Tubers with lots of calories: the base of the Martian diet.
+908|Grain to grind into flour.
+909|Pods with protein-rich beans.
+910|Seeds of
+911|Planted in a tray of the hydroponic garden with water and nutrient solution.
+912| In the kitchen it becomes food; in the lab it gives new seeds.
+913|Hydroponic growing under LEDs.
+914|Nutrient solution
+915|Liquid fertilizer for the hydroponic garden, made with sulfates and water.
+916|Dissolved nitrogen, phosphorus, potassium and sulfur salts.
+917|Flour
+918|Ground wheat for cooking.
+919|Whole flour from dwarf wheat.
+920|Survival ration
+921|Complete vacuum-packed meal for the crew (about 2,000 kcal).
+922|Bread made of wheat, soy and potato.
+923|Fresh salad
+924|Lettuce, tomato and radish from the garden. Fresh vitamins.
+925|It doesn't keep for long.
+926|turned into gas
+927|went bad
+928|This robot has no cargo bay.
+929|What you deliver here turns into resources in the base storage
+930|(iron ore into iron, ice into ice…).
+931|Transfer all minerals
+932|Transfer everything
+933|Press I to see your bay and transfer loose items.
+934|<b>Contents</b> (
+936|Take out to the robot
+937|Picked up
+938|It doesn't fit in the bay (mass or volume).
+940|Front left wheel
+941|Front right wheel
+942|Back left wheel
+943|Back right wheel
+944|Visor wiring (HUD)
+945|Minimap wiring
+946|Sensor wiring
+947|Chassis
+948|Solar panel
+1012|Wrong tool for
+1013|Stop the robot to repair.
+1015|Stop the rover to use the tool.
+1016|Not enough battery.
+1017|Bay full: empty the cargo at the rocket or drop items (I).
+1018|Blowing dust…
+1019|It doesn't fit:
+1020| (mass or volume at the limit).
+1021|None
+1022|There is no tool on the front arm (put one on at the rocket's workshop).
+1050|Section
+1051| of the berm complete
+1052|Shielding berm, section
+1053| · dump regolith [hold F]
+1054| · bring regolith (shovel or drill)
+1055|Regolith dumped.
+1056|<b>Propellant tanks:</b>
+1057| of methane (
+1058|With full tanks, the mothership could take off again or refuel the crew's ship.
+1070|Mothership
+1071|Shielding berm:
+1072| sections complete ·
+1073| % radiation at the base
+1074|Hangar cargo hold
+1075|Rocket terminal
+1076|Space weather
+1077|Base status
+1078|No link with the space weather system.
+1079|Propellant:
+1080| of methane
+1081|Energy: +
+1082| W · batteries
+1083|Getting ready for the crew:
+1084| (details at the communications antenna)
+1085|Close this menu and press <b>K</b> to inspect the ship: cutaway view, the 5 levels, labels and measurements.
+1086|F: go up to the hangar
+1087|F: go down to the ground
+1088|F: call the elevator
+1089|F: call the elevator (it is up in the hangar)
+1090|Elevator moving…
+1091|Height 52.5 m
+1092|Outer Ø 9 m
+1093|Tanks and engines 0–24.5 m
+1094|3.2 m between levels
+1095|Inner Ø 8.2 m
+1096|<b>Mothership inspection</b>  (52.5 × Ø 9 m)
+1097|View: all levels
+1098|View:
+1099| (isolated)
+1100|All

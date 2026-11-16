@@ -69,11 +69,11 @@ namespace MarsRobot.Base
 
         public string GetInteractionPrompt()
         {
-            if (_units >= UnitsNeeded) return "Tramo " + _index + " de la berma completo";
+            if (_units >= UnitsNeeded) return Tr.T("Tramo ") + _index + Tr.T(" de la berma completo");
             Interactor who = Interactor.Local;
             int have = who != null && who.Inventory != null ? RegolithInBay(who.Inventory) : 0;
-            string head = "Berma de blindaje, tramo " + _index + ": " + _units + "/" + UnitsNeeded;
-            return have > 0 ? head + " · volcar regolito [mantén F]" : head + " · trae regolito (pala o taladro)";
+            string head = Tr.T("Berma de blindaje, tramo ") + _index + ": " + _units + "/" + UnitsNeeded;
+            return have > 0 ? head + Tr.T(" · volcar regolito [mantén F]") : head + Tr.T(" · trae regolito (pala o taladro)");
         }
 
         public void Interact(Interactor interactor)
@@ -85,7 +85,7 @@ namespace MarsRobot.Base
             if (put == 0) return;
             _units += put;
             UpdateMound();
-            interactor.ShowFeedback(_manager != null ? _manager.DescribeShielding() : "Regolito volcado.");
+            interactor.ShowFeedback(_manager != null ? _manager.DescribeShielding() : Tr.T("Regolito volcado."));
         }
 
         private static int RegolithInBay(RobotInventory inv)

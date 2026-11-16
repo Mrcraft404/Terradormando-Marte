@@ -8,8 +8,8 @@ namespace MarsRobot.Core
     /// </summary>
     public static class GameSettings
     {
-        public static readonly string[] QualityLabels = { "Baja", "Media", "Alta", "Ultra" };
-        public static readonly string[] LanguageLabels = { "Español", "English (próximamente)" };
+        public static string[] QualityLabels => new[] { Tr.T("Baja"), Tr.T("Media"), Tr.T("Alta"), "Ultra" };
+        public static readonly string[] LanguageLabels = { "English", "Español" };
 
         public static int Quality { get; private set; } = 1;
         public static float MasterVolume { get; private set; } = 0.8f;
@@ -17,7 +17,7 @@ namespace MarsRobot.Core
         public static float EffectsVolume { get; private set; } = 0.8f;
         public static float Brightness { get; private set; } = 1f;
         public static float MouseSensitivity { get; private set; } = 2f;
-        public static int Language { get; private set; }
+        public static int Language { get; private set; } = 1; // español hasta cargar los ajustes
         public static bool ShowFps { get; private set; }
 
         private static Color? _baseAmbient;
@@ -32,7 +32,7 @@ namespace MarsRobot.Core
             EffectsVolume = PlayerPrefs.GetFloat("cfg_fx", 0.8f);
             Brightness = PlayerPrefs.GetFloat("cfg_brightness", 1f);
             MouseSensitivity = PlayerPrefs.GetFloat("cfg_mouse", 2f);
-            Language = PlayerPrefs.GetInt("cfg_lang", 0);
+            Language = PlayerPrefs.GetInt("cfg_idioma", 1); // 1 = Español (por defecto); 0 = English
             ShowFps = PlayerPrefs.GetInt("cfg_fps", 0) == 1;
             ApplyAll();
         }
@@ -71,8 +71,8 @@ namespace MarsRobot.Core
 
         public static void SetLanguage(int index)
         {
-            Language = 0; // de momento solo español; se guarda la preferencia para el futuro
-            PlayerPrefs.SetInt("cfg_lang", Mathf.Clamp(index, 0, LanguageLabels.Length - 1));
+            Language = Mathf.Clamp(index, 0, LanguageLabels.Length - 1);
+            PlayerPrefs.SetInt("cfg_idioma", Language);
         }
 
         public static void SetShowFps(bool show)

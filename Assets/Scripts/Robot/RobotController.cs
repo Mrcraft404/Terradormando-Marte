@@ -59,6 +59,7 @@ namespace MarsRobot.Robot
 
         private Rigidbody _rb;
         private RobotHealthSystem _health;
+        private RobotModuleSystem _modules;
         private float _pitch;
         private float _pendingYaw;
         private Vector2 _moveInput;
@@ -132,6 +133,7 @@ namespace MarsRobot.Robot
         {
             _rb = GetComponent<Rigidbody>();
             _health = GetComponent<RobotHealthSystem>();
+            _modules = GetComponent<RobotModuleSystem>();
             if (battery == null) battery = GetComponent<BatterySystem>();
 
             _rb.interpolation = RigidbodyInterpolation.Interpolate;
@@ -223,7 +225,9 @@ namespace MarsRobot.Robot
             {
                 targetVelocity = Vector3.ProjectOnPlane(targetVelocity, _groundNormal);
                 // Demasiado empinado: no se puede subir (sí bajar).
-                if (slope > maxClimbSlope && targetVelocity.y > 0f) targetVelocity = Vector3.zero;
+                // Las orugas suben más; las ruedas rápidas, menos.
+                float climbLimit = maxClimbSlope + (_modules != null ? _modules.ClimbBonusDegrees : 0f);
+                if (slope > climbLimit && targetVelocity.y > 0f) targetVelocity = Vector3.zero;
             }
 
             Vector3 velocity = GetVelocity();

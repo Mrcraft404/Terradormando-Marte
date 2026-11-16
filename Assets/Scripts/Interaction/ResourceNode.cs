@@ -115,15 +115,15 @@ namespace MarsRobot.Interaction
         public string GetInteractionPrompt()
         {
             Interactor who = Interactor.Local;
-            string kind = hardness == RockHardness.Dense ? "roca densa" : "roca suelta";
-            if (who != null && who.Inventory != null && who.Inventory.IsFull) return "Bahía llena: vacía la carga en el cohete";
+            string kind = hardness == RockHardness.Dense ? Tr.T("roca densa") : Tr.T("roca suelta");
+            if (who != null && who.Inventory != null && who.Inventory.IsFull) return Tr.T("Bahía llena: vacía la carga en el cohete");
             if (who != null && !ToolAllowed(who.Tools))
             {
                 return hardness == RockHardness.Dense
-                    ? "Roca densa: necesitas el taladro percutor (cámbialo en el taller del cohete)"
-                    : "Necesitas la pala o el taladro";
+                    ? Tr.T("Roca densa: necesitas el taladro percutor (cámbialo en el taller del cohete)")
+                    : Tr.T("Necesitas la pala o el taladro");
             }
-            return "Minar " + kind + " (" + MainProduct() + ") [mantén F]  ·  quedan " + units;
+            return Tr.T("Minar ") + kind + " (" + MainProduct() + Tr.T(") [mantén F]  ·  quedan ") + units;
         }
 
         public void Interact(Interactor interactor)
@@ -136,13 +136,15 @@ namespace MarsRobot.Interaction
             got += Give(interactor, _sulfates > 0.3f ? ItemDatabase.PerchlorateRegolith : ItemDatabase.Regolith);
             if (drill)
             {
-                if (Random.value < 0.2f + _iron * 0.8f) got += Give(interactor, ItemDatabase.IronOre);
-                if (Random.value < 0.1f + _clays * 0.6f) got += Give(interactor, ItemDatabase.Clays);
-                if (Random.value < _sulfates * 0.5f) got += Give(interactor, ItemDatabase.Sulfates);
-                if (Random.value < _ice * 0.6f) got += Give(interactor, ItemDatabase.Ice);
-                if (Random.value < 0.15f) got += Give(interactor, ItemDatabase.Sample);
+                // El escáner de minerales del robot mejora las probabilidades.
+                float k = interactor.Tools != null ? interactor.Tools.OreChanceMultiplier : 1f;
+                if (Random.value < (0.2f + _iron * 0.8f) * k) got += Give(interactor, ItemDatabase.IronOre);
+                if (Random.value < (0.1f + _clays * 0.6f) * k) got += Give(interactor, ItemDatabase.Clays);
+                if (Random.value < _sulfates * 0.5f * k) got += Give(interactor, ItemDatabase.Sulfates);
+                if (Random.value < _ice * 0.6f * k) got += Give(interactor, ItemDatabase.Ice);
+                if (Random.value < 0.15f * k) got += Give(interactor, ItemDatabase.Sample);
             }
-            interactor.ShowFeedback(got > 0 ? "Extraídas " + got + " unidades" : "No cabe nada más en la bahía.");
+            interactor.ShowFeedback(got > 0 ? Tr.T("Extraídas ") + got + Tr.T(" unidades") : Tr.T("No cabe nada más en la bahía."));
             PlayEffects();
 
             units--;
@@ -164,7 +166,7 @@ namespace MarsRobot.Interaction
         private string MainProduct()
         {
             if (_ice > 0.5f) return "hielo";
-            if (_iron > 0.45f) return "rica en hierro";
+            if (_iron > 0.45f) return Tr.T("rica en hierro");
             if (_clays > 0.3f) return "arcillas";
             if (_sulfates > 0.3f) return "sulfatos/percloratos";
             return "regolito";
@@ -219,7 +221,7 @@ namespace MarsRobot.Interaction
                 float noise = (float)(rng.NextDouble() * 2.0 - 1.0);
                 data[i] = noise * hammer * Mathf.Exp(-t * 3f) * 0.5f;
             }
-            AudioClip clip = AudioClip.Create("Taladro", samples, 1, rate, false);
+            AudioClip clip = AudioClip.Create(Tr.T("Taladro"), samples, 1, rate, false);
             clip.SetData(data, 0);
             return clip;
         }

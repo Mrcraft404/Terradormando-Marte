@@ -14,22 +14,22 @@ namespace MarsRobot.Base
 
         private static readonly string[] Labels =
         {
-            "Reserva de oxígeno: " + OxygenGoal + " unidades",
-            "Reserva de agua: " + WaterGoal + " unidades",
-            "Energía estable: " + PowerGoalWatts.ToString("0") + " W de potencia instalada",
-            "Refugio contra radiación construido",
-            "Pista de aterrizaje nivelada construida",
-            "Antena de comunicaciones construida",
+            Tr.T("Reserva de oxígeno: ") + OxygenGoal + Tr.T(" unidades"),
+            Tr.T("Reserva de agua: ") + WaterGoal + Tr.T(" unidades"),
+            Tr.T("Energía estable: ") + PowerGoalWatts.ToString("0") + Tr.T(" W de potencia instalada"),
+            Tr.T("Refugio contra radiación construido"),
+            Tr.T("Pista de aterrizaje nivelada construida"),
+            Tr.T("Antena de comunicaciones construida"),
         };
 
         /// <summary>Mensajes de la Tierra que llegan según el progreso (con el retraso real de unos minutos).</summary>
         private static readonly string[] EarthMessages =
         {
-            "Control de misión: señal recibida con 12 minutos de retraso. Buen trabajo con la base. Prioridad: oxígeno y agua.",
-            "Control de misión: las reservas avanzan. Recuerda que las tormentas tapan el sol: necesitaréis baterías o un reactor.",
-            "Control de misión: la tripulación ya entrena. Necesitamos un refugio contra la radiación antes del despegue.",
-            "Control de misión: la nave está casi lista. Falta una pista llana donde posarla.",
-            "Control de misión: ¡todo en verde! La primera tripulación despega hacia Marte. Gracias, explorador.",
+            Tr.T("Control de misión: señal recibida con 12 minutos de retraso. Buen trabajo con la base. Prioridad: oxígeno y agua."),
+            Tr.T("Control de misión: las reservas avanzan. Recuerda que las tormentas tapan el sol: necesitaréis baterías o un reactor."),
+            Tr.T("Control de misión: la tripulación ya entrena. Necesitamos un refugio contra la radiación antes del despegue."),
+            Tr.T("Control de misión: la nave está casi lista. Falta una pista llana donde posarla."),
+            Tr.T("Control de misión: ¡todo en verde! La primera tripulación despega hacia Marte. Gracias, explorador."),
         };
 
         public static int Total
@@ -66,7 +66,7 @@ namespace MarsRobot.Base
         {
             int done = CompletedCount(b);
             GUILayout.Space(6);
-            GUILayout.Label("<b>Preparación para la tripulación: " + done + "/" + Total + "</b>");
+            GUILayout.Label(Tr.T("<b>Preparación para la tripulación: ") + done + "/" + Total + "</b>");
             for (int i = 0; i < Labels.Length; i++)
             {
                 GUILayout.Label((IsDone(b, i) ? "<color=#80ff80>✓ " : "<color=#cccccc>○ ") + Labels[i] + "</color>");

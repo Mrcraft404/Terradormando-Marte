@@ -28,6 +28,8 @@ namespace MarsRobot.Dialogue
         private bool _paused;
         private float _prevTimeScale = 1f;
         private int _blipCounter;
+        private bool _hasVoice;
+        private float _cps = 45f;
         private AudioSource _audio, _staticSource;
         private AudioClip _blip, _staticClip;
         private GUIStyle _textStyle, _speakerStyle;
@@ -99,7 +101,14 @@ namespace MarsRobot.Dialogue
             }
             SetRobotControl(false);
 
-            if (node.voiceClip != null) _audio.PlayOneShot(node.voiceClip);
+            // Voz: la del nodo, o la voz de Marti para su frase (si está generada).
+            _audio.Stop();
+            AudioClip voice = node.voiceClip;
+            if (voice == null && node.IsMascot) voice = MarsRobot.UI.MascotGuide.VoiceFor(node.text);
+            _hasVoice = voice != null;
+            if (_hasVoice) _audio.PlayOneShot(voice);
+            int len = (node.LocalizedText ?? "").Length;
+            _cps = _hasVoice && voice.length > 0.5f ? Mathf.Clamp(len / (voice.length * 0.9f), 10f, charsPerSecond) : charsPerSecond;
             if (node.roboticStatic)
             {
                 _staticSource.clip = _staticClip;
@@ -109,7 +118,7 @@ namespace MarsRobot.Dialogue
             {
                 _staticSource.Stop();
             }
-            if (node.addToLog) LogTerminal.Add(node.SpeakerName, node.text, LogCategory.Message);
+            if (node.addToLog) LogTerminal.Add(node.SpeakerName, node.LocalizedText, LogCategory.Message);
         }
 
         private void Update()
@@ -117,15 +126,17 @@ namespace MarsRobot.Dialogue
             if (_current == null) return;
 
             // Efecto máquina de escribir (tiempo real: funciona aunque el juego esté en pausa).
-            int total = _current.text != null ? _current.text.Length : 0;
+            // Se cuenta el texto TRADUCIDO (no la clave): si no, se cortaba a la longitud de la clave.
+            string full = _current.LocalizedText ?? "";
+            int total = full.Length;
             if (_shownChars < total)
             {
                 int before = (int)_shownChars;
-                _shownChars = Mathf.Min(total, _shownChars + charsPerSecond * Time.unscaledDeltaTime);
+                _shownChars = Mathf.Min(total, _shownChars + _cps * Time.unscaledDeltaTime);
                 int after = (int)_shownChars;
                 for (int i = before; i < after; i++)
                 {
-                    if (_current.voiceClip == null && !char.IsWhiteSpace(_current.text[i]) && ++_blipCounter % blipEveryChars == 0)
+                    if (!_hasVoice && !char.IsWhiteSpace(full[i]) && ++_blipCounter % blipEveryChars == 0)
                     {
                         _audio.PlayOneShot(_blip, 0.25f);
                     }
@@ -160,6 +171,7 @@ namespace MarsRobot.Dialogue
         {
             DialogueNode finished = _current;
             _current = null;
+            _audio.Stop();
             DialogueEffects.Run(finished);
 
             if (next != null)
@@ -200,54 +212,96 @@ namespace MarsRobot.Dialogue
             Cursor.visible = !enabled;
         }
 
+        /// <summary>¿Hay un diálogo en pantalla? (los consejos de Marti esperan a que termine).</summary>
+        public static bool AnyShowing
+        {
+            get { return _instance != null && _instance._current != null; }
+        }
+
+        private GUIStyle _choiceStyle, _hintStyle;
+
         private void OnGUI()
         {
             if (_current == null) return;
             if (_textStyle == null)
             {
-                _textStyle = new GUIStyle(GUI.skin.label) { fontSize = 16, wordWrap = true, richText = true };
-                _textStyle.normal.textColor = new Color(0.85f, 1f, 0.9f);
-                _speakerStyle = new GUIStyle(GUI.skin.label) { fontSize = 15, fontStyle = FontStyle.Bold };
-                _speakerStyle.normal.textColor = new Color(1f, 0.75f, 0.3f);
+                _textStyle = new GUIStyle(GUI.skin.label) { fontSize = 26, wordWrap = true, richText = true };
+                _textStyle.normal.textColor = new Color(0.12f, 0.1f, 0.14f);
+                _speakerStyle = new GUIStyle(GUI.skin.label) { fontSize = 26, fontStyle = FontStyle.Bold };
+                _speakerStyle.normal.textColor = new Color(0.85f, 0.32f, 0.12f);
+                _choiceStyle = new GUIStyle(GUI.skin.button) { fontSize = 22, fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleLeft, wordWrap = true };
+                _choiceStyle.padding = new RectOffset(18, 12, 6, 6);
+                _hintStyle = new GUIStyle(GUI.skin.label) { fontSize = 18, fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleRight };
+                _hintStyle.normal.textColor = new Color(0.45f, 0.4f, 0.45f);
             }
 
-            float w = Mathf.Min(820f, Screen.width - 40f), h = 200f;
-            Rect box = new Rect((Screen.width - w) * 0.5f, Screen.height - h - 20f, w, h);
-            Color prev = GUI.color;
-            GUI.color = new Color(0f, 0.04f, 0.03f, 0.88f);
-            GUI.DrawTexture(box, Texture2D.whiteTexture);
-            GUI.color = new Color(0.2f, 0.9f, 0.6f, 0.6f);
-            GUI.DrawTexture(new Rect(box.x, box.y, box.width, 2), Texture2D.whiteTexture);
-            GUI.color = prev;
-
-            GUI.Label(new Rect(box.x + 14, box.y + 8, w - 28, 22), "▶ " + _current.SpeakerName, _speakerStyle);
-            string text = _current.text ?? "";
+            // Lienzo virtual 1600×900: se ve igual en cualquier pantalla.
+            MarsRobot.UI.HudTheme.BeginScaled();
+            bool mascot = _current.IsMascot;
+            string text = _current.LocalizedText ?? "";
             int n = Mathf.Clamp((int)_shownChars, 0, text.Length);
             bool typing = n < text.Length;
-            string cursor = typing || Mathf.Repeat(Time.unscaledTime, 1f) < 0.5f ? "█" : "";
-            GUI.Label(new Rect(box.x + 14, box.y + 32, w - 28, 100), text.Substring(0, n) + cursor, _textStyle);
+            int choices = !typing ? _current.choices.Count : 0;
 
-            float y = box.y + 136;
-            if (!typing && _current.choices.Count > 0)
+            // Altura del texto completo (no del trozo ya escrito): la caja no cambia de tamaño
+            // mientras escribe y el final nunca queda cortado.
+            const float textW = 1200f - 56f;
+            float textH = Mathf.Max(64f, _textStyle.CalcHeight(new GUIContent(text), textW) + 8f);
+            float h = 54f + textH + 56f + choices * 58f;
+            if (h > 640f) h = 640f;
+            var box = new Rect(240f, 900f - h - 24f, 1200f, h);
+
+            // Fondo oscuro suave detrás para que el texto se lea sobre cualquier escena.
+            MarsRobot.UI.HudTheme.Fill(new Rect(0f, box.y - 40f, 1600f, 900f - box.y + 40f), new Color(0f, 0f, 0f, 0.35f));
+            // Bocadillo claro, como en un cuento.
+            MarsRobot.UI.HudTheme.Frame(box, new Color(1f, 0.97f, 0.92f, 0.98f),
+                mascot ? new Color(0.85f, 0.32f, 0.12f) : new Color(0.25f, 0.55f, 0.85f), 4f);
+
+            // Retrato: Marti (con saltitos al hablar) o una placa con el nombre.
+            var face = new Rect(box.x - 220f, box.yMax - 230f, 220f, 220f);
+            if (mascot) MarsRobot.UI.MascotGuide.DrawPortrait(face, typing);
+            else
             {
-                for (int i = 0; i < _current.choices.Count; i++)
+                var plate = new Rect(face.x + 30f, face.y + 50f, 160f, 160f);
+                MarsRobot.UI.HudTheme.Frame(plate, new Color(0.12f, 0.2f, 0.3f, 0.95f), new Color(0.25f, 0.55f, 0.85f), 4f);
+                string tag = _current.speaker == DialogueSpeaker.ProbeArchive ? Tr.T("SONDA") : Tr.T("TIERRA");
+                var plateStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = 30, fontStyle = FontStyle.Bold };
+                plateStyle.normal.textColor = new Color(0.75f, 0.9f, 1f);
+                GUI.Label(plate, tag, plateStyle);
+            }
+
+            GUI.Label(new Rect(box.x + 28f, box.y + 14f, box.width - 56f, 36f), _current.SpeakerName, _speakerStyle);
+            GUI.Label(new Rect(box.x + 28f, box.y + 54f, textW, textH), text.Substring(0, n), _textStyle);
+
+            if (choices > 0)
+            {
+                float y = box.y + 54f + textH + 6f;
+                for (int i = 0; i < choices; i++)
                 {
-                    if (GUI.Button(new Rect(box.x + 14, y, w - 28, 24), (i + 1) + ". " + _current.choices[i].text))
+                    if (GUI.Button(new Rect(box.x + 28f, y, box.width - 56f, 50f), (i + 1) + "   " + _current.choices[i].LocalizedText, _choiceStyle))
                     {
+                        MarsRobot.UI.HudTheme.EndScaled();
                         Advance(_current.choices[i].next);
                         return;
                     }
-                    y += 26;
+                    y += 58f;
                 }
             }
             else
             {
-                GUI.Label(new Rect(box.x + 14, box.y + h - 26, w - 28, 20), typing ? "Intro: mostrar todo" : "Intro o clic: continuar", _speakerStyle);
+                // Flechita que parpadea: "pulsa para seguir".
+                bool blink = Mathf.Repeat(Time.unscaledTime, 0.8f) < 0.5f;
+                string hint = typing ? MarsRobot.Localization.Localizer.L("Intro: ver todo", "Enter: show all")
+                    : (blink ? "▼  " : "    ") + MarsRobot.Localization.Localizer.L("Intro o clic para seguir", "Enter or click to continue");
+                GUI.Label(new Rect(box.x + 28f, box.yMax - 44f, box.width - 56f, 30f), hint, _hintStyle);
                 if (!typing && Event.current.type == EventType.MouseDown && box.Contains(Event.current.mousePosition))
                 {
+                    MarsRobot.UI.HudTheme.EndScaled();
                     Advance(_current.next);
+                    return;
                 }
             }
+            MarsRobot.UI.HudTheme.EndScaled();
         }
 
         /// <summary>Estática de radio: ruido filtrado a bajo volumen.</summary>
@@ -289,8 +343,8 @@ namespace MarsRobot.Dialogue
             switch (e.type)
             {
                 case DialogueEventType.StartMission:
-                    LogTerminal.Add("Misión", e.stringParam, LogCategory.Mission);
-                    NotificationSystem.Notify("Nueva misión: " + e.stringParam, NotificationLevel.Info, 7f);
+                    LogTerminal.Add(Tr.T("Misión"), e.stringParam, LogCategory.Mission);
+                    NotificationSystem.Notify(Tr.T("Nueva misión: ") + e.stringParam, NotificationLevel.Info, 7f);
                     break;
 
                 case DialogueEventType.RepairModule:
@@ -303,7 +357,7 @@ namespace MarsRobot.Dialogue
                         RobotModuleId id;
                         if (Enum.TryParse(e.stringParam, out id)) health.RepairModule(id);
                     }
-                    NotificationSystem.Notify("Reparación remota completada.", NotificationLevel.Info);
+                    NotificationSystem.Notify(Tr.T("Reparación remota completada."), NotificationLevel.Info);
                     break;
                 }
 
@@ -313,7 +367,7 @@ namespace MarsRobot.Dialogue
                     if (!GameServices.TryGet(out b)) break;
                     b.Research.ForceUnlock(e.stringParam);
                     StructureDefinition def = StructureCatalog.Find(e.stringParam);
-                    NotificationSystem.Notify("Tecnología desbloqueada: " + (def != null ? def.name : e.stringParam), NotificationLevel.Info, 6f);
+                    NotificationSystem.Notify(Tr.T("Tecnología desbloqueada: ") + (def != null ? def.name : e.stringParam), NotificationLevel.Info, 6f);
                     break;
                 }
 
@@ -323,12 +377,12 @@ namespace MarsRobot.Dialogue
                     ResourceType type;
                     if (!GameServices.TryGet(out b) || !Enum.TryParse(e.stringParam, out type)) break;
                     int added = b.Inventory.Add(type, e.intParam);
-                    if (added > 0) NotificationSystem.Notify("+" + added + " " + BaseInventory.Label(type) + " en el almacén", NotificationLevel.Info);
+                    if (added > 0) NotificationSystem.Notify("+" + added + " " + BaseInventory.Label(type) + Tr.T(" en el almacén"), NotificationLevel.Info);
                     break;
                 }
 
                 case DialogueEventType.AddLogEntry:
-                    LogTerminal.Add("Registro", e.stringParam, LogCategory.Discovery);
+                    LogTerminal.Add(Tr.T("Registro"), e.stringParam, LogCategory.Discovery);
                     break;
 
                 case DialogueEventType.Notify:

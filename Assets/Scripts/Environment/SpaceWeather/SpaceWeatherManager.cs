@@ -75,7 +75,7 @@ namespace MarsRobot.World.SpaceWeather
 
         public string SourceStatus
         {
-            get { return _client != null && _client.LastStatus != null ? _client.LastStatus : "Conectando con DONKI…"; }
+            get { return _client != null && _client.LastStatus != null ? _client.LastStatus : Tr.T("Conectando con la base de datos de clima espacial de la NASA…"); }
         }
 
         public IReadOnlyList<SpaceWeatherEvent> History
@@ -139,7 +139,7 @@ namespace MarsRobot.World.SpaceWeather
                 }
             }
             Loaded = true;
-            NotificationSystem.Notify("Enlace de clima espacial: " + SourceStatus, NotificationLevel.Info, 6f);
+            NotificationSystem.Notify(Tr.T("Enlace de clima espacial: ") + SourceStatus, NotificationLevel.Info, 6f);
         }
 
         private static IEnumerable<SpaceWeatherEvent> Strongest(List<SpaceWeatherEvent> all, SpaceWeatherEventType type, int max)
@@ -183,7 +183,7 @@ namespace MarsRobot.World.SpaceWeather
             }
             // Si no queda nada, uno simulado de cada tipo por turnos.
             var t = (SpaceWeatherEventType)(_history.Count % 4);
-            Begin(new SpaceWeatherEvent { type = t, time = DateTime.UtcNow, intensity01 = 0.8f, label = t + " de prueba", simulated = true });
+            Begin(new SpaceWeatherEvent { type = t, time = DateTime.UtcNow, intensity01 = 0.8f, label = SpaceWeatherNames.Full(t) + Tr.T(" de prueba"), simulated = true });
         }
 
         private void Begin(SpaceWeatherEvent ev)
@@ -194,7 +194,7 @@ namespace MarsRobot.World.SpaceWeather
             {
                 case SpaceWeatherEventType.FLR:
                     a.endGameSeconds = _gameSeconds + flareHours * MarsTime.HourSeconds * Mathf.Lerp(0.5f, 1.5f, ev.intensity01);
-                    NotificationSystem.Notify(ev.label + ": interferencias electromagnéticas, radar bloqueado.", ev.intensity01 > 0.7f ? NotificationLevel.Critical : NotificationLevel.Warning, 7f);
+                    NotificationSystem.Notify(ev.label + Tr.T(": interferencias electromagnéticas, radar bloqueado."), ev.intensity01 > 0.7f ? NotificationLevel.Critical : NotificationLevel.Warning, 7f);
                     break;
                 case SpaceWeatherEventType.CME:
                 {
@@ -203,16 +203,16 @@ namespace MarsRobot.World.SpaceWeather
                     float transitHours = 2.28e8f / speed / 3600f * cmeTransitScale;
                     a.arrivalGameSeconds = _gameSeconds + transitHours * MarsTime.HourSeconds;
                     a.endGameSeconds = a.arrivalGameSeconds + cmeStormHours * MarsTime.HourSeconds;
-                    NotificationSystem.Notify("¡ADVERTENCIA: CME detectada! Impacto estimado en " + transitHours.ToString("0") + " h. Busque refugio.", NotificationLevel.Critical, 10f);
+                    NotificationSystem.Notify(Tr.T("¡ADVERTENCIA: eyección de masa coronal detectada! Impacto estimado en ") + transitHours.ToString("0") + Tr.T(" h. Busque refugio."), NotificationLevel.Critical, 10f);
                     break;
                 }
                 case SpaceWeatherEventType.SEP:
                     a.endGameSeconds = _gameSeconds + sepHours * MarsTime.HourSeconds;
-                    NotificationSystem.Notify("Tormenta de partículas solares (SEP): radiación alta, los paneles se degradan.", NotificationLevel.Critical, 8f);
+                    NotificationSystem.Notify(Tr.T("Tormenta de partículas solares: radiación alta, los paneles se degradan."), NotificationLevel.Critical, 8f);
                     break;
                 default:
                     a.endGameSeconds = _gameSeconds + gstHours * MarsTime.HourSeconds;
-                    NotificationSystem.Notify(ev.label + ": fluctuaciones eléctricas en la base y en los motores.", NotificationLevel.Warning, 7f);
+                    NotificationSystem.Notify(ev.label + Tr.T(": fluctuaciones eléctricas en la base y en los motores."), NotificationLevel.Warning, 7f);
                     break;
             }
             _active.Add(a);
@@ -248,7 +248,7 @@ namespace MarsRobot.World.SpaceWeather
                             if (!a.arrived)
                             {
                                 a.arrived = true;
-                                NotificationSystem.Notify("Impacto de la CME: tormenta de polvo global. Sin energía solar.", NotificationLevel.Critical, 10f);
+                                NotificationSystem.Notify(Tr.T("Impacto de la eyección de masa coronal: tormenta de polvo global. Sin energía solar."), NotificationLevel.Critical, 10f);
                             }
                             storm = true;
                         }

@@ -203,9 +203,9 @@ namespace MarsRobot.Base
             {
                 case ResourceType.Regolith: case ResourceType.Silicon: case ResourceType.Samples: return "Mineral";
                 case ResourceType.Iron: case ResourceType.MetalParts: return "Metal";
-                case ResourceType.Ice: case ResourceType.Water: case ResourceType.Oxygen: return "Soporte vital";
-                case ResourceType.Methane: return "Combustible";
-                case ResourceType.Research: return "Ciencia";
+                case ResourceType.Ice: case ResourceType.Water: case ResourceType.Oxygen: return Tr.T("Soporte vital");
+                case ResourceType.Methane: return Tr.T("Combustible");
+                case ResourceType.Research: return Tr.T("Ciencia");
                 default: return "Material";
             }
         }
@@ -214,19 +214,19 @@ namespace MarsRobot.Base
         {
             switch (type)
             {
-                case ResourceType.Regolith: return "Regolito";
-                case ResourceType.Iron: return "Hierro";
-                case ResourceType.Silicon: return "Silicio";
-                case ResourceType.Ice: return "Hielo";
-                case ResourceType.MetalParts: return "Piezas metálicas";
-                case ResourceType.Wiring: return "Cableado";
-                case ResourceType.SolarCells: return "Células solares";
-                case ResourceType.RegolithBricks: return "Bloques de regolito";
-                case ResourceType.Water: return "Agua";
-                case ResourceType.Oxygen: return "Oxígeno";
-                case ResourceType.Samples: return "Muestras";
-                case ResourceType.Research: return "Investigación";
-                default: return "Metano (propelente)";
+                case ResourceType.Regolith: return Tr.T("Regolito");
+                case ResourceType.Iron: return Tr.T("Hierro");
+                case ResourceType.Silicon: return Tr.T("Silicio");
+                case ResourceType.Ice: return Tr.T("Hielo");
+                case ResourceType.MetalParts: return Tr.T("Piezas metálicas");
+                case ResourceType.Wiring: return Tr.T("Cableado");
+                case ResourceType.SolarCells: return Tr.T("Células solares");
+                case ResourceType.RegolithBricks: return Tr.T("Bloques de regolito");
+                case ResourceType.Water: return Tr.T("Agua");
+                case ResourceType.Oxygen: return Tr.T("Oxígeno");
+                case ResourceType.Samples: return Tr.T("Muestras");
+                case ResourceType.Research: return Tr.T("Investigación");
+                default: return Tr.T("Metano (propelente)");
             }
         }
 

@@ -25,7 +25,7 @@ namespace MarsRobot.Core
     [Serializable]
     public class WorldSetup
     {
-        public string worldName = "Nueva colonia";
+        public string worldName = Tr.T("Nueva colonia");
         public int seed = 1234;
         public GameMode mode = GameMode.Survival;
         public WorldDifficulty difficulty = WorldDifficulty.Normal;
@@ -43,7 +43,7 @@ namespace MarsRobot.Core
 
         public string ModeLabel
         {
-            get { return mode == GameMode.Creative ? "Creativo" : "Supervivencia"; }
+            get { return mode == GameMode.Creative ? Tr.T("Creativo") : Tr.T("Supervivencia"); }
         }
 
         public string DifficultyLabel
@@ -52,8 +52,8 @@ namespace MarsRobot.Core
             {
                 switch (difficulty)
                 {
-                    case WorldDifficulty.Easy: return "Fácil";
-                    case WorldDifficulty.Hard: return "Difícil";
+                    case WorldDifficulty.Easy: return Tr.T("Fácil");
+                    case WorldDifficulty.Hard: return Tr.T("Difícil");
                     default: return "Normal";
                 }
             }

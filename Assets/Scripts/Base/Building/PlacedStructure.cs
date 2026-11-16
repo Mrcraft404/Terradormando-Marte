@@ -54,7 +54,7 @@ namespace MarsRobot.Base
             Definition = def;
             IsOn = true;
             PowerRatio = 1f;
-            Status = "Funcionando";
+            Status = Tr.T("Funcionando");
             _producedAccum = new float[def.produces.Length];
             _consumedAccum = new float[def.consumes.Length];
             float radius = Mathf.Max(def.size.x, def.size.z) * 0.5f + 2.5f;
@@ -88,7 +88,7 @@ namespace MarsRobot.Base
         {
             if (!IsOn)
             {
-                Status = "Apagada";
+                Status = Tr.T("Apagada");
                 return false;
             }
             if (IsJammed)
@@ -101,7 +101,7 @@ namespace MarsRobot.Base
             {
                 if (inv.Get(Definition.consumes[i].type) < 1 && _consumedAccum[i] <= 0f)
                 {
-                    Status = "Falta " + BaseInventory.Label(Definition.consumes[i].type);
+                    Status = Tr.T("Falta ") + BaseInventory.Label(Definition.consumes[i].type);
                     return false;
                 }
             }
@@ -112,7 +112,7 @@ namespace MarsRobot.Base
             }
             if (!anyRoom)
             {
-                Status = "Almacén lleno: construye tanques";
+                Status = Tr.T("Almacén lleno: construye tanques");
                 return false;
             }
             return true;
@@ -127,13 +127,13 @@ namespace MarsRobot.Base
             if (Definition.kind == StructureKind.SolarArray && env != null)
             {
                 Dust01 = Mathf.Clamp01(Dust01 + env.DustDepositionPerHour * gameHours * (1f - Dust01));
-                Status = Dust01 > 0.4f ? "<color=orange>Panel sucio: F para limpiar</color>" : "Generando " + LastGeneration.ToString("0") + " W";
+                Status = Dust01 > 0.4f ? "<color=orange>Panel sucio: F para limpiar</color>" : Tr.T("Generando ") + LastGeneration.ToString("0") + " W";
                 return;
             }
 
             if (!Definition.IsConsumer)
             {
-                if (Status == "" || Status == "Funcionando") Status = "Funcionando";
+                if (Status == "" || Status == Tr.T("Funcionando")) Status = Tr.T("Funcionando");
                 return;
             }
             if (!CanWork()) return;
@@ -178,8 +178,8 @@ namespace MarsRobot.Base
                 }
             }
 
-            Status = efficiency >= 0.99f ? "Funcionando" : "Funcionando al " + Mathf.RoundToInt(efficiency * 100f) + " %";
-            if (Definition.kind == StructureKind.IceDrill && iceFactor < 0.3f) Status += " (poco hielo en esta zona)";
+            Status = efficiency >= 0.99f ? Tr.T("Funcionando") : Tr.T("Funcionando al ") + Mathf.RoundToInt(efficiency * 100f) + " %";
+            if (Definition.kind == StructureKind.IceDrill && iceFactor < 0.3f) Status += Tr.T(" (poco hielo en esta zona)");
         }
 
         // ------------------------------------------------------------------
@@ -195,29 +195,29 @@ namespace MarsRobot.Base
         {
             GUILayout.Label(Definition.description);
             GUILayout.Space(4);
-            GUILayout.Label("<b>Estado:</b> " + Status);
-            if (Definition.IsGenerator) GUILayout.Label("Genera ahora: " + LastGeneration.ToString("0") + " W");
-            if (Definition.IsConsumer) GUILayout.Label("Consume: " + Definition.consumptionWatts.ToString("0") + " W  (energía recibida " + Mathf.RoundToInt(PowerRatio * 100f) + " %)");
-            if (Definition.storageWh > 0f) GUILayout.Label("Almacena hasta " + Definition.storageWh.ToString("0") + " Wh");
+            GUILayout.Label(Tr.T("<b>Estado:</b> ") + Status);
+            if (Definition.IsGenerator) GUILayout.Label(Tr.T("Genera ahora: ") + LastGeneration.ToString("0") + " W");
+            if (Definition.IsConsumer) GUILayout.Label(Tr.T("Consume: ") + Definition.consumptionWatts.ToString("0") + Tr.T(" W  (energía recibida ") + Mathf.RoundToInt(PowerRatio * 100f) + " %)");
+            if (Definition.storageWh > 0f) GUILayout.Label(Tr.T("Almacena hasta ") + Definition.storageWh.ToString("0") + " Wh");
             if (Definition.storageBonus.amount > 0)
             {
-                GUILayout.Label("+" + Definition.storageBonus.amount + " de capacidad de " + BaseInventory.Label(Definition.storageBonus.type));
+                GUILayout.Label("+" + Definition.storageBonus.amount + Tr.T(" de capacidad de ") + BaseInventory.Label(Definition.storageBonus.type));
             }
             GUILayout.Space(6);
 
-            if (Definition.IsConsumer && GUILayout.Button(IsOn ? "Apagar" : "Encender", GUILayout.Width(200)))
+            if (Definition.IsConsumer && GUILayout.Button(IsOn ? Tr.T("Apagar") : Tr.T("Encender"), GUILayout.Width(200)))
             {
                 IsOn = !IsOn;
             }
-            if (Definition.kind == StructureKind.SolarArray && GUILayout.Button("Limpiar el panel (" + Mathf.RoundToInt(Dust01 * 100f) + " % de polvo)", GUILayout.Width(300)))
+            if (Definition.kind == StructureKind.SolarArray && GUILayout.Button(Tr.T("Limpiar el panel (") + Mathf.RoundToInt(Dust01 * 100f) + Tr.T(" % de polvo)"), GUILayout.Width(300)))
             {
                 Dust01 = 0f;
-                _lastAction = "Panel limpio.";
+                _lastAction = Tr.T("Panel limpio.");
             }
-            if (Definition.kind == StructureKind.RegolithPrinter && IsJammed && GUILayout.Button("Desatascar la tolva", GUILayout.Width(200)))
+            if (Definition.kind == StructureKind.RegolithPrinter && IsJammed && GUILayout.Button(Tr.T("Desatascar la tolva"), GUILayout.Width(200)))
             {
                 IsJammed = false;
-                _lastAction = "Tolva desatascada: el regolito vuelve a fluir.";
+                _lastAction = Tr.T("Tolva desatascada: el regolito vuelve a fluir.");
             }
 
             // Extras de ciencia.
@@ -225,7 +225,7 @@ namespace MarsRobot.Base
             if (Definition.kind == StructureKind.CommsAntenna) ColonyObjectives.DrawMenu(Owner);
 
             GUILayout.Space(8);
-            if (GUILayout.Button("Desmontar (recuperas la mitad de los materiales)", GUILayout.Width(380)))
+            if (GUILayout.Button(Tr.T("Desmontar (recuperas la mitad de los materiales)"), GUILayout.Width(380)))
             {
                 Owner.Dismantle(this);
                 return;

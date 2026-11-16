@@ -218,7 +218,7 @@ namespace MarsRobot.Crew
             if (_target != null)
                 GUI.Box(new Rect(Screen.width * 0.5f - 230, Screen.height - 150, 460, 40), _target.CrewPrompt, _promptStyle);
             GUI.Label(new Rect(Screen.width * 0.5f - 300, Screen.height - 104, 600, 22),
-                "<color=#9fe8ff>WASD</color> caminar · <color=#9fe8ff>Mayús</color> correr · <color=#9fe8ff>F</color> usar · <color=#9fe8ff>I</color> inventario · <color=#9fe8ff>V</color> cámara · <color=#9fe8ff>Esc</color> soltar ratón",
+                Tr.T("<color=#9fe8ff>WASD</color> caminar · <color=#9fe8ff>Mayús</color> correr · <color=#9fe8ff>F</color> usar · <color=#9fe8ff>I</color> inventario · <color=#9fe8ff>V</color> cámara · <color=#9fe8ff>Esc</color> soltar ratón"),
                 new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, richText = true, fontSize = 13 });
         }
     }

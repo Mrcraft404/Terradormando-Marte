@@ -46,18 +46,18 @@ namespace MarsRobot.Robot
         {
             return new List<RobotModuleDefinition>
             {
-                Wheel(RobotModuleId.WheelFrontLeft, "Rueda delantera izquierda", RobotSide.Left, new Vector3(-0.8f, -0.4f, 1f)),
-                Wheel(RobotModuleId.WheelFrontRight, "Rueda delantera derecha", RobotSide.Right, new Vector3(0.8f, -0.4f, 1f)),
-                Wheel(RobotModuleId.WheelRearLeft, "Rueda trasera izquierda", RobotSide.Left, new Vector3(-0.8f, -0.4f, -1f)),
-                Wheel(RobotModuleId.WheelRearRight, "Rueda trasera derecha", RobotSide.Right, new Vector3(0.8f, -0.4f, -1f)),
-                Cable(RobotModuleId.CableHud, "Cableado de visor (HUD)", new Vector3(0f, 0.6f, 0.6f)),
-                Cable(RobotModuleId.CableMinimap, "Cableado de minimapa", new Vector3(0f, 0.4f, 0f)),
-                Cable(RobotModuleId.CableSensors, "Cableado de sensores", new Vector3(0f, 0.2f, 1.1f)),
+                Wheel(RobotModuleId.WheelFrontLeft, Tr.T("Rueda delantera izquierda"), RobotSide.Left, new Vector3(-0.8f, -0.4f, 1f)),
+                Wheel(RobotModuleId.WheelFrontRight, Tr.T("Rueda delantera derecha"), RobotSide.Right, new Vector3(0.8f, -0.4f, 1f)),
+                Wheel(RobotModuleId.WheelRearLeft, Tr.T("Rueda trasera izquierda"), RobotSide.Left, new Vector3(-0.8f, -0.4f, -1f)),
+                Wheel(RobotModuleId.WheelRearRight, Tr.T("Rueda trasera derecha"), RobotSide.Right, new Vector3(0.8f, -0.4f, -1f)),
+                Cable(RobotModuleId.CableHud, Tr.T("Cableado de visor (HUD)"), new Vector3(0f, 0.6f, 0.6f)),
+                Cable(RobotModuleId.CableMinimap, Tr.T("Cableado de minimapa"), new Vector3(0f, 0.4f, 0f)),
+                Cable(RobotModuleId.CableSensors, Tr.T("Cableado de sensores"), new Vector3(0f, 0.2f, 1.1f)),
                 new RobotModuleDefinition
                 {
                     id = RobotModuleId.Chassis,
                     category = ModuleCategory.Structure,
-                    displayName = "Chasis",
+                    displayName = Tr.T("Chasis"),
                     maxIntegrity = 200f,
                     localMountPoint = Vector3.zero,
                     damageMultiplier = 0.6f,
@@ -68,7 +68,7 @@ namespace MarsRobot.Robot
                 {
                     id = RobotModuleId.SolarPanel,
                     category = ModuleCategory.Power,
-                    displayName = "Panel solar",
+                    displayName = Tr.T("Panel solar"),
                     maxIntegrity = 80f,
                     localMountPoint = new Vector3(0f, 0.9f, -0.3f),
                     damageMultiplier = 1.2f,

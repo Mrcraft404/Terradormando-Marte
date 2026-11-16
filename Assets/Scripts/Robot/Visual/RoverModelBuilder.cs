@@ -455,10 +455,10 @@ namespace MarsRobot.Robot.Visual
             _metal = Mat("Aluminio", new Color(0.72f, 0.72f, 0.74f), 0.85f, 0.55f, null, Vector2.one);
             _darkMetal = Mat("Metal oscuro", new Color(0.18f, 0.18f, 0.2f), 0.7f, 0.45f, null, Vector2.one);
             _gold = Mat("Dorado", new Color(0.86f, 0.66f, 0.28f), 1f, 0.7f, null, Vector2.one);
-            _wheel = Mat("Rueda", new Color(0.2f, 0.2f, 0.22f), 0.75f, 0.35f, null, Vector2.one);
+            _wheel = Mat(Tr.T("Rueda"), new Color(0.2f, 0.2f, 0.22f), 0.75f, 0.35f, null, Vector2.one);
             _rim = Mat("Garras", new Color(0.32f, 0.32f, 0.34f), 0.85f, 0.4f, null, Vector2.one);
             _lens = Mat("Lente", new Color(0.03f, 0.04f, 0.06f), 0.2f, 0.95f, null, Vector2.one);
-            _solar = Mat("Células solares", Color.white, 0.6f, 0.8f, SolarTexture(), new Vector2(6f, 6f));
+            _solar = Mat(Tr.T("Células solares"), Color.white, 0.6f, 0.8f, SolarTexture(), new Vector2(6f, 6f));
             _rtg = Mat("RTG", new Color(0.35f, 0.35f, 0.37f), 0.8f, 0.35f, null, Vector2.one);
             _copper = Mat("Cobre", new Color(0.78f, 0.45f, 0.25f), 1f, 0.6f, null, Vector2.one);
             _blue = Mat("Placa azul", new Color(0.25f, 0.4f, 0.65f), 0.4f, 0.6f, null, Vector2.one);
@@ -516,7 +516,7 @@ namespace MarsRobot.Robot.Visual
                     px[y * s + x] = line ? new Color32(190, 190, 200, 255) : (finger ? new Color32(70, 80, 120, 255) : new Color32(25, 32, 70, 255));
                 }
             }
-            return MakeTex(px, s, "Células solares");
+            return MakeTex(px, s, Tr.T("Células solares"));
         }
 
         private static Texture2D MakeTex(Color32[] px, int s, string name)

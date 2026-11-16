@@ -23,9 +23,7 @@ namespace MarsRobot.Crew
         private Behaviour[] _robotOnly;
         private Transform _ship;
         private ShipElevator _elevator;
-        private string _message = "";
-        private float _messageTime = -10f;
-        private GUIStyle _badge, _msg;
+        private GUIStyle _badge;
 
         public bool AstronautActive { get; private set; }
 
@@ -63,12 +61,12 @@ namespace MarsRobot.Crew
             var inv = robot.GetComponent<RobotInventory>();
             if (inv != null)
             {
-                ContainerAccess.Create(ship, "bahía de carga del robot", Vector3.zero, () => inv.Bay,
+                ContainerAccess.Create(ship, Tr.T("bahía de carga del robot"), Vector3.zero, () => inv.Bay,
                     () => c.RobotDocked, () => robot.transform.position + Vector3.up, 2.6f);
             }
 
             c.SetAstronaut(true);
-            c.Show("Eres el astronauta. Fabrica en los talleres (nivel 2) y baja al hangar (nivel 1) para pilotar el robot con P.");
+            c.Show("marti_astronaut_start");
             return c;
         }
 
@@ -103,12 +101,12 @@ namespace MarsRobot.Crew
             if (!RobotDocked)
             {
                 Show(AstronautActive
-                    ? "El robot no está en el hangar: solo puedes tomar el control cuando está acoplado dentro."
-                    : "Lleva el robot al hangar (sube con el ascensor) para volver al astronauta.");
+                    ? "marti_robot_outside"
+                    : "marti_robot_to_hangar");
                 return;
             }
             SetAstronaut(!AstronautActive);
-            Show(AstronautActive ? "Control: astronauta." : "Control: robot. Sal por la puerta de carga y baja con el ascensor (F).");
+            Show(AstronautActive ? "marti_now_astronaut" : "marti_now_robot");
         }
 
         public void SetAstronaut(bool astronaut)
@@ -124,10 +122,10 @@ namespace MarsRobot.Crew
             Cursor.visible = true;
         }
 
+        /// <summary>Los consejos los da Marti, la mascota guía (bocadillo a la izquierda).</summary>
         private void Show(string text)
         {
-            _message = text;
-            _messageTime = Time.unscaledTime;
+            MarsRobot.UI.MascotGuide.Say(text);
         }
 
         private void OnGUI()
@@ -137,16 +135,14 @@ namespace MarsRobot.Crew
             {
                 _badge = new GUIStyle(GUI.skin.box) { fontSize = 15, fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleCenter, richText = true };
                 _badge.normal.textColor = Color.white;
-                _msg = new GUIStyle(GUI.skin.box) { fontSize = 16, alignment = TextAnchor.MiddleCenter, wordWrap = true };
-                _msg.normal.textColor = new Color(1f, 0.9f, 0.7f);
             }
             bool docked = RobotDocked;
-            string who = AstronautActive ? "<color=#ffb066>ASTRONAUTA</color>" : "<color=#66d9ff>ROBOT XR-1</color>";
-            string hint = docked ? "P: cambiar a " + (AstronautActive ? "robot" : "astronauta") : (AstronautActive ? "robot fuera del hangar" : "vuelve al hangar para cambiar");
+            System.Func<string, string, string> L = MarsRobot.Localization.Localizer.L;
+            string who = AstronautActive ? "<color=#ffb066>" + L("ASTRONAUTA", "ASTRONAUT") + "</color>" : "<color=#66d9ff>ROBOT XR-1</color>";
+            string hint = docked ? L("P: cambiar a ", "P: switch to ") + (AstronautActive ? "robot" : L("astronauta", "astronaut"))
+                                 : (AstronautActive ? L("robot fuera del hangar", "robot is outside the hangar") : L("vuelve al hangar para cambiar", "go back to the hangar to switch"));
             // Abajo en el centro (arriba están el clima espacial y los avisos).
-            GUI.Box(new Rect(Screen.width * 0.5f - 230, Screen.height - 40, 460, 30), "Controlas: " + who + "   ·   " + hint, _badge);
-            if (Time.unscaledTime - _messageTime < 6f)
-                GUI.Box(new Rect(Screen.width * 0.5f - 330, Screen.height - 210, 660, 48), _message, _msg);
+            GUI.Box(new Rect(Screen.width * 0.5f - 230, Screen.height - 40, 460, 30), MarsRobot.Localization.Localizer.L("Controlas: ", "You control: ") + who + "   ·   " + hint, _badge);
         }
     }
 }

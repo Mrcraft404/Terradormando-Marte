@@ -14,12 +14,12 @@ namespace MarsRobot.Spawns
     /// panel de depuración (IMGUI, sin paquetes extra). Así la escena .unity solo necesita un objeto
     /// con este componente y no hay que arrastrar referencias a mano.
     ///
-    /// Teclas de prueba: F1–F6 cambiar de zona · F8 daño aleatorio · F9 reparar todo ·
+    /// Teclas de prueba (cambiar de zona: mapa grande con M, pestaña "Marte") · F8 daño aleatorio · F9 reparar todo ·
     /// F10 tormenta de polvo · (+ los controles normales del robot).
     /// </summary>
     public sealed class TestSceneBootstrap : MonoBehaviour
     {
-        [Tooltip("Catálogo con las 6 zonas (F1–F6).")]
+        [Tooltip("Catálogo con las 6 zonas (se viaja desde el mapa grande, tecla M).")]
         [SerializeField] private LandingZoneCatalog catalog;
 
         [Tooltip("Zona con la que arranca la prueba si no se eligió otra.")]
@@ -40,8 +40,9 @@ namespace MarsRobot.Spawns
         private LandingZoneSpawner _spawner;
 
         /// <summary>
-        /// Cuando el robot ya ha aterrizado, aparca el MarteCar en la base: a la izquierda de la
-        /// plataforma de carga, lejos del radio de las máquinas para que la F no se confunda.
+        /// Cuando el robot ya ha aterrizado, prepara la base: rocas, puntos de descubrimiento…
+        /// (El MarteCar que se aparcaba junto al ascensor se ha quitado: el vehículo del jugador
+        /// es el propio rover. Sus scripts están en Documents/JUEGO_respaldo_limpieza.)
         /// </summary>
         private System.Collections.IEnumerator Start()
         {
@@ -53,12 +54,6 @@ namespace MarsRobot.Spawns
             MarsRobot.Crew.CrewControl.Setup(_spawner.RocketBase, _controller.gameObject);
 
             Transform baseRoot = _spawner.RocketBase.transform;
-            // MarteCar aparcado junto al pie del ascensor (a la derecha según se sale de la nave).
-            Vector3 parking = baseRoot.TransformPoint(new Vector3(8.5f, 0f, 17f));
-            parking.y = _terrain.GetHeightAt(parking);
-            MarsRobot.Vehicles.MarteCarFactory.Create(parking, baseRoot.rotation).gameObject
-                .AddComponent<MarsRobot.UI.Minimap.MinimapObjectMarker>().Setup(MarsRobot.UI.Minimap.MinimapMarkerType.Vehicle, false, "MarteCar");
-
             // Rocas minables alrededor del rover.
             var rocks = new GameObject("Rocas").AddComponent<RockScatterSpawner>();
             rocks.Setup(_terrain, _controller.transform, _spawner.ActiveZone);
@@ -71,7 +66,7 @@ namespace MarsRobot.Spawns
                 float dist = 70f + (float)rng.NextDouble() * 50f;
                 Vector3 p = baseRoot.position + Quaternion.Euler(0f, ang, 0f) * Vector3.forward * dist;
                 p.y = _terrain.GetHeightAt(p);
-                MarsRobot.Dialogue.DiscoveryPoint.Spawn(p, "probe_archive", i == 0 ? "Restos de una sonda antigua" : "Módulo de aterrizaje abandonado");
+                MarsRobot.Dialogue.DiscoveryPoint.Spawn(p, "probe_archive", i == 0 ? Tr.T("Restos de una sonda antigua") : Tr.T("Módulo de aterrizaje abandonado"));
             }
 
             // Aspecto: atrezo con colocación orgánica, cielo marciano, sondas de reflejos y una
@@ -83,6 +78,8 @@ namespace MarsRobot.Spawns
             // Bienvenida de la IA del cohete (pausa el juego hasta elegir respuesta).
             yield return new WaitForSeconds(1.5f);
             MarsRobot.Dialogue.DialogueManager.Play("intro_nav");
+            // Tutorial guiado con Marti (empieza al cerrar la bienvenida; solo la primera vez).
+            MarsRobot.UI.TutorialGuide.StartIfNeeded();
 
             // Mensaje de la comandante cuando la base lleve un rato funcionando.
             yield return new WaitForSeconds(480f);
@@ -92,14 +89,30 @@ namespace MarsRobot.Spawns
         private float _messageTime;
         private GUIStyle _style;
 
+        private static int _catalogLanguage = -1;
+
         private void Awake()
         {
+            Catalog = catalog;
+            // Nombres de máquinas, piezas, objetos y recetas en el idioma de Ajustes: si cambió
+            // desde la última partida, se rehacen ahora (antes de que nada los use).
+            if (_catalogLanguage != MarsRobot.Core.GameSettings.Language)
+            {
+                if (_catalogLanguage >= 0)
+                {
+                    MarsRobot.Base.StructureCatalog.ResetCache();
+                    MarsRobot.Base.BuildPieceCatalog.ResetCache();
+                    MarsRobot.Crafting.RecipeBook.ResetCache();
+                    MarsRobot.Items.ItemDatabase.ResetCache();
+                }
+                _catalogLanguage = MarsRobot.Core.GameSettings.Language;
+            }
             _zone = LandingZoneCatalog.SelectedZone != null ? LandingZoneCatalog.SelectedZone : defaultZone;
             if (_zone == null)
             {
                 // Sin assets (p. ej. si se borraron): zona por defecto en memoria.
                 _zone = ScriptableObject.CreateInstance<LandingZoneData>();
-                _zone.displayName = "Zona de prueba";
+                _zone.displayName = Tr.T("Zona de prueba");
             }
 
             ConfigureRendering();
@@ -113,7 +126,9 @@ namespace MarsRobot.Spawns
             spaceWeather.AddComponent<MarsRobot.World.SpaceWeather.SpaceWeatherHUD>();
 
             // Minimapa táctico (arriba a la izquierda).
-            new GameObject("Minimapa").AddComponent<MarsRobot.UI.Minimap.MarsMinimapController>();
+            var minimap = new GameObject("Minimapa");
+            minimap.AddComponent<MarsRobot.UI.Minimap.MarsMinimapController>();
+            minimap.AddComponent<MarsRobot.UI.Minimap.MarsMapScreen>(); // mapa grande (M) y viajes entre zonas
 
             _terrain = new GameObject("Terreno").AddComponent<TerrainManager>();
             _terrain.SetMaterial(MarsGroundMaterialFactory.Create(_zone.terrain.seed));
@@ -129,8 +144,8 @@ namespace MarsRobot.Spawns
             spawner.SetTerrainGenerator(_marsData);
 
             _repair.RepairBlocked += (m, reason) => ShowMessage(reason);
-            _health.CableCut += m => ShowMessage("¡Cable cortado: " + m.Definition.displayName + "!");
-            _dusting.DustWarning += () => ShowMessage("Paneles sucios: pulsa C para limpiarlos.");
+            _health.CableCut += m => ShowMessage(Tr.T("¡Cable cortado: ") + m.Definition.displayName + "!");
+            _dusting.DustWarning += () => ShowMessage(Tr.T("Paneles sucios: pulsa C para limpiarlos."));
         }
 
         // ------------------------------------------------------------------
@@ -186,7 +201,8 @@ namespace MarsRobot.Spawns
             robot.AddComponent<RoverToolController>();  // X: taladro / pala / soplador
             robot.AddComponent<RobotToolbelt>();        // L foco · Z escáner
             robot.AddComponent<BuildModeController>();  // B: construir (antes que RobotBaseLink, que lo busca en Awake)
-            robot.AddComponent<MarsBuildingPlacer>();   // N: hábitats por capas con holograma (después de BuildModeController)
+            robot.AddComponent<MarsBuildingPlacer>();   // hábitats por capas con holograma (se entra desde el menú N)
+            robot.AddComponent<SpaceBuildMenu>();       // N: menú de construcción con fotos (piezas, módulos y equipos)
             robot.AddComponent<RobotBaseLink>();        // F: máquinas y estructuras de la base (por cercanía)
             robot.AddComponent<MarsRobot.Interaction.PlayerInteractor>(); // F: lo que apunta el punto de mira
             robot.AddComponent<MarsRobot.Interaction.InteractionUI>();    // punto de mira y texto de acción
@@ -274,10 +290,6 @@ namespace MarsRobot.Spawns
         private void Update()
         {
 #if ENABLE_LEGACY_INPUT_MANAGER
-            for (int i = 0; i < 6; i++)
-            {
-                if (Input.GetKeyDown(KeyCode.F1 + i)) LoadZone(i);
-            }
             if (Input.GetKeyDown(KeyCode.H))
             {
                 // El panel de depuración ocupa mucho en la vista Game pequeña del editor.
@@ -290,23 +302,23 @@ namespace MarsRobot.Spawns
                 if (GameServices.TryGet(out rocketBase))
                 {
                     foreach (ResourceType t in System.Enum.GetValues(typeof(ResourceType))) rocketBase.Inventory.Add(t, 10);
-                    ShowMessage("Prueba: +10 de cada recurso en el almacén.");
+                    ShowMessage(Tr.T("Prueba: +10 de cada recurso en el almacén."));
                 }
             }
             if (Input.GetKeyDown(KeyCode.F8))
             {
                 _health.ApplyImpact(_health.transform.position + Random.insideUnitSphere, 9f, 1f);
-                ShowMessage("Prueba: golpe fuerte.");
+                ShowMessage(Tr.T("Prueba: golpe fuerte."));
             }
             if (Input.GetKeyDown(KeyCode.F9))
             {
                 _health.RepairAll();
-                ShowMessage("Prueba: todo reparado.");
+                ShowMessage(Tr.T("Prueba: todo reparado."));
             }
             if (Input.GetKeyDown(KeyCode.F10))
             {
                 _environment.StartStorm(0.5f);
-                ShowMessage("Prueba: tormenta de polvo.");
+                ShowMessage(Tr.T("Prueba: tormenta de polvo."));
             }
             if (Input.GetKeyDown(KeyCode.F11))
             {
@@ -314,19 +326,22 @@ namespace MarsRobot.Spawns
                 if (GameServices.TryGet(out sw))
                 {
                     sw.TriggerNextNow();
-                    ShowMessage("Prueba: siguiente evento de clima espacial.");
+                    ShowMessage(Tr.T("Prueba: siguiente evento de clima espacial."));
                 }
             }
 #endif
         }
 
-        private void LoadZone(int index)
+        /// <summary>Zonas de aterrizaje del juego (las muestra el mapa grande, pestaña "Marte").</summary>
+        public static LandingZoneCatalog Catalog { get; private set; }
+
+        /// <summary>Viaja a otra zona: vuelve a cargar la escena aterrizando allí (antes eran F1–F6).</summary>
+        public static void TravelTo(LandingZoneData zone)
         {
-            if (catalog == null || index >= catalog.zones.Count || catalog.zones[index] == null) return;
-            LandingZoneCatalog.SelectedZone = catalog.zones[index];
+            if (zone == null) return;
+            LandingZoneCatalog.SelectedZone = zone;
             Scene scene = SceneManager.GetActiveScene();
             if (scene.buildIndex >= 0) SceneManager.LoadScene(scene.buildIndex);
-            else ShowMessage("Añade la escena a Build Settings para cambiar de zona.");
         }
 
         private void ShowMessage(string text)
@@ -357,39 +372,39 @@ namespace MarsRobot.Spawns
 
             var sb = new System.Text.StringBuilder();
             sb.AppendLine("<b>" + _zone.displayName + "</b>  (" + LandingZoneData.DifficultyLabel(_zone.difficulty) + ")");
-            sb.AppendLine("Batería: " + Pct(_battery.Charge01) + "   Panel: " + _dusting.CurrentOutputWatts.ToString("0") + " W   Polvo: " + Pct(_dusting.Dust01));
-            sb.AppendLine("Movilidad: " + Pct(_health.Mobility) + "   Integridad: " + Pct(_health.StructuralIntegrity01) +
-                          "   Velocidad: " + _controller.CurrentSpeed.ToString("0.0") + " m/s");
-            sb.AppendLine("Hora del sol: " + _environment.SolTime01.ToString("0.00") + "   " +
-                          _environment.TemperatureC.ToString("0") + " °C" + (_environment.IsDustStormActive ? "   <color=orange>TORMENTA</color>" : ""));
+            sb.AppendLine(Tr.T("Batería: ") + Pct(_battery.Charge01) + "   Panel: " + _dusting.CurrentOutputWatts.ToString("0") + Tr.T(" W   Polvo: ") + Pct(_dusting.Dust01));
+            sb.AppendLine(Tr.T("Movilidad: ") + Pct(_health.Mobility) + Tr.T("   Integridad: ") + Pct(_health.StructuralIntegrity01) +
+                          Tr.T("   Velocidad: ") + _controller.CurrentSpeed.ToString("0.0") + " m/s");
+            sb.AppendLine(Tr.T("Hora del sol: ") + _environment.SolTime01.ToString("0.00") + "   " +
+                          _environment.TemperatureC.ToString("0") + " °C" + (_environment.IsDustStormActive ? Tr.T("   <color=orange>TORMENTA</color>") : ""));
 
             if (_health.IsFunctional(RobotModuleId.CableSensors))
             {
-                sb.AppendLine("Chunks: " + _terrain.ActiveChunkCount + " activos, " + _terrain.PooledChunkCount +
-                              " en pool, " + _terrain.PendingBuildCount + " pendientes");
+                sb.AppendLine("Chunks: " + _terrain.ActiveChunkCount + Tr.T(" activos, ") + _terrain.PooledChunkCount +
+                              Tr.T(" en pool, ") + _terrain.PendingBuildCount + Tr.T(" pendientes"));
             }
             else
             {
                 sb.AppendLine("<color=red>Sensores sin señal</color>");
             }
-            sb.AppendLine(_health.IsFunctional(RobotModuleId.CableMinimap) ? "Minimapa: OK" : "<color=red>Minimapa: SIN SEÑAL</color>");
+            sb.AppendLine(_health.IsFunctional(RobotModuleId.CableMinimap) ? Tr.T("Minimapa: OK") : "<color=red>Minimapa: SIN SEÑAL</color>");
 
             // Datos del mapa real (NASA o simulación del script de Python).
             if (_marsData != null && _marsData.IsLoaded && _health.IsFunctional(RobotModuleId.CableSensors))
             {
                 Vector3 pos = _controller.transform.position;
                 MarsChunkData chunk = _marsData.GetChunkAt(pos);
-                sb.AppendLine("Mapa: " + _marsData.Manifest.sources.elevation + " · elevación " +
+                sb.AppendLine(Tr.T("Mapa: ") + _marsData.Manifest.sources.elevation + Tr.T(" · elevación ") +
                               _marsData.GetAreoidElevation(pos).ToString("0") + " m");
                 if (chunk != null && chunk.Metadata != null && chunk.Metadata.minerals != null)
                 {
                     MarsMineralConcentrations m = chunk.Metadata.minerals;
-                    sb.AppendLine("Minerales: arcillas " + Pct(m.clays) + " · sulfatos " + Pct(m.sulfates) +
-                                  " · óxidos Fe " + Pct(m.ironOxides) + " · hielo " + Pct(m.subsurfaceIce));
+                    sb.AppendLine(Tr.T("Minerales: arcillas ") + Pct(m.clays) + Tr.T(" · sulfatos ") + Pct(m.sulfates) +
+                                  Tr.T(" · óxidos Fe ") + Pct(m.ironOxides) + Tr.T(" · hielo ") + Pct(m.subsurfaceIce));
                     if (chunk.Metadata.environment != null)
                     {
-                        sb.AppendLine("Radiación: " + chunk.Metadata.environment.radiationMilliGrayPerDay.ToString("0.00") +
-                                      " mGy/día · presión " + chunk.Metadata.environment.pressurePa.ToString("0") + " Pa");
+                        sb.AppendLine(Tr.T("Radiación: ") + chunk.Metadata.environment.radiationMilliGrayPerDay.ToString("0.00") +
+                                      Tr.T(" mGy/día · presión ") + chunk.Metadata.environment.pressurePa.ToString("0") + " Pa");
                     }
                 }
             }
@@ -409,16 +424,16 @@ namespace MarsRobot.Spawns
             }
 
             sb.AppendLine();
-            sb.AppendLine("Herramienta: " + _repair.CurrentTool + (_repair.IsRepairing ? "  <color=lime>reparando…</color>" : ""));
+            sb.AppendLine(Tr.T("Herramienta: ") + _repair.CurrentTool + (_repair.IsRepairing ? Tr.T("  <color=lime>reparando…</color>") : ""));
             // Diagnóstico de control: si el robot no se mueve, esta línea dice por qué.
             Vector2 mv = _controller.MoveInput;
-            sb.AppendLine("Teclas: (" + mv.x.ToString("0") + ", " + mv.y.ToString("0") + ")   En suelo: " +
-                          (_controller.IsGrounded ? "sí" : "<color=orange>no</color>") + "   Ratón: " +
-                          (Cursor.lockState == CursorLockMode.Locked ? "capturado" : "libre (clic en la vista)") +
-                          "   Cámara: " + (_cameraRig.Mode == RobotCameraMode.FirstPerson ? "1ª persona" : "3ª persona"));
-            sb.AppendLine("W adelante · S atrás · A izquierda · D derecha · Q/E girar · ratón mirar · V cámara");
-            sb.AppendLine("F usar máquina · R reparar · T herramienta · G módulo · C limpiar paneles");
-            sb.AppendLine("F1–F6 zona · F7 +recursos · F8 golpe · F9 reparar todo · F10 tormenta · F11 clima espacial · H ocultar panel");
+            sb.AppendLine(Tr.T("Teclas: (") + mv.x.ToString("0") + ", " + mv.y.ToString("0") + Tr.T(")   En suelo: ") +
+                          (_controller.IsGrounded ? Tr.T("sí") : "<color=orange>no</color>") + Tr.T("   Ratón: ") +
+                          (Cursor.lockState == CursorLockMode.Locked ? "capturado" : Tr.T("libre (clic en la vista)")) +
+                          Tr.T("   Cámara: ") + (_cameraRig.Mode == RobotCameraMode.FirstPerson ? Tr.T("1ª persona") : Tr.T("3ª persona")));
+            sb.AppendLine(Tr.T("W adelante · S atrás · A izquierda · D derecha · Q/E girar · ratón mirar · V cámara"));
+            sb.AppendLine(Tr.T("F usar máquina · R reparar · T herramienta · G módulo · C limpiar paneles"));
+            sb.AppendLine(Tr.T("M mapa y zonas · F7 +recursos · F8 golpe · F9 reparar todo · F10 tormenta · F11 clima espacial · H ocultar panel"));
             if (Time.time - _messageTime < 4f && _lastMessage.Length > 0) sb.AppendLine("\n<b>" + _lastMessage + "</b>");
 
             GUI.color = new Color(0f, 0f, 0f, 0.55f);

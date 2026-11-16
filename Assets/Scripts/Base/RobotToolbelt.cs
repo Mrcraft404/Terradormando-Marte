@@ -76,21 +76,21 @@ namespace MarsRobot.Base
         {
             if (_battery != null && !_battery.TryConsume(scanEnergyWh))
             {
-                Show("Batería insuficiente para escanear.");
+                Show(Tr.T("Batería insuficiente para escanear."));
                 return;
             }
             RoverToolController.SoilReading s = _tools != null ? _tools.ReadSoil(transform.position) : default(RoverToolController.SoilReading);
             int rocks = ResourceNode.RevealAround(transform.position, scanRadius);
 
             var sb = new System.Text.StringBuilder("<b>Escáner geológico</b>");
-            sb.Append(s.realData ? "  (datos orbitales CRISM)\n" : "  (estimación de la zona)\n");
-            sb.Append("Hielo bajo el suelo: ").Append(Pct(s.ice)).Append('\n');
-            sb.Append("Óxidos de hierro: ").Append(Pct(s.iron)).Append('\n');
-            sb.Append("Sulfatos: ").Append(Pct(s.sulfates)).Append("   Arcillas: ").Append(Pct(s.clays)).Append('\n');
-            sb.Append("Rocas aprovechables cerca: ").Append(rocks).Append(" (marcadas en el minimapa)\n");
+            sb.Append(s.realData ? Tr.T("  (datos orbitales CRISM)\n") : Tr.T("  (estimación de la zona)\n"));
+            sb.Append(Tr.T("Hielo bajo el suelo: ")).Append(Pct(s.ice)).Append('\n');
+            sb.Append(Tr.T("Óxidos de hierro: ")).Append(Pct(s.iron)).Append('\n');
+            sb.Append(Tr.T("Sulfatos: ")).Append(Pct(s.sulfates)).Append(Tr.T("   Arcillas: ")).Append(Pct(s.clays)).Append('\n');
+            sb.Append(Tr.T("Rocas aprovechables cerca: ")).Append(rocks).Append(Tr.T(" (marcadas en el minimapa)\n"));
             if (s.ice >= 0.5f) sb.Append("<color=#80d0ff>Buen sitio para un taladro de hielo.</color>");
             else if (s.iron >= 0.45f) sb.Append("<color=#ffb080>Suelo rico en hierro: perfora aquí (X).</color>");
-            else sb.Append("Suelo normal: sirve para regolito.");
+            else sb.Append(Tr.T("Suelo normal: sirve para regolito."));
             _scanText = sb.ToString();
             _scanTime = Time.time;
 
@@ -110,18 +110,18 @@ namespace MarsRobot.Base
 
             if (_tools != null)
             {
-                sb.Append("<b>Herramienta:</b> ").Append(RoverToolController.ToolLabel(_tools.ActiveTool));
-                if (_tools.IsWorking) sb.Append("  <color=#ffd060>trabajando… ").Append(Mathf.RoundToInt(_tools.Progress01 * 100f)).Append(" %</color>");
+                sb.Append(Tr.T("<b>Herramienta:</b> ")).Append(RoverToolController.ToolLabel(_tools.ActiveTool));
+                if (_tools.IsWorking) sb.Append(Tr.T("  <color=#ffd060>trabajando… ")).Append(Mathf.RoundToInt(_tools.Progress01 * 100f)).Append(" %</color>");
                 if (Time.time - _tools.LastMessageTime < 2.5f && _tools.LastMessage.Length > 0) sb.Append("\n").Append(_tools.LastMessage);
             }
             if (_inventory != null && _inventory.Bay != null)
             {
-                sb.Append("\n<b>Carga:</b> ").Append(_inventory.Bay.TotalMassKg.ToString("0")).Append('/').Append(_inventory.Bay.MaxMassKg.ToString("0"))
+                sb.Append(Tr.T("\n<b>Carga:</b> ")).Append(_inventory.Bay.TotalMassKg.ToString("0")).Append('/').Append(_inventory.Bay.MaxMassKg.ToString("0"))
                   .Append(" kg · ").Append(_inventory.Bay.TotalVolumeLiters.ToString("0")).Append('/').Append(_inventory.Bay.MaxVolumeLiters.ToString("0")).Append(" L  ")
                   .Append(_inventory.LoadStatus);
             }
             if (Time.time - _messageTime < 3f) sb.Append("\n<b>").Append(_message).Append("</b>");
-            sb.Append("\nX herramienta · F usar · I carga · J bitácora · L foco · Z escáner · B construir");
+            sb.Append(Tr.T("\nX herramienta · F usar · I carga · J bitácora · L foco · Z escáner · B construir"));
 
             float w = 680f;
             GUI.Label(new Rect(Screen.width * 0.5f - w * 0.5f, Screen.height - 250, w, 110), sb.ToString());

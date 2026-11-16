@@ -110,7 +110,7 @@ namespace MarsRobot.Base.Ship
                 ShipMesh.Beam(_p, p0, p1, 0.05f, ShipMaterials.Copper);
                 ShipMesh.Beam(_p, p0 + Vector3.down * 0.15f, p1 + Vector3.down * 0.15f, 0.035f, ShipMaterials.Metal);
             }
-            Label(0f, 2.4f, -3.1f, "Núcleo: escalera de caracol + montacargas");
+            Label(0f, 2.4f, -3.1f, Tr.T("Núcleo: escalera de caracol + montacargas"));
         }
 
         // ------------------------------------------------------------------
@@ -150,12 +150,12 @@ namespace MarsRobot.Base.Ship
             // Estanterías de la bodega (sólidas) y terminal.
             Solid(new Vector3(3.05f, 1.4f, 0f), new Vector3(1.1f, 2.8f, 2.8f));
 
-            Label(0f, 0.6f, 0.3f, "Hangar del robot · 4,5 × 5 m (taller integrado)");
-            Label(0f, 2.9f, -1.6f, "Pórtico: cambio de ruedas, patas y herramientas");
-            Label(-3.1f, 2.2f, 0f, "Estación de carga de baterías");
-            Label(3.05f, 2.9f, 0f, "Almacén de repuestos · 1,1 × 2,8 m");
-            Label(-2.0f, 1.2f, -2.65f, "Bancos de trabajo");
-            Label(0f, 1.6f, 3.7f, "Puerta de carga 3,2 m → plataforma elevadora");
+            Label(0f, 0.6f, 0.3f, Tr.T("Hangar del robot · 4,5 × 5 m (taller integrado)"));
+            Label(0f, 2.9f, -1.6f, Tr.T("Pórtico: cambio de ruedas, patas y herramientas"));
+            Label(-3.1f, 2.2f, 0f, Tr.T("Estación de carga de baterías"));
+            Label(3.05f, 2.9f, 0f, Tr.T("Almacén de repuestos · 1,1 × 2,8 m"));
+            Label(-2.0f, 1.2f, -2.65f, Tr.T("Bancos de trabajo"));
+            Label(0f, 1.6f, 3.7f, Tr.T("Puerta de carga 3,2 m → plataforma elevadora"));
         }
 
         // ------------------------------------------------------------------
@@ -175,11 +175,11 @@ namespace MarsRobot.Base.Ship
             Workbench(ShipLayout.Workbench, ShipLayout.WorkbenchFacing);
             Lockers(ShipLayout.Lockers);
 
-            Label(ShipLayout.Fabricator.x, 2.4f, ShipLayout.Fabricator.z, "Fabricador");
-            Label(ShipLayout.Smelter.x, 2.6f, ShipLayout.Smelter.z, "Fundición de inducción");
-            Label(ShipLayout.Refinery.x, 2.4f, ShipLayout.Refinery.z, "Refinería química (Sabatier · electrólisis · Bosch)");
-            Label(ShipLayout.Workbench.x, 2.2f, ShipLayout.Workbench.z, "Banco de trabajo");
-            Label(0f, 2.3f, ShipLayout.Lockers.z, "Almacén de la base");
+            Label(ShipLayout.Fabricator.x, 2.4f, ShipLayout.Fabricator.z, Tr.T("Fabricador"));
+            Label(ShipLayout.Smelter.x, 2.6f, ShipLayout.Smelter.z, Tr.T("Fundición de inducción"));
+            Label(ShipLayout.Refinery.x, 2.4f, ShipLayout.Refinery.z, Tr.T("Refinería química (Sabatier · electrólisis · Bosch)"));
+            Label(ShipLayout.Workbench.x, 2.2f, ShipLayout.Workbench.z, Tr.T("Banco de trabajo"));
+            Label(0f, 2.3f, ShipLayout.Lockers.z, Tr.T("Almacén de la base"));
         }
 
         private static Transform BeginMachine(string name, Vector3 pos, float yaw)
@@ -217,7 +217,7 @@ namespace MarsRobot.Base.Ship
         /// <summary>Celda de fabricación: cabina cerrada con puerta de cristal, pórtico XYZ y panel.</summary>
         private static void Fabricator(Vector3 pos, float yaw)
         {
-            BeginMachine("Fabricador", pos, yaw);
+            BeginMachine(Tr.T("Fabricador"), pos, yaw);
             MB(0f, 0.06f, 0f, 1.9f, 0.12f, 1.3f, ShipMaterials.DarkMetal);              // zócalo
             MB(0f, 2.0f, 0f, 1.9f, 0.25f, 1.3f, ShipMaterials.Panel);                   // techo técnico
             MB(0f, 1.06f, -0.62f, 1.9f, 1.88f, 0.05f, ShipMaterials.Wall);              // trasera
@@ -244,7 +244,7 @@ namespace MarsRobot.Base.Ship
         /// <summary>Horno de inducción basculante con crisol, campana extractora y cuadro de control.</summary>
         private static void Smelter(Vector3 pos, float yaw)
         {
-            BeginMachine("Fundición", pos, yaw);
+            BeginMachine(Tr.T("Fundición"), pos, yaw);
             MB(0f, 0.08f, 0f, 1.9f, 0.16f, 1.8f, ShipMaterials.DarkMetal);              // plataforma
             MC(0f, 0.85f, -0.1f, 0.62f, 1.3f, ShipMaterials.Metal);                     // cuerpo del horno
             for (int k = 0; k < 4; k++) MC(0f, 0.45f + k * 0.27f, -0.1f, 0.66f, 0.06f, ShipMaterials.Copper); // bobina
@@ -268,7 +268,7 @@ namespace MarsRobot.Base.Ship
         /// <summary>Refinería química: depósitos de CO₂ y agua, reactor Sabatier, electrolizador y tuberías.</summary>
         private static void ChemicalRefinery(Vector3 pos, float yaw)
         {
-            BeginMachine("Refinería química", pos, yaw);
+            BeginMachine(Tr.T("Refinería química"), pos, yaw);
             MB(0f, 0.06f, 0f, 1.9f, 0.12f, 1.5f, ShipMaterials.DarkMetal);              // bancada
             MC(-0.55f, 1.0f, -0.35f, 0.32f, 1.7f, ShipMaterials.Frost);                 // depósito de CO₂
             MC(0.55f, 1.0f, -0.35f, 0.32f, 1.7f, ShipMaterials.TankDark);               // depósito de agua/metano
@@ -289,7 +289,7 @@ namespace MarsRobot.Base.Ship
         /// <summary>Banco de trabajo con cajonera, panel de herramientas, tornillo y lámpara.</summary>
         private static void Workbench(Vector3 pos, float yaw)
         {
-            BeginMachine("Banco de trabajo", pos, yaw);
+            BeginMachine(Tr.T("Banco de trabajo"), pos, yaw);
             MB(0f, 0.9f, 0f, 1.9f, 0.07f, 0.8f, ShipMaterials.Metal);                   // tablero
             for (int s = -1; s <= 1; s += 2) MB(s * 0.88f, 0.45f, 0f, 0.06f, 0.88f, 0.74f, ShipMaterials.DarkMetal);
             MB(0.55f, 0.45f, 0f, 0.6f, 0.82f, 0.7f, ShipMaterials.Panel);               // cajonera
@@ -307,7 +307,7 @@ namespace MarsRobot.Base.Ship
         /// <summary>Fila de armarios del almacén de la base contra la pared delantera.</summary>
         private static void Lockers(Vector3 pos)
         {
-            BeginMachine("Almacén de la base", pos, 180f);
+            BeginMachine(Tr.T("Almacén de la base"), pos, 180f);
             for (int k = 0; k < 5; k++)
             {
                 float x = -1.2f + k * 0.6f;
@@ -456,7 +456,7 @@ namespace MarsRobot.Base.Ship
         private static void Industry()
         {
             // Impresora 3D industrial: cabina de metacrilato, cama caliente, pórtico y bobinas de filamento.
-            Machine("Impresora 3D", ShipLayout.Printer3D);
+            Machine(Tr.T("Impresora 3D"), ShipLayout.Printer3D);
             MB(0f, 0.35f, 0f, 1.3f, 0.7f, 1.1f, ShipMaterials.Panel);                         // armario base
             for (int k = 0; k < 2; k++) MB(0f, 0.2f + k * 0.3f, 0.556f, 1.1f, 0.01f, 0.01f, ShipMaterials.DarkMetal); // cajones
             for (int sx = -1; sx <= 1; sx += 2)
@@ -479,7 +479,7 @@ namespace MarsRobot.Base.Ship
             EndMachine(Vector3.up, new Vector3(1.5f, 2f, 1.2f));
 
             // Taller de electrónica: tapete antiestático, osciloscopio, estación de soldadura, microscopio y cajonera.
-            Machine("Taller de electrónica", ShipLayout.ElectronicsBench);
+            Machine(Tr.T("Taller de electrónica"), ShipLayout.ElectronicsBench);
             WorkTable(1.9f, 0.8f, X("Tapete antiestático", new Color(0.12f, 0.3f, 0.55f), 0f, 0.25f));
             MB(-0.6f, 1.08f, -0.18f, 0.42f, 0.28f, 0.3f, ShipMaterials.Panel);                // osciloscopio
             MB(-0.66f, 1.1f, -0.025f, 0.24f, 0.18f, 0.01f, ShipMaterials.ScreenGreen);
@@ -510,8 +510,8 @@ namespace MarsRobot.Base.Ship
             Shelf(ShipLayout.IndustryShelfL, 3);
             Shelf(ShipLayout.IndustryShelfR, 4);
 
-            LabelAt(ShipLayout.Printer3D, 2.2f, "Impresora 3D");
-            LabelAt(ShipLayout.ElectronicsBench, 1.8f, "Taller de electrónica");
+            LabelAt(ShipLayout.Printer3D, 2.2f, Tr.T("Impresora 3D"));
+            LabelAt(ShipLayout.ElectronicsBench, 1.8f, Tr.T("Taller de electrónica"));
             LabelAt(ShipLayout.MineralBins, 1.1f, "Contenedores de minerales");
         }
 
@@ -531,11 +531,11 @@ namespace MarsRobot.Base.Ship
 
         private static void Science()
         {
-            GardenRack("Huerto hidropónico A", ShipLayout.GardenA);
-            GardenRack("Huerto hidropónico B", ShipLayout.GardenB);
+            GardenRack(Tr.T("Huerto hidropónico A"), ShipLayout.GardenA);
+            GardenRack(Tr.T("Huerto hidropónico B"), ShipLayout.GardenB);
 
             // Laboratorio: campana de flujo, microscopio, centrifugadora, gradilla de tubos y espectrómetro.
-            Machine("Laboratorio", ShipLayout.Laboratory);
+            Machine(Tr.T("Laboratorio"), ShipLayout.Laboratory);
             WorkTable(1.9f, 0.8f, ShipMaterials.Wall);
             MB(-0.45f, 1.45f, -0.05f, 0.95f, 1.05f, 0.65f, X("Campana de flujo", new Color(0.88f, 0.9f, 0.92f), 0f, 0.5f));
             MB(-0.45f, 1.4f, 0.28f, 0.85f, 0.75f, 0.01f, ShipMaterials.Glass);
@@ -565,9 +565,9 @@ namespace MarsRobot.Base.Ship
 
             Shelf(ShipLayout.SeedShelf, 7);
 
-            LabelAt(ShipLayout.GardenA, 2.5f, "Huerto hidropónico A");
-            LabelAt(ShipLayout.GardenB, 2.5f, "Huerto hidropónico B");
-            LabelAt(ShipLayout.Laboratory, 2.2f, "Laboratorio");
+            LabelAt(ShipLayout.GardenA, 2.5f, Tr.T("Huerto hidropónico A"));
+            LabelAt(ShipLayout.GardenB, 2.5f, Tr.T("Huerto hidropónico B"));
+            LabelAt(ShipLayout.Laboratory, 2.2f, Tr.T("Laboratorio"));
             LabelAt(ShipLayout.Germination, 2.2f, "Cámara de germinación");
         }
 
@@ -597,7 +597,7 @@ namespace MarsRobot.Base.Ship
         private static void Resources()
         {
             // Planta de agua: fusor de hielo, columnas de filtrado, bomba y panel de control.
-            Machine("Planta de agua", ShipLayout.WaterPlant);
+            Machine(Tr.T("Planta de agua"), ShipLayout.WaterPlant);
             MB(0f, 0.06f, 0f, 1.9f, 0.12f, 1.2f, ShipMaterials.DarkMetal);
             MC(-0.5f, 0.9f, -0.15f, 0.42f, 1.5f, ShipMaterials.Frost);                         // fusor
             MC(-0.5f, 1.66f, -0.15f, 0.44f, 0.06f, ShipMaterials.Metal);
@@ -611,7 +611,7 @@ namespace MarsRobot.Base.Ship
             EndMachine(new Vector3(0f, 0.9f, 0f), new Vector3(1.9f, 1.8f, 1.2f));
 
             // Generador de oxígeno: pila de electrólisis y depósitos de O2 (verde) y H2 (rojo).
-            Machine("Generador de oxígeno", ShipLayout.OxygenPlant);
+            Machine(Tr.T("Generador de oxígeno"), ShipLayout.OxygenPlant);
             MB(0f, 0.06f, 0f, 1.7f, 0.12f, 1.0f, ShipMaterials.DarkMetal);
             for (int k = 0; k < 12; k++) MB(-0.3f, 0.3f + k * 0.07f, 0.1f, 0.6f, 0.05f, 0.5f, k % 2 == 0 ? ShipMaterials.Metal : ShipMaterials.Copper); // pila
             MB(-0.3f, 1.2f, 0.1f, 0.66f, 0.06f, 0.56f, ShipMaterials.Panel);
@@ -626,7 +626,7 @@ namespace MarsRobot.Base.Ship
             EndMachine(new Vector3(0f, 0.85f, 0f), new Vector3(1.7f, 1.7f, 1.0f));
 
             // Cocina: encimera con fregadero, horno, dispensador de agua y armarios altos.
-            Machine("Cocina", ShipLayout.Kitchen);
+            Machine(Tr.T("Cocina"), ShipLayout.Kitchen);
             MB(0f, 0.45f, 0f, 1.9f, 0.9f, 0.65f, ShipMaterials.Wall);
             MB(0f, 0.92f, 0f, 1.92f, 0.04f, 0.67f, X("Encimera", new Color(0.3f, 0.32f, 0.35f), 0.2f, 0.6f));
             MB(-0.45f, 0.9f, 0.02f, 0.45f, 0.03f, 0.38f, ShipMaterials.DarkMetal);              // fregadero
@@ -664,9 +664,9 @@ namespace MarsRobot.Base.Ship
             ShipMesh.Beam(_m, new Vector3(-0.7f, 1.95f, 0f), new Vector3(0.7f, 1.95f, 0f), 0.03f, ShipMaterials.Copper);
             EndMachine(new Vector3(0f, 0.95f, 0f), new Vector3(2.1f, 1.9f, 0.62f));
 
-            LabelAt(ShipLayout.WaterPlant, 2.0f, "Planta de agua");
+            LabelAt(ShipLayout.WaterPlant, 2.0f, Tr.T("Planta de agua"));
             LabelAt(ShipLayout.OxygenPlant, 2.0f, "Generador de oxígeno (electrólisis)");
-            LabelAt(ShipLayout.Kitchen, 2.4f, "Cocina");
+            LabelAt(ShipLayout.Kitchen, 2.4f, Tr.T("Cocina"));
             LabelAt(ShipLayout.Pantry, 2.2f, "Despensa");
             LabelAt(ShipLayout.WaterTanks, 2.1f, "Agua potable");
         }

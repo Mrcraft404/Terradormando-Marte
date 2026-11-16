@@ -61,6 +61,12 @@ namespace MarsRobot.Robot
             LastMessage = "";
         }
 
+        /// <summary>Multiplicador de hallazgos de minerales (escáner de minerales instalado).</summary>
+        public float OreChanceMultiplier
+        {
+            get { return _modules != null ? _modules.OreChanceMultiplier : 1f; }
+        }
+
         /// <summary>¿Lleva esta herramienta en alguno de los brazos?</summary>
         public bool HasTool(RoverModuleType tool)
         {
@@ -87,19 +93,19 @@ namespace MarsRobot.Robot
             RoverModuleType tool = ActiveTool;
             if (tool == RoverModuleType.None)
             {
-                Say("No hay herramienta en el brazo delantero (instálala en el taller del cohete).");
+                Say(Tr.T("No hay herramienta en el brazo delantero (instálala en el taller del cohete)."));
                 return;
             }
             if (_controller != null && _controller.CurrentSpeed > maxSpeedToWork)
             {
-                Say("Detén el rover para usar la herramienta.");
+                Say(Tr.T("Detén el rover para usar la herramienta."));
                 return;
             }
 
             float watts = tool == RoverModuleType.PercussionDrill ? drillWatts : (tool == RoverModuleType.Shovel ? shovelWatts : blowerWatts);
             if (_battery != null && !_battery.TryConsume(MarsTime.WattsToWh(watts, Time.deltaTime * MarsTime.TimeScale)))
             {
-                Say("Batería insuficiente.");
+                Say(Tr.T("Batería insuficiente."));
                 return;
             }
             IsWorking = true;
@@ -111,7 +117,7 @@ namespace MarsRobot.Robot
             }
             if (_inventory != null && _inventory.IsFull)
             {
-                Say("Bahía llena: vacía la carga en el cohete o suelta objetos (I).");
+                Say(Tr.T("Bahía llena: vacía la carga en el cohete o suelta objetos (I)."));
                 IsWorking = false;
                 return;
             }
@@ -135,10 +141,11 @@ namespace MarsRobot.Robot
             SoilReading s = ReadSoil(transform.position);
             // Con muchos sulfatos suele haber percloratos (señal de sales oxidantes).
             Collect(s.sulfates > 0.3f ? ItemDatabase.PerchlorateRegolith : ItemDatabase.Regolith, 1);
-            if (Random.value < 0.1f + s.iron * 0.6f) Collect(ItemDatabase.IronOre, 1);
-            if (Random.value < 0.08f + s.clays * 0.5f) Collect(ItemDatabase.Clays, 1);
-            if (Random.value < s.ice * 0.5f) Collect(ItemDatabase.Ice, 1);
-            if (Random.value < 0.15f + s.sulfates * 0.3f) Collect(ItemDatabase.Sample, 1);
+            float k = OreChanceMultiplier;
+            if (Random.value < (0.1f + s.iron * 0.6f) * k) Collect(ItemDatabase.IronOre, 1);
+            if (Random.value < (0.08f + s.clays * 0.5f) * k) Collect(ItemDatabase.Clays, 1);
+            if (Random.value < s.ice * 0.5f * k) Collect(ItemDatabase.Ice, 1);
+            if (Random.value < (0.15f + s.sulfates * 0.3f) * k) Collect(ItemDatabase.Sample, 1);
         }
 
         private void Blow()
@@ -159,7 +166,7 @@ namespace MarsRobot.Robot
                     ps.CleanPanel(0.4f * Time.deltaTime);
                 }
             }
-            Say("Soplando polvo…");
+            Say(Tr.T("Soplando polvo…"));
         }
 
         /// <summary>Guarda un objeto en la bahía. Devuelve false si no cabe.</summary>
@@ -169,7 +176,7 @@ namespace MarsRobot.Robot
             if (item == null || _inventory == null) return false;
             int added = _inventory.TryAdd(item, count);
             if (added > 0) Say("+" + added + " " + item.itemName);
-            else Say("No cabe " + item.itemName + " (masa o volumen al límite).");
+            else Say(Tr.T("No cabe ") + item.itemName + Tr.T(" (masa o volumen al límite)."));
             return added > 0;
         }
 
@@ -223,7 +230,7 @@ namespace MarsRobot.Robot
         public static string ToolLabel(RoverModuleType t)
         {
             RoverModuleDefinition d = RobotModuleSystem.Find(t);
-            return d != null ? d.name : "Ninguna";
+            return d != null ? d.name : Tr.T("Ninguna");
         }
     }
 }

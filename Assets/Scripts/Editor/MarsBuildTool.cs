@@ -24,6 +24,9 @@ namespace MarsRobot.EditorTools
     {
         public const string OutputFolder = "Builds/Windows";
 
+        /// <summary>Versión del juego: sale en el menú principal (Application.version) y en el nombre del .zip.</summary>
+        public const string GameVersion = "1.4";
+
         /// <summary>Shaders que los scripts buscan por nombre (Shader.Find).</summary>
         private static readonly string[] RuntimeShaders =
         {
@@ -67,6 +70,7 @@ namespace MarsRobot.EditorTools
                 return null;
             }
 
+            PlayerSettings.bundleVersion = GameVersion;
             string exeName = string.IsNullOrEmpty(PlayerSettings.productName) ? "JUEGO" : PlayerSettings.productName;
             string output = Path.Combine(OutputFolder, exeName + ".exe");
             Directory.CreateDirectory(OutputFolder);

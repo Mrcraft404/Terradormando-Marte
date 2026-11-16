@@ -81,8 +81,8 @@ namespace MarsRobot.Crew
             }
 
             SuitOxygenHours = Mathf.Max(0f, SuitOxygenHours - hours);
-            if (!_warned25 && SuitOxygen01 <= 0.25f) { _warned25 = true; Show("Oxígeno del traje al 25 %. Vuelve a un módulo presurizado."); }
-            if (!_warned10 && SuitOxygen01 <= 0.10f) { _warned10 = true; Show("¡OXÍGENO CRÍTICO (10 %)!"); }
+            if (!_warned25 && SuitOxygen01 <= 0.25f) { _warned25 = true; Show(Tr.T("Oxígeno del traje al 25 %. Vuelve a un módulo presurizado.")); }
+            if (!_warned10 && SuitOxygen01 <= 0.10f) { _warned10 = true; Show(Tr.T("¡OXÍGENO CRÍTICO (10 %)!")); }
             if (SuitOxygenHours <= 0f) Rescue();
         }
 
@@ -97,7 +97,7 @@ namespace MarsRobot.Crew
                 _astronaut.Teleport(ship.TransformPoint(ShipLayout.OnLevel(ShipModel.WorkshopLevel, ShipLayout.CrewSpawn) + Vector3.up * 0.1f),
                                     ship.rotation);
             }
-            Show("Te desmayaste por falta de oxígeno. El equipo te ha llevado a la nave.");
+            Show(Tr.T("Te desmayaste por falta de oxígeno. El equipo te ha llevado a la nave."));
             Debug.LogWarning("[Soporte vital] El astronauta se quedó sin oxígeno y ha sido rescatado.", this);
         }
 
@@ -124,19 +124,19 @@ namespace MarsRobot.Crew
             else if (CurrentVolume.IsBreathable)
             {
                 where = CurrentVolume.Label + " · " + CurrentVolume.PressureKPa.ToString("0.#") + " kPa · O₂ " +
-                        CurrentVolume.OxygenPartialKPa.ToString("0.#") + " kPa · <color=#80ff80>aire respirable</color>";
+                        CurrentVolume.OxygenPartialKPa.ToString("0.#") + Tr.T(" kPa · <color=#80ff80>aire respirable</color>");
             }
             else
             {
-                where = "<color=#ff8080>" + CurrentVolume.Label + " DESPRESURIZADO (" + CurrentVolume.PressureKPa.ToString("0.#") +
-                        " kPa) · respirando del traje</color>";
+                where = "<color=#ff8080>" + CurrentVolume.Label + Tr.T(" DESPRESURIZADO (") + CurrentVolume.PressureKPa.ToString("0.#") +
+                        Tr.T(" kPa) · respirando del traje</color>");
             }
 
             float o2 = SuitOxygen01;
             int minutes = Mathf.FloorToInt(SuitOxygenHours * 60f);
             bool low = !BreathingAmbient && o2 <= 0.25f;
             bool blink = low && Mathf.Repeat(Time.time, 1f) < 0.5f;
-            string tank = "Traje: O₂ " + Mathf.RoundToInt(o2 * 100f) + " % (" + (minutes / 60) + " h " + (minutes % 60).ToString("00") + " min)";
+            string tank = Tr.T("Traje: O₂ ") + Mathf.RoundToInt(o2 * 100f) + " % (" + (minutes / 60) + " h " + (minutes % 60).ToString("00") + " min)";
             if (blink) tank = "<color=#ff5050><b>" + tank + "</b></color>";
 
             const float w = 620f, h = 54f;

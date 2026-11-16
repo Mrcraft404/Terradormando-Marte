@@ -16,7 +16,7 @@ namespace MarsRobot.Items
         public static DroppedItem Spawn(ItemData item, int count, float condition, Vector3 position)
         {
             GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            go.name = "Objeto: " + item.itemName + " ×" + count;
+            go.name = Tr.T("Objeto: ") + item.itemName + " ×" + count;
             // Tamaño según el volumen real (cubo de igual volumen, mínimo 25 cm).
             float side = Mathf.Max(0.25f, Mathf.Pow(item.volumeLiters * count / 1000f, 1f / 3f));
             go.transform.position = position;
@@ -43,7 +43,7 @@ namespace MarsRobot.Items
         public string GetInteractionPrompt()
         {
             if (_item == null) return "";
-            return "Recoger " + _item.itemName + " ×" + _count + " [F]";
+            return Tr.T("Recoger ") + _item.itemName + " ×" + _count + " [F]";
         }
 
         public float HoldDuration
@@ -57,11 +57,11 @@ namespace MarsRobot.Items
             int taken = interactor.Inventory.TryAdd(_item, _count, _condition);
             if (taken <= 0)
             {
-                interactor.ShowFeedback("No cabe: bahía llena (masa o volumen).");
+                interactor.ShowFeedback(Tr.T("No cabe: bahía llena (masa o volumen)."));
                 return;
             }
             _count -= taken;
-            interactor.ShowFeedback("Recogido: " + _item.itemName + " ×" + taken);
+            interactor.ShowFeedback(Tr.T("Recogido: ") + _item.itemName + " ×" + taken);
             if (_count <= 0) Destroy(gameObject);
         }
     }

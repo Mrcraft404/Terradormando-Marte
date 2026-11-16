@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using MarsRobot.Core;
+using MarsRobot.Localization;
 using MarsRobot.Spawns;
 using MarsRobot.World.GlobalMap;
 using UnityEngine;
@@ -27,7 +28,7 @@ namespace MarsRobot.UI.Menu
         [SerializeField] private string gameSceneName = "Prueba";
 
         [SerializeField] private string titleTop = "Terraformando";
-        [SerializeField] private string titleBottom = "Marte";
+        [SerializeField] private string titleBottom = Tr.T("Marte");
 
         private enum MenuScreen { Main, Mode, Create, Map, Options, Exit, Loading }
 
@@ -44,7 +45,7 @@ namespace MarsRobot.UI.Menu
         private static readonly Color CreativeColor = new Color(0.3f, 0.8f, 1f);
         private static readonly Color SurvivalColor = new Color(1f, 0.5f, 0.16f);
 
-        private static readonly string[] WorldNames = { "Colonia Ares", "Base Horizonte", "Colonia Aurora", "Puesto Fénix", "Base Olympus", "Colonia Nueva Esperanza" };
+        private static string[] WorldNames => new[] { Tr.T("Colonia Ares"), Tr.T("Base Horizonte"), Tr.T("Colonia Aurora"), Tr.T("Puesto Fénix"), Tr.T("Base Olympus"), Tr.T("Colonia Nueva Esperanza") };
 
         private MenuScreen _screen = MenuScreen.Main;
         private float _fade = 1f;
@@ -54,7 +55,7 @@ namespace MarsRobot.UI.Menu
         private WorldSetup _draft = new WorldSetup();
         private WorldSetup _lastWorld;
         private string _seedText = "";
-        private string _commander = "COMANDANTE";
+        private string _commander = Tr.T("COMANDANTE");
 
         // Selección en el mapa
         private bool _hasPick;
@@ -287,19 +288,19 @@ namespace MarsRobot.UI.Menu
 
         private void DrawMain()
         {
-            FancyText(new Rect(0, 60, VW, 175), titleTop, 150);
-            FancyText(new Rect(0, 210, VW, 175), titleBottom, 150);
+            FancyText(new Rect(0, 60, VW, 175), Localizer.T(titleTop), 150);
+            FancyText(new Rect(0, 210, VW, 175), Localizer.T(titleBottom), 150);
 
             // Adorno bajo el título.
             Tinted(new Rect(560, 392, 800, 6), MenuArt.FadeLine, new Color(1f, 0.45f, 0.12f, 0.95f));
             Tinted(new Rect(948, 386, 24, 24), MenuArt.Circle, new Color(1f, 0.5f, 0.15f, 1f));
             Tinted(new Rect(954, 392, 12, 12), MenuArt.Circle, new Color(1f, 0.85f, 0.55f, 1f));
 
-            if (MetalButton("jugar", new Rect(660, 440, 600, 150), "JUGAR", MenuButtonKind.Orange, MenuArt.IconRover, 66))
+            if (MetalButton("jugar", new Rect(660, 440, 600, 150), Localizer.T("JUGAR"), MenuButtonKind.Orange, MenuArt.IconRover, 66))
                 Show(MenuScreen.Mode);
-            if (MetalButton("opciones", new Rect(690, 610, 540, 125), "OPCIONES", MenuButtonKind.Steel, MenuArt.IconGear, 54))
+            if (MetalButton("opciones", new Rect(690, 610, 540, 125), Localizer.T("OPCIONES"), MenuButtonKind.Steel, MenuArt.IconGear, 54))
                 Show(MenuScreen.Options);
-            if (MetalButton("salir", new Rect(690, 755, 540, 125), "SALIR", MenuButtonKind.Red, MenuArt.IconExit, 54))
+            if (MetalButton("salir", new Rect(690, 755, 540, 125), Localizer.T("SALIR"), MenuButtonKind.Red, MenuArt.IconExit, 54))
                 Show(MenuScreen.Exit);
 
             var info = new Rect(40, 975, 640, 66);
@@ -322,27 +323,27 @@ namespace MarsRobot.UI.Menu
         private void DrawMode()
         {
             Fill(new Rect(-500, -500, VW + 1000, VH + 1000), new Color(0f, 0f, 0f, 0.5f));
-            FancyText(new Rect(0, 50, VW, 110), "ELIGE EL MODO DE JUEGO", 84);
-            Label(new Rect(0, 160, VW, 40), "Podrás cambiarlo después al crear el mundo", _textCenter, 26, Muted);
+            FancyText(new Rect(0, 50, VW, 110), Tr.T("ELIGE EL MODO DE JUEGO"), 84);
+            Label(new Rect(0, 160, VW, 40), Tr.T("Podrás cambiarlo después al crear el mundo"), _textCenter, 26, Muted);
 
-            if (ModeCard("card_creativo", new Rect(300, 225, 620, 610), "CREATIVO", MenuArt.IconCube, CreativeColor,
-                    "Construye sin límites",
-                    new[] { "Recursos y energía ilimitados", "Sin daño ni averías", "Sin tormentas de polvo", "Ideal para diseñar tu colonia" }))
+            if (ModeCard("card_creativo", new Rect(300, 225, 620, 610), Tr.T("CREATIVO"), MenuArt.IconCube, CreativeColor,
+                    Tr.T("Construye sin límites"),
+                    new[] { Tr.T("Recursos y energía ilimitados"), Tr.T("Sin daño ni averías"), Tr.T("Sin tormentas de polvo"), Tr.T("Ideal para diseñar tu colonia") }))
                 PickMode(GameMode.Creative);
 
-            if (ModeCard("card_supervivencia", new Rect(1000, 225, 620, 610), "SUPERVIVENCIA", MenuArt.IconHelmet, SurvivalColor,
-                    "Sobrevive al planeta rojo",
-                    new[] { "Gestiona batería, polvo y averías", "Tormentas y clima espacial", "Recoge, procesa y fabrica", "Prepara Marte para la tripulación" }))
+            if (ModeCard("card_supervivencia", new Rect(1000, 225, 620, 610), Tr.T("SUPERVIVENCIA"), MenuArt.IconHelmet, SurvivalColor,
+                    Tr.T("Sobrevive al planeta rojo"),
+                    new[] { Tr.T("Gestiona batería, polvo y averías"), Tr.T("Tormentas y clima espacial"), Tr.T("Recoge, procesa y fabrica"), Tr.T("Prepara Marte para la tripulación") }))
                 PickMode(GameMode.Survival);
 
             float backX = _lastWorld != null ? 420f : 760f;
-            if (MetalButton("modo_atras", new Rect(backX, 875, 400, 110), "ATRÁS", MenuButtonKind.Steel, null, 42))
+            if (MetalButton("modo_atras", new Rect(backX, 875, 400, 110), Tr.T("ATRÁS"), MenuButtonKind.Steel, null, 42))
                 Show(MenuScreen.Main);
 
             if (_lastWorld != null)
             {
                 string n = _lastWorld.worldName.Length > 16 ? _lastWorld.worldName.Substring(0, 16) + "…" : _lastWorld.worldName;
-                if (MetalButton("continuar", new Rect(900, 870, 600, 120), "CONTINUAR: " + n.ToUpperInvariant(), MenuButtonKind.Orange, null, 34))
+                if (MetalButton("continuar", new Rect(900, 870, 600, 120), Tr.T("CONTINUAR: ") + n.ToUpperInvariant(), MenuButtonKind.Orange, null, 34))
                     StartGame(_lastWorld);
             }
         }
@@ -368,7 +369,7 @@ namespace MarsRobot.UI.Menu
                 Label(new Rect(dr.x + 125, y, dr.width - 160, 44), bullets[i], _text, 27, new Color(0.88f, 0.84f, 0.8f));
             }
 
-            Label(new Rect(dr.x, dr.yMax - 62, dr.width, 44), anim > 0.5f ? "▶  ELEGIR" : "ELEGIR", _textCenter, 28,
+            Label(new Rect(dr.x, dr.yMax - 62, dr.width, 44), anim > 0.5f ? Tr.T("▶  ELEGIR") : Tr.T("ELEGIR"), _textCenter, 28,
                 Color.Lerp(Muted, accent, anim));
 
             return ClickArea(r);
@@ -398,9 +399,9 @@ namespace MarsRobot.UI.Menu
             Fill(new Rect(-500, -500, VW + 1000, VH + 1000), new Color(0f, 0f, 0f, 0.55f));
             var win = new Rect(360, 100, 1200, 880);
             Box(win);
-            FancyText(new Rect(win.x, win.y + 22, win.width, 80), "CREAR MUNDO", 66);
+            FancyText(new Rect(win.x, win.y + 22, win.width, 80), Tr.T("CREAR MUNDO"), 66);
             bool survival = _draft.mode == GameMode.Survival;
-            Label(new Rect(win.x, win.y + 100, win.width, 34), survival ? "Modo Supervivencia" : "Modo Creativo", _textCenter, 26,
+            Label(new Rect(win.x, win.y + 100, win.width, 34), survival ? Tr.T("Modo Supervivencia") : Tr.T("Modo Creativo"), _textCenter, 26,
                 survival ? SurvivalColor : CreativeColor);
             Tinted(new Rect(win.x + 100, win.y + 140, win.width - 200, 4), MenuArt.FadeLine, new Color(1f, 0.5f, 0.15f, 0.7f));
 
@@ -408,39 +409,39 @@ namespace MarsRobot.UI.Menu
 
             // Nombre
             float y = win.y + 170;
-            RowLabel(lx, y, "Nombre del mundo");
+            RowLabel(lx, y, Tr.T("Nombre del mundo"));
             _draft.worldName = TextField("nombre", new Rect(cx, y, cw, 62), _draft.worldName, 28);
 
             // Semilla
             y += 86;
-            RowLabel(lx, y, "Semilla");
+            RowLabel(lx, y, Tr.T("Semilla"));
             string seed = TextField("semilla", new Rect(cx, y, cw - 240, 62), _seedText, 12);
             _seedText = FilterDigits(seed);
-            if (FlatButton("semilla_rnd", new Rect(cx + cw - 225, y, 225, 62), "ALEATORIA", 24))
+            if (FlatButton("semilla_rnd", new Rect(cx + cw - 225, y, 225, 62), Tr.T("ALEATORIA"), 24))
                 _seedText = Random.Range(1, 999999999).ToString();
 
             // Modo
             y += 86;
-            RowLabel(lx, y, "Modo de juego");
-            int mode = Segmented("seg_modo", new Rect(cx, y, cw, 62), new[] { "CREATIVO", "SUPERVIVENCIA" }, (int)_draft.mode);
+            RowLabel(lx, y, Tr.T("Modo de juego"));
+            int mode = Segmented("seg_modo", new Rect(cx, y, cw, 62), new[] { Tr.T("CREATIVO"), Tr.T("SUPERVIVENCIA") }, (int)_draft.mode);
             _draft.mode = (GameMode)mode;
 
             // Dificultad
             y += 86;
-            RowLabel(lx, y, "Dificultad");
+            RowLabel(lx, y, Tr.T("Dificultad"));
             if (_draft.mode == GameMode.Survival)
             {
-                _draft.difficulty = (WorldDifficulty)Segmented("seg_dif", new Rect(cx, y, cw, 62), new[] { "FÁCIL", "NORMAL", "DIFÍCIL" }, (int)_draft.difficulty);
+                _draft.difficulty = (WorldDifficulty)Segmented("seg_dif", new Rect(cx, y, cw, 62), new[] { Tr.T("FÁCIL"), "NORMAL", Tr.T("DIFÍCIL") }, (int)_draft.difficulty);
             }
             else
             {
                 Tinted(new Rect(cx, y, cw, 62), MenuArt.Rounded, new Color(0.12f, 0.12f, 0.14f, 0.8f), 12);
-                Label(new Rect(cx + 20, y, cw - 40, 62), "Sin dificultad: sin daño, sin tormentas y recursos ilimitados", _text, 23, Muted);
+                Label(new Rect(cx + 20, y, cw - 40, 62), Tr.T("Sin dificultad: sin daño, sin tormentas y recursos ilimitados"), _text, 23, Muted);
             }
 
             // Punto de aparición
             y += 96;
-            RowLabel(lx, y + 4, "Punto de aparición");
+            RowLabel(lx, y + 4, Tr.T("Punto de aparición"));
             var box = new Rect(cx, y, cw, 176);
             Tinted(box, MenuArt.Rounded, new Color(0.1f, 0.09f, 0.1f, 0.92f), 12);
             var thumb = new Rect(box.x + 12, box.y + 12, 304, 152);
@@ -459,25 +460,25 @@ namespace MarsRobot.UI.Menu
             {
                 Label(new Rect(tx, box.y + 8, tw, 40), _draft.spawnRegion, _text, 30, Orange);
                 Label(new Rect(tx, box.y + 46, tw, 30), MarsGlobalMap.FormatCoords(_draft.spawnLatitude, MarsGlobalMap.ToSigned(_draft.spawnLongitudeEast)), _text, 22, TextLight);
-                Label(new Rect(tx, box.y + 76, tw, 30), string.IsNullOrEmpty(_draft.presetZoneId) ? "Terreno procedural" : "Zona con datos reales (NASA)", _text, 20, Muted);
+                Label(new Rect(tx, box.y + 76, tw, 30), string.IsNullOrEmpty(_draft.presetZoneId) ? Tr.T("Terreno procedural") : Tr.T("Zona con datos reales (NASA)"), _text, 20, Muted);
             }
             else
             {
-                Label(new Rect(tx, box.y + 10, tw, 70), "Aún no has elegido dónde aterrizar", _text, 26, new Color(1f, 0.7f, 0.45f));
+                Label(new Rect(tx, box.y + 10, tw, 70), Tr.T("Aún no has elegido dónde aterrizar"), _text, 26, new Color(1f, 0.7f, 0.45f));
             }
-            if (FlatButton("elegir_mapa", new Rect(tx, box.yMax - 66, tw, 54), _draft.hasSpawn ? "CAMBIAR EN EL MAPA" : "ELEGIR EN EL MAPA", 23, true))
+            if (FlatButton("elegir_mapa", new Rect(tx, box.yMax - 66, tw, 54), _draft.hasSpawn ? Tr.T("CAMBIAR EN EL MAPA") : Tr.T("ELEGIR EN EL MAPA"), 23, true))
                 OpenMap();
 
             // Botones
-            if (MetalButton("crear_atras", new Rect(win.x + 60, win.yMax - 135, 400, 110), "ATRÁS", MenuButtonKind.Steel, null, 42))
+            if (MetalButton("crear_atras", new Rect(win.x + 60, win.yMax - 135, 400, 110), Tr.T("ATRÁS"), MenuButtonKind.Steel, null, 42))
                 Show(MenuScreen.Mode);
 
             bool ready = _draft.hasSpawn && _draft.worldName.Trim().Length > 0;
             var createRect = new Rect(win.xMax - 540, win.yMax - 140, 480, 120);
-            if (MetalButton("crear_ok", createRect, "CREAR MUNDO", MenuButtonKind.Orange, null, 46, ready))
+            if (MetalButton("crear_ok", createRect, Tr.T("CREAR MUNDO"), MenuButtonKind.Orange, null, 46, ready))
                 CreateWorld();
             if (!ready && createRect.Contains(Event.current.mousePosition))
-                Label(new Rect(win.xMax - 540, win.yMax - 178, 480, 34), _draft.hasSpawn ? "Ponle un nombre al mundo" : "Elige primero un punto de aparición", _textCenter, 22, new Color(1f, 0.7f, 0.45f));
+                Label(new Rect(win.xMax - 540, win.yMax - 178, 480, 34), _draft.hasSpawn ? Tr.T("Ponle un nombre al mundo") : Tr.T("Elige primero un punto de aparición"), _textCenter, 22, new Color(1f, 0.7f, 0.45f));
         }
 
         private void OpenMap()
@@ -514,8 +515,8 @@ namespace MarsRobot.UI.Menu
         private void DrawMap()
         {
             Fill(new Rect(-500, -500, VW + 1000, VH + 1000), new Color(0.04f, 0.025f, 0.02f, 0.96f));
-            FancyText(new Rect(0, 14, VW, 84), "SELECCIONA TU PUNTO DE APARICIÓN", 60);
-            Label(new Rect(0, 92, VW, 34), "Haz clic en cualquier lugar de Marte. Los rombos dorados son zonas con datos reales de la NASA.", _textCenter, 23, Muted);
+            FancyText(new Rect(0, 14, VW, 84), Tr.T("SELECCIONA TU PUNTO DE APARICIÓN"), 60);
+            Label(new Rect(0, 92, VW, 34), Tr.T("Haz clic en cualquier lugar de Marte. Los rombos dorados son zonas con datos reales de la NASA."), _textCenter, 23, Muted);
 
             Rect m = MapRect;
             Box(Grow(m, 14f));
@@ -595,54 +596,54 @@ namespace MarsRobot.UI.Menu
             Box(panel);
             if (!MarsGlobalMap.IsReady)
             {
-                Label(new Rect(panel.x + 40, panel.y, panel.width - 80, panel.height), "Generando el mapa de Marte…", _text, 30, Muted);
+                Label(new Rect(panel.x + 40, panel.y, panel.width - 80, panel.height), Tr.T("Generando el mapa de Marte…"), _text, 30, Muted);
             }
             else if (!_hasPick)
             {
-                Label(new Rect(panel.x + 40, panel.y + 22, panel.width - 80, 46), "Ningún punto seleccionado", _text, 34, Orange);
+                Label(new Rect(panel.x + 40, panel.y + 22, panel.width - 80, 46), Tr.T("Ningún punto seleccionado"), _text, 34, Orange);
                 Label(new Rect(panel.x + 40, panel.y + 74, panel.width - 80, 90),
-                    "Elige dónde aterrizará tu cohete. Las zonas marcadas con rombo usan relieve y minerales reales; " +
-                    "el resto del planeta se genera según su latitud, altura y rugosidad.", _text, 23, Muted);
+                    Tr.T("Elige dónde aterrizará tu cohete. Las zonas marcadas con rombo usan relieve y minerales reales; ") +
+                    Tr.T("el resto del planeta se genera según su latitud, altura y rugosidad."), _text, 23, Muted);
             }
             else
             {
                 string name = _pickPreset != null ? _pickPreset.displayName : _pickInfo.Region;
                 Label(new Rect(panel.x + 40, panel.y + 16, 820, 46), name, _text, 36, Orange);
 
-                string tag = _pickPreset != null ? "DATOS REALES · NASA" : "TERRENO PROCEDURAL";
+                string tag = _pickPreset != null ? Tr.T("DATOS REALES · NASA") : Tr.T("TERRENO PROCEDURAL");
                 Color tagColor = _pickPreset != null ? new Color(1f, 0.8f, 0.3f) : new Color(0.6f, 0.75f, 0.85f);
                 var tagRect = new Rect(panel.xMax - 340, panel.y + 22, 300, 36);
                 Tinted(tagRect, MenuArt.Rounded, new Color(tagColor.r * 0.25f, tagColor.g * 0.25f, tagColor.b * 0.25f, 0.95f), 12);
                 Label(tagRect, tag, _textCenter, 19, tagColor);
 
                 int difficulty = _pickPreset != null ? (int)_pickPreset.difficulty : _pickInfo.DifficultyIndex;
-                Label(new Rect(panel.xMax - 340, panel.y + 62, 300, 30), "Dificultad: " + LandingZoneData.DifficultyLabel((ZoneDifficulty)difficulty),
+                Label(new Rect(panel.xMax - 340, panel.y + 62, 300, 30), Tr.T("Dificultad: ") + LandingZoneData.DifficultyLabel((ZoneDifficulty)difficulty),
                     _textCenter, 21, DifficultyColor(difficulty));
 
                 float minT = _pickPreset != null ? _pickPreset.minTemperatureC : _pickInfo.MinTempC;
                 float maxT = _pickPreset != null ? _pickPreset.maxTemperatureC : _pickInfo.MaxTempC;
                 float ice = _pickPreset != null ? _pickPreset.iceAbundance : _pickInfo.Ice01;
                 Label(new Rect(panel.x + 40, panel.y + 64, 900, 30),
-                    MarsGlobalMap.FormatCoords(_pickLat, _pickLon) + "      Elevación " + _pickInfo.ElevationKm.ToString("+0.0;-0.0") + " km",
+                    MarsGlobalMap.FormatCoords(_pickLat, _pickLon) + Tr.T("      Elevación ") + _pickInfo.ElevationKm.ToString("+0.0;-0.0") + " km",
                     _text, 23, TextLight);
                 Label(new Rect(panel.x + 40, panel.y + 96, 1300, 30),
-                    "Temperatura " + minT.ToString("0") + " / " + maxT.ToString("0") + " °C   ·   Presión " + _pickInfo.PressureMbar.ToString("0.0") +
-                    " mbar   ·   Hielo de agua: " + Level(ice) + "   ·   Luz solar " + Mathf.RoundToInt(_pickInfo.Sunlight01 * 100f) + " %",
+                    Tr.T("Temperatura ") + minT.ToString("0") + " / " + maxT.ToString("0") + Tr.T(" °C   ·   Presión ") + _pickInfo.PressureMbar.ToString("0.0") +
+                    Tr.T(" mbar   ·   Hielo de agua: ") + Level(ice) + Tr.T("   ·   Luz solar ") + Mathf.RoundToInt(_pickInfo.Sunlight01 * 100f) + " %",
                     _text, 21, Muted);
                 string desc = _pickPreset != null && !string.IsNullOrEmpty(_pickPreset.description) ? _pickPreset.description : _pickInfo.Description;
                 Label(new Rect(panel.x + 40, panel.y + 130, panel.width - 80, 60), "<i>" + desc + "</i>", _text, 21, new Color(0.9f, 0.86f, 0.82f));
             }
 
-            if (MetalButton("mapa_ok", new Rect(1420, 868, 470, 118), "CONFIRMAR", MenuButtonKind.Orange, null, 44, _hasPick && MarsGlobalMap.IsReady))
+            if (MetalButton("mapa_ok", new Rect(1420, 868, 470, 118), Tr.T("CONFIRMAR"), MenuButtonKind.Orange, null, 44, _hasPick && MarsGlobalMap.IsReady))
                 ConfirmPick();
-            if (MetalButton("mapa_rnd", new Rect(1420, 988, 232, 84), "ALEATORIO", MenuButtonKind.Steel, null, 25, MarsGlobalMap.IsReady))
+            if (MetalButton("mapa_rnd", new Rect(1420, 988, 232, 84), Tr.T("ALEATORIO"), MenuButtonKind.Steel, null, 25, MarsGlobalMap.IsReady))
             {
                 _pickLat = Random.Range(-60f, 60f);
                 _pickLon = Random.Range(-180f, 180f);
                 _hasPick = true;
                 RefreshPick();
             }
-            if (MetalButton("mapa_cancel", new Rect(1658, 988, 232, 84), "CANCELAR", MenuButtonKind.Steel, null, 25))
+            if (MetalButton("mapa_cancel", new Rect(1658, 988, 232, 84), Tr.T("CANCELAR"), MenuButtonKind.Steel, null, 25))
                 Show(MenuScreen.Create);
         }
 
@@ -777,10 +778,10 @@ namespace MarsRobot.UI.Menu
 
         private static string Level(float v)
         {
-            if (v >= 0.7f) return "Muy alto";
-            if (v >= 0.4f) return "Alto";
-            if (v >= 0.15f) return "Moderado";
-            return "Bajo";
+            if (v >= 0.7f) return Tr.T("Muy alto");
+            if (v >= 0.4f) return Tr.T("Alto");
+            if (v >= 0.15f) return Tr.T("Moderado");
+            return Tr.T("Bajo");
         }
 
         private static Color DifficultyColor(int d)
@@ -799,44 +800,49 @@ namespace MarsRobot.UI.Menu
             Fill(new Rect(-500, -500, VW + 1000, VH + 1000), new Color(0f, 0f, 0f, 0.55f));
             var win = new Rect(410, 90, 1100, 900);
             Box(win);
-            FancyText(new Rect(win.x, win.y + 22, win.width, 80), "OPCIONES", 66);
+            FancyText(new Rect(win.x, win.y + 22, win.width, 80), Tr.T("OPCIONES"), 66);
             Tinted(new Rect(win.x + 100, win.y + 110, win.width - 200, 4), MenuArt.FadeLine, new Color(1f, 0.5f, 0.15f, 0.7f));
 
             float lx = win.x + 60, cx = win.x + 420, cw = 520;
             float y = win.y + 140;
 
-            RowLabel(lx, y, "Nombre del comandante");
+            RowLabel(lx, y, Tr.T("Nombre del comandante"));
             string name = TextField("comandante", new Rect(cx, y, cw + 100, 60), _commander, 18);
             if (name != _commander) _commander = name.ToUpperInvariant();
 
             y += 84;
-            float master = SliderRow("Volumen general", y, cx, cw, GameSettings.MasterVolume, 0f, 1f, Pct(GameSettings.MasterVolume));
+            float master = SliderRow(Tr.T("Volumen general"), y, cx, cw, GameSettings.MasterVolume, 0f, 1f, Pct(GameSettings.MasterVolume));
             y += 70;
-            float music = SliderRow("Música / ambiente", y, cx, cw, GameSettings.MusicVolume, 0f, 1f, Pct(GameSettings.MusicVolume));
+            float music = SliderRow(Tr.T("Música / ambiente"), y, cx, cw, GameSettings.MusicVolume, 0f, 1f, Pct(GameSettings.MusicVolume));
             y += 70;
-            float fx = SliderRow("Efectos", y, cx, cw, GameSettings.EffectsVolume, 0f, 1f, Pct(GameSettings.EffectsVolume));
+            float fx = SliderRow(Tr.T("Efectos"), y, cx, cw, GameSettings.EffectsVolume, 0f, 1f, Pct(GameSettings.EffectsVolume));
             if (master != GameSettings.MasterVolume || music != GameSettings.MusicVolume || fx != GameSettings.EffectsVolume)
                 GameSettings.SetVolumes(master, music, fx);
 
             y += 70;
-            float bright = SliderRow("Brillo", y, cx, cw, GameSettings.Brightness, 0.5f, 1.5f, Pct(GameSettings.Brightness));
+            float bright = SliderRow(Tr.T("Brillo"), y, cx, cw, GameSettings.Brightness, 0.5f, 1.5f, Pct(GameSettings.Brightness));
             if (bright != GameSettings.Brightness) GameSettings.SetBrightness(bright);
 
             y += 70;
-            float sens = SliderRow("Sensibilidad del ratón", y, cx, cw, GameSettings.MouseSensitivity, 0.2f, 8f, GameSettings.MouseSensitivity.ToString("0.0"));
+            float sens = SliderRow(Tr.T("Sensibilidad del ratón"), y, cx, cw, GameSettings.MouseSensitivity, 0.2f, 8f, GameSettings.MouseSensitivity.ToString("0.0"));
             if (sens != GameSettings.MouseSensitivity) GameSettings.SetMouseSensitivity(sens);
 
             y += 80;
-            RowLabel(lx, y, "Calidad gráfica");
-            int q = Segmented("seg_calidad", new Rect(cx, y, cw + 100, 60), new[] { "BAJA", "MEDIA", "ALTA", "ULTRA" }, GameSettings.Quality);
+            RowLabel(lx, y, Tr.T("Calidad gráfica"));
+            int q = Segmented("seg_calidad", new Rect(cx, y, cw + 100, 60), new[] { Tr.T("BAJA"), Tr.T("MEDIA"), Tr.T("ALTA"), "ULTRA" }, GameSettings.Quality);
             if (q != GameSettings.Quality) GameSettings.SetQuality(q);
 
             y += 84;
-            RowLabel(lx, y, "Mostrar FPS");
-            int fps = Segmented("seg_fps", new Rect(cx, y, 300, 60), new[] { "NO", "SÍ" }, GameSettings.ShowFps ? 1 : 0);
+            RowLabel(lx, y, Localizer.T("Idioma"));
+            int lang = Segmented("seg_lang", new Rect(cx, y, 400, 60), GameSettings.LanguageLabels, GameSettings.Language);
+            if (lang != GameSettings.Language) GameSettings.SetLanguage(lang);
+
+            y += 84;
+            RowLabel(lx, y, Tr.T("Mostrar FPS"));
+            int fps = Segmented("seg_fps", new Rect(cx, y, 300, 60), new[] { "NO", Tr.T("SÍ") }, GameSettings.ShowFps ? 1 : 0);
             if ((fps == 1) != GameSettings.ShowFps) GameSettings.SetShowFps(fps == 1);
 
-            if (MetalButton("opc_reset", new Rect(win.x + 70, win.yMax - 140, 440, 110), "RESTABLECER", MenuButtonKind.Steel, null, 38))
+            if (MetalButton("opc_reset", new Rect(win.x + 70, win.yMax - 140, 440, 110), Tr.T("RESTABLECER"), MenuButtonKind.Steel, null, 38))
             {
                 GameSettings.SetVolumes(0.8f, 0.6f, 0.8f);
                 GameSettings.SetBrightness(1f);
@@ -844,13 +850,13 @@ namespace MarsRobot.UI.Menu
                 GameSettings.SetQuality(1);
                 GameSettings.SetShowFps(false);
             }
-            if (MetalButton("opc_volver", new Rect(win.xMax - 510, win.yMax - 140, 440, 110), "VOLVER", MenuButtonKind.Orange, null, 42))
+            if (MetalButton("opc_volver", new Rect(win.xMax - 510, win.yMax - 140, 440, 110), Tr.T("VOLVER"), MenuButtonKind.Orange, null, 42))
                 CloseOptions();
         }
 
         private void CloseOptions()
         {
-            if (string.IsNullOrEmpty(_commander.Trim())) _commander = "COMANDANTE";
+            if (string.IsNullOrEmpty(_commander.Trim())) _commander = Tr.T("COMANDANTE");
             PlayerPrefs.SetString(CommanderKey, _commander.Trim());
             GameSettings.Save();
             Show(MenuScreen.Main);
@@ -885,11 +891,11 @@ namespace MarsRobot.UI.Menu
             Fill(new Rect(-500, -500, VW + 1000, VH + 1000), new Color(0f, 0f, 0f, 0.6f));
             var win = new Rect(560, 320, 800, 440);
             Box(win);
-            FancyText(new Rect(win.x, win.y + 30, win.width, 90), "¿SALIR DEL JUEGO?", 64);
-            Label(new Rect(win.x + 60, win.y + 140, win.width - 120, 90), "Tu última colonia queda guardada para continuar más tarde.", _textCenter, 28, Muted);
-            if (MetalButton("salir_no", new Rect(win.x + 50, win.yMax - 160, 340, 115), "CANCELAR", MenuButtonKind.Steel, null, 38))
+            FancyText(new Rect(win.x, win.y + 30, win.width, 90), Tr.T("¿SALIR DEL JUEGO?"), 64);
+            Label(new Rect(win.x + 60, win.y + 140, win.width - 120, 90), Tr.T("Tu última colonia queda guardada para continuar más tarde."), _textCenter, 28, Muted);
+            if (MetalButton("salir_no", new Rect(win.x + 50, win.yMax - 160, 340, 115), Tr.T("CANCELAR"), MenuButtonKind.Steel, null, 38))
                 Show(MenuScreen.Main);
-            if (MetalButton("salir_si", new Rect(win.xMax - 390, win.yMax - 160, 340, 115), "SALIR", MenuButtonKind.Red, MenuArt.IconExit, 42))
+            if (MetalButton("salir_si", new Rect(win.xMax - 390, win.yMax - 160, 340, 115), Tr.T("SALIR"), MenuButtonKind.Red, MenuArt.IconExit, 42))
                 Quit();
         }
 
@@ -905,19 +911,19 @@ namespace MarsRobot.UI.Menu
         private void DrawLoading()
         {
             Fill(new Rect(-500, -500, VW + 1000, VH + 1000), new Color(0f, 0f, 0f, 0.82f));
-            Label(new Rect(0, 380, VW, 50), "ATERRIZANDO EN", _textCenter, 36, Muted);
+            Label(new Rect(0, 380, VW, 50), Tr.T("ATERRIZANDO EN"), _textCenter, 36, Muted);
             FancyText(new Rect(0, 430, VW, 110), _loadingRegion, 84);
             var bar = new Rect(560, 590, 800, 20);
             Tinted(bar, MenuArt.Rounded, new Color(0.15f, 0.13f, 0.13f, 1f), 8);
             float p = Mathf.Clamp01(_loadProgress);
             Tinted(new Rect(bar.x, bar.y, Mathf.Max(20f, bar.width * p), bar.height), MenuArt.Rounded, Orange, 8);
-            Label(new Rect(0, 630, VW, 40), _draft.mode == GameMode.Creative ? "Modo creativo · recursos ilimitados" : "Modo supervivencia · dificultad " + _draft.DifficultyLabel.ToLowerInvariant(), _textCenter, 24, Muted);
+            Label(new Rect(0, 630, VW, 40), _draft.mode == GameMode.Creative ? Tr.T("Modo creativo · recursos ilimitados") : Tr.T("Modo supervivencia · dificultad ") + _draft.DifficultyLabel.ToLowerInvariant(), _textCenter, 24, Muted);
         }
 
         private void StartGame(WorldSetup setup)
         {
             _draft = setup;
-            _loadingRegion = string.IsNullOrEmpty(setup.spawnRegion) ? "Marte" : setup.spawnRegion;
+            _loadingRegion = string.IsNullOrEmpty(setup.spawnRegion) ? Tr.T("Marte") : setup.spawnRegion;
             _loadProgress = 0f;
             Show(MenuScreen.Loading);
             StartCoroutine(LoadGame(setup));

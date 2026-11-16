@@ -22,11 +22,11 @@ namespace MarsRobot.Items
     [DisallowMultipleComponent]
     public sealed class InventoryUI : MonoBehaviour
     {
-        public const string RobotName = "Robot explorador XR-1";
+        public static string RobotName => Tr.T("Robot explorador XR-1");
         private const float LinkRange = 25f;
 
         private enum Tab { Overview, Ship, Robot, Status, Settings }
-        private static readonly string[] TabLabels = { "Gestión", "Inventario de la Nave", "Inventario del Robot", "Estado del Robot", "Ajustes" };
+        private static string[] TabLabels => new[] { Tr.T("Gestión"), Tr.T("Inventario de la Nave"), Tr.T("Inventario del Robot"), Tr.T("Estado del Robot"), Tr.T("Ajustes") };
 
         private RobotInventory _inventory;
         private RobotController _controller;
@@ -50,74 +50,68 @@ namespace MarsRobot.Items
         /// <summary>Lista de controles por sección (tecla, acción). Mantener al día al añadir teclas.</summary>
         private static readonly string[][] Controls =
         {
-            new[] { "#", "Astronauta (dentro de la nave)" },
-            new[] { "P", "Cambiar entre astronauta y robot (solo con el robot en el hangar)" },
-            new[] { "WASD · Mayús · Espacio", "Caminar · correr · saltar" },
-            new[] { "F", "Usar máquina, armario o montacargas" },
-            new[] { "I", "Inventario personal y fabricación a mano" },
-            new[] { "V", "Primera / tercera persona" },
+            new[] { "#", Tr.T("Astronauta (dentro de la nave)") },
+            new[] { "P", Tr.T("Cambiar entre astronauta y robot (solo con el robot en el hangar)") },
+            new[] { Tr.T("WASD · Mayús · Espacio"), Tr.T("Caminar · correr · saltar") },
+            new[] { "F", Tr.T("Usar máquina, armario o montacargas") },
+            new[] { "I", Tr.T("Inventario personal y fabricación a mano") },
+            new[] { "V", Tr.T("Primera / tercera persona") },
 
-            new[] { "#", "Movimiento del robot" },
-            new[] { "W / S", "Adelante / atrás" },
-            new[] { "A / D", "Izquierda / derecha (de lado, ruedas a 90°)" },
-            new[] { "Q / E", "Girar el robot" },
-            new[] { "Ratón", "Mirar (clic en la vista para capturar el ratón)" },
-            new[] { "V", "Primera / tercera persona" },
-            new[] { "Rueda del ratón", "Acercar o alejar la cámara (3ª persona)" },
-            new[] { "Esc", "Soltar el ratón / cerrar menús" },
+            new[] { "#", Tr.T("Movimiento del robot") },
+            new[] { "W / S", Tr.T("Adelante / atrás") },
+            new[] { "A / D", Tr.T("Izquierda / derecha (de lado, ruedas a 90°)") },
+            new[] { "Q / E", Tr.T("Girar el robot") },
+            new[] { Tr.T("Ratón"), Tr.T("Mirar (clic en la vista para capturar el ratón)") },
+            new[] { "V", Tr.T("Primera / tercera persona") },
+            new[] { Tr.T("Rueda del ratón"), Tr.T("Acercar o alejar la cámara (3ª persona)") },
+            new[] { "Esc", Tr.T("Soltar el ratón / cerrar menús") },
 
-            new[] { "#", "Acciones del robot" },
-            new[] { "F", "Usar lo que apuntas o la máquina más cercana" },
-            new[] { "F (en el ascensor)", "Subir al hangar / bajar al suelo · llamar al ascensor" },
-            new[] { "F (mantener)", "Minar rocas, volcar regolito en la berma, descargar registros" },
-            new[] { "X (mantener, parado)", "Herramienta del brazo: taladro, pala o soplador" },
-            new[] { "Z", "Escáner geológico" },
-            new[] { "L", "Foco" },
-            new[] { "C", "Limpiar los paneles solares" },
-            new[] { "R (mantener)", "Reparar a mano el módulo seleccionado" },
-            new[] { "T", "Cambiar herramienta de reparación" },
-            new[] { "G", "Elegir el módulo a reparar" },
+            new[] { "#", Tr.T("Acciones del robot") },
+            new[] { "F", Tr.T("Usar lo que apuntas o la máquina más cercana") },
+            new[] { Tr.T("F (en el ascensor)"), Tr.T("Subir al hangar / bajar al suelo · llamar al ascensor") },
+            new[] { Tr.T("F (mantener)"), Tr.T("Minar rocas, volcar regolito en la berma, descargar registros") },
+            new[] { Tr.T("X (mantener, parado)"), Tr.T("Herramienta del brazo: taladro, pala o soplador") },
+            new[] { "Z", Tr.T("Escáner geológico") },
+            new[] { "L", Tr.T("Foco") },
+            new[] { "C", Tr.T("Limpiar los paneles solares") },
+            new[] { Tr.T("R (mantener)"), Tr.T("Reparar a mano el módulo seleccionado") },
+            new[] { "T", Tr.T("Cambiar herramienta de reparación") },
+            new[] { "G", Tr.T("Elegir el módulo a reparar") },
 
-            new[] { "#", "Paneles y menús" },
-            new[] { "I", "Panel de gestión (este panel)" },
-            new[] { "J", "Bitácora" },
-            new[] { "K", "Inspeccionar el cohete nodriza" },
-            new[] { "B", "Modo construcción" },
-            new[] { "1–9", "Elegir opción en el menú de una máquina" },
+            new[] { "#", Tr.T("Paneles y menús") },
+            new[] { "I", Tr.T("Panel de gestión (este panel)") },
+            new[] { "J", Tr.T("Bitácora") },
+            new[] { "K", Tr.T("Inspeccionar el cohete nodriza") },
+            new[] { "B", Tr.T("Modo construcción") },
+            new[] { "1–9", Tr.T("Elegir opción en el menú de una máquina") },
 
-            new[] { "#", "Modo construcción (B)" },
-            new[] { "Tab", "Cambiar de categoría" },
-            new[] { "1–9", "Elegir estructura" },
-            new[] { "R", "Girar la pieza 90°" },
-            new[] { "Clic izquierdo / Intro", "Construir" },
-            new[] { "B / Esc", "Salir" },
+            new[] { "#", Tr.T("Modo construcción (B)") },
+            new[] { "Tab", Tr.T("Cambiar de categoría") },
+            new[] { "1–9", Tr.T("Elegir estructura") },
+            new[] { "R", Tr.T("Girar la pieza 90°") },
+            new[] { Tr.T("Clic izquierdo / Intro"), Tr.T("Construir") },
+            new[] { "B / Esc", Tr.T("Salir") },
 
-            new[] { "#", "MarteCar" },
-            new[] { "F (apuntando)", "Subir" },
-            new[] { "W / S", "Acelerar / frenar y marcha atrás" },
-            new[] { "A / D", "Girar" },
-            new[] { "F", "Bajar" },
+            new[] { "#", Tr.T("Inspección del cohete (K)") },
+            new[] { Tr.T("Ratón izquierdo"), Tr.T("Rotar la vista") },
+            new[] { Tr.T("Ratón derecho"), Tr.T("Desplazar la vista") },
+            new[] { Tr.T("Rueda"), "Zoom" },
+            new[] { "WASD / Q / E", Tr.T("Mover la cámara / bajar / subir") },
+            new[] { Tr.T("Mayús"), Tr.T("Moverse más rápido") },
+            new[] { Tr.T("1–5 / Mayús+1–5 / 0"), Tr.T("Ver hasta ese nivel / solo ese nivel / todos") },
+            new[] { "C / L / M", Tr.T("Corte del casco / etiquetas / cotas") },
+            new[] { "K / Esc", Tr.T("Salir") },
 
-            new[] { "#", "Inspección del cohete (K)" },
-            new[] { "Ratón izquierdo", "Rotar la vista" },
-            new[] { "Ratón derecho", "Desplazar la vista" },
-            new[] { "Rueda", "Zoom" },
-            new[] { "WASD / Q / E", "Mover la cámara / bajar / subir" },
-            new[] { "Mayús", "Moverse más rápido" },
-            new[] { "1–5 / Mayús+1–5 / 0", "Ver hasta ese nivel / solo ese nivel / todos" },
-            new[] { "C / L / M", "Corte del casco / etiquetas / cotas" },
-            new[] { "K / Esc", "Salir" },
+            new[] { "#", Tr.T("Diálogos") },
+            new[] { Tr.T("Intro / Espacio"), Tr.T("Mostrar todo el texto / continuar") },
+            new[] { "1–4", Tr.T("Elegir respuesta") },
 
-            new[] { "#", "Diálogos" },
-            new[] { "Intro / Espacio", "Mostrar todo el texto / continuar" },
-            new[] { "1–4", "Elegir respuesta" },
-
-            new[] { "#", "Teclas de prueba (desarrollo)" },
-            new[] { "F1–F6", "Cambiar de zona de aterrizaje" },
-            new[] { "F7", "+10 de cada recurso" },
-            new[] { "F8 / F9", "Golpe fuerte / reparar todo" },
-            new[] { "F10 / F11", "Tormenta de polvo / evento de clima espacial" },
-            new[] { "H", "Ocultar el panel de depuración" },
+            new[] { "#", Tr.T("Teclas de prueba (desarrollo)") },
+            new[] { "M", Tr.T("Mapa grande (y viajar a otra zona)") },
+            new[] { "F7", Tr.T("+10 de cada recurso") },
+            new[] { "F8 / F9", Tr.T("Golpe fuerte / reparar todo") },
+            new[] { "F10 / F11", Tr.T("Tormenta de polvo / evento de clima espacial") },
+            new[] { "H", Tr.T("Ocultar el panel de depuración") },
         };
 
         private void DrawControls(Rect r)
@@ -281,9 +275,9 @@ namespace MarsRobot.Items
             int sol = 1 + Mathf.FloorToInt(gameSeconds / MarsTime.SolSeconds);
             float hours = env != null ? env.SolTime01 * 24.66f : 12f;
             int hh = Mathf.FloorToInt(hours), mm = Mathf.FloorToInt((hours - hh) * 60f);
-            string storm = env != null && env.IsDustStormActive ? "FUERTE" : "NINGUNA";
+            string storm = env != null && env.IsDustStormActive ? Tr.T("FUERTE") : Tr.T("NINGUNA");
             if (MarsRobot.World.SpaceWeather.SpaceWeatherState.GlobalStormActive) storm = "GLOBAL";
-            string title = RobotName.ToUpperInvariant() + "  |  MARTE — SOL " + sol + "  |  " + hh.ToString("00") + ":" + mm.ToString("00") + "  |  TORMENTA DE POLVO: " + storm;
+            string title = RobotName.ToUpperInvariant() + Tr.T("  |  MARTE — SOL ") + sol + "  |  " + hh.ToString("00") + ":" + mm.ToString("00") + Tr.T("  |  TORMENTA DE POLVO: ") + storm;
             GUI.Label(new Rect(20, 10, 1000, 36), "<b>" + title + "</b>", HudTheme.Subtitle);
 
             // Contadores de recursos de la nave (como en el diseño).
@@ -295,12 +289,12 @@ namespace MarsRobot.Items
                 int metals = inv.Get(ResourceType.Iron) + inv.Get(ResourceType.MetalParts);
                 int water = inv.Get(ResourceType.Water) + inv.Get(ResourceType.Ice);
                 float energy = b.Grid.CapacityWh > 0f ? b.Grid.StoredWh / b.Grid.CapacityWh : 0f;
-                Counter(new Rect(1010, 8, 120, 40), ItemIconPainter.For(ResourceType.Iron), minerals.ToString(), "Minerales");
-                Counter(new Rect(1135, 8, 120, 40), ItemIconPainter.For(ResourceType.MetalParts), metals.ToString(), "Metales");
-                Counter(new Rect(1260, 8, 110, 40), ItemIconPainter.For(ResourceType.Water), water.ToString(), "Agua");
-                Counter(new Rect(1375, 8, 110, 40), ItemIconPainter.For(ResourceType.SolarCells), Mathf.RoundToInt(energy * 100f) + "%", "Energía");
+                Counter(new Rect(1010, 8, 120, 40), ItemIconPainter.For(ResourceType.Iron), minerals.ToString(), Tr.T("Minerales"));
+                Counter(new Rect(1135, 8, 120, 40), ItemIconPainter.For(ResourceType.MetalParts), metals.ToString(), Tr.T("Metales"));
+                Counter(new Rect(1260, 8, 110, 40), ItemIconPainter.For(ResourceType.Water), water.ToString(), Tr.T("Agua"));
+                Counter(new Rect(1375, 8, 110, 40), ItemIconPainter.For(ResourceType.SolarCells), Mathf.RoundToInt(energy * 100f) + "%", Tr.T("Energía"));
             }
-            if (GUI.Button(new Rect(1500, 10, 88, 36), "X  Cerrar", HudTheme.Button)) SetOpen(false);
+            if (GUI.Button(new Rect(1500, 10, 88, 36), Tr.T("X  Cerrar"), HudTheme.Button)) SetOpen(false);
         }
 
         private static void Counter(Rect r, Texture2D icon, string value, string label)
@@ -334,23 +328,23 @@ namespace MarsRobot.Items
             // Barra inferior: enlace con la nave.
             Rect bar = new Rect(20, 806, 1560, 34);
             HudTheme.Frame(bar, HudTheme.PanelBg, HudTheme.AccentDim, 1f);
-            string link = Linked ? "<color=#60ff80>Estado de enlace: estable</color> — sincronizado con la nave nodriza (" + DistanceToShip.ToString("0") + " m)"
-                                 : "<color=#ff8080>Sin enlace con la nave</color> — acércate a menos de " + LinkRange.ToString("0") + " m para transferir (" + DistanceToShip.ToString("0") + " m)";
+            string link = Linked ? Tr.T("<color=#60ff80>Estado de enlace: estable</color> — sincronizado con la nave nodriza (") + DistanceToShip.ToString("0") + " m)"
+                                 : Tr.T("<color=#ff8080>Sin enlace con la nave</color> — acércate a menos de ") + LinkRange.ToString("0") + Tr.T(" m para transferir (") + DistanceToShip.ToString("0") + " m)";
             GUI.Label(new Rect(bar.x + 14, bar.y, bar.width - 28, bar.height), link, HudTheme.Small);
         }
 
         private void DrawShipList(Rect r)
         {
-            HudTheme.Panel(r, "Inventario de la Nave", "Recursos almacenados en la nave nodriza");
+            HudTheme.Panel(r, Tr.T("Inventario de la Nave"), Tr.T("Recursos almacenados en la nave nodriza"));
             RocketBase b = Ship;
             if (b == null)
             {
-                GUI.Label(new Rect(r.x + 20, r.y + 90, r.width - 40, 40), "Sin nave.", HudTheme.Body);
+                GUI.Label(new Rect(r.x + 20, r.y + 90, r.width - 40, 40), Tr.T("Sin nave."), HudTheme.Body);
                 return;
             }
             BaseInventory inv = b.Inventory;
             HudTheme.Bar(new Rect(r.x + 20, r.y + 76, r.width - 40, 24), inv.TotalMassKg / inv.MaxMassKg, HudTheme.Accent,
-                "Capacidad de almacenaje: " + inv.TotalMassKg.ToString("0") + " / " + inv.MaxMassKg.ToString("0") + " kg");
+                Tr.T("Capacidad de almacenaje: ") + inv.TotalMassKg.ToString("0") + " / " + inv.MaxMassKg.ToString("0") + " kg");
 
             Rect view = new Rect(r.x + 14, r.y + 110, r.width - 28, r.height - 230);
             List<ResourceType> types = ShipTypes(inv);
@@ -363,7 +357,7 @@ namespace MarsRobot.Items
                 HudTheme.Fill(row, sel ? new Color(0.1f, 0.4f, 0.5f, 0.9f) : HudTheme.Slot);
                 GUI.DrawTexture(new Rect(row.x + 6, row.y + 4, 44, 44), ItemIconPainter.For(t));
                 GUI.Label(new Rect(row.x + 58, row.y + 4, 260, 22), "<b>" + BaseInventory.Label(t) + "</b>", HudTheme.Small);
-                GUI.Label(new Rect(row.x + 58, row.y + 26, 300, 20), BaseInventory.CategoryLabel(t) + " • Masa: " + (inv.Get(t) * BaseInventory.MassPerUnit(t)).ToString("0") + " kg", HudTheme.Small);
+                GUI.Label(new Rect(row.x + 58, row.y + 26, 300, 20), BaseInventory.CategoryLabel(t) + Tr.T(" • Masa: ") + (inv.Get(t) * BaseInventory.MassPerUnit(t)).ToString("0") + " kg", HudTheme.Small);
                 GUI.Label(new Rect(row.xMax - 110, row.y + 8, 100, 30), "<size=20><b>" + inv.Get(t) + "</b></size>", HudTheme.Small);
                 if (GUI.Button(row, GUIContent.none, GUIStyle.none)) { _hasShipSel = true; _shipSel = t; }
             }
@@ -375,9 +369,9 @@ namespace MarsRobot.Items
         private void DrawRobotList(Rect r)
         {
             ItemContainer bay = _inventory.Bay;
-            HudTheme.Panel(r, "Inventario del Robot", "Carga del rover • " + bay.TotalMassKg.ToString("0") + " / " + bay.MaxMassKg.ToString("0") + " kg");
+            HudTheme.Panel(r, Tr.T("Inventario del Robot"), Tr.T("Carga del rover • ") + bay.TotalMassKg.ToString("0") + " / " + bay.MaxMassKg.ToString("0") + " kg");
             HudTheme.Bar(new Rect(r.x + 20, r.y + 76, r.width - 40, 24), bay.MassRatio, BarColor(bay.MassRatio),
-                Mathf.RoundToInt(bay.MassRatio * 100f) + "% masa · " + bay.TotalVolumeLiters.ToString("0") + " / " + bay.MaxVolumeLiters.ToString("0") + " L");
+                Mathf.RoundToInt(bay.MassRatio * 100f) + Tr.T("% masa · ") + bay.TotalVolumeLiters.ToString("0") + " / " + bay.MaxVolumeLiters.ToString("0") + " L");
 
             Rect view = new Rect(r.x + 14, r.y + 110, r.width - 28, r.height - 230);
             int rows = bay.Slots.Count + 1;
@@ -390,7 +384,7 @@ namespace MarsRobot.Items
                 HudTheme.Fill(row, s == _robotSel ? new Color(0.1f, 0.4f, 0.5f, 0.9f) : HudTheme.Slot);
                 GUI.DrawTexture(new Rect(row.x + 6, row.y + 4, 44, 44), ItemIconPainter.For(s.item));
                 GUI.Label(new Rect(row.x + 58, row.y + 4, 280, 22), "<b>" + s.item.itemName + "</b>", HudTheme.Small);
-                GUI.Label(new Rect(row.x + 58, row.y + 26, 300, 20), "Peso: " + s.MassKg.ToString("0.#") + " kg · " + s.VolumeLiters.ToString("0.#") + " L", HudTheme.Small);
+                GUI.Label(new Rect(row.x + 58, row.y + 26, 300, 20), Tr.T("Peso: ") + s.MassKg.ToString("0.#") + " kg · " + s.VolumeLiters.ToString("0.#") + " L", HudTheme.Small);
                 GUI.Label(new Rect(row.xMax - 90, row.y + 8, 80, 30), "<size=20><b>" + s.count + "</b></size>", HudTheme.Small);
                 if (GUI.Button(row, GUIContent.none, GUIStyle.none)) _robotSel = s;
                 y += 56;
@@ -401,26 +395,26 @@ namespace MarsRobot.Items
                 Rect row = new Rect(0, y, view.width - 20, 52);
                 HudTheme.Fill(row, new Color(0.6f, 0.55f, 0.1f, 0.9f));
                 GUI.DrawTexture(new Rect(row.x + 6, row.y + 4, 44, 44), ItemIconPainter.Get(IconShape.Toolbox, new Color(0.9f, 0.8f, 0.3f)));
-                GUI.Label(new Rect(row.x + 58, row.y + 8, 380, 36), "<b>" + RoverToolController.ToolLabel(_tools.ActiveTool) + " (equipada)</b>\nBrazo delantero", HudTheme.Small);
+                GUI.Label(new Rect(row.x + 58, row.y + 8, 380, 36), "<b>" + RoverToolController.ToolLabel(_tools.ActiveTool) + Tr.T(" (equipada)</b>\nBrazo delantero"), HudTheme.Small);
             }
             GUI.EndScrollView();
 
             Rect buttons = new Rect(r.x + 20, r.yMax - 112, r.width - 40, 100);
             GUI.enabled = Linked && _robotSel != null && ContainsStack(_robotSel);
-            if (GUI.Button(new Rect(buttons.x, buttons.y, buttons.width, 44), "←  Transferir a Nave", HudTheme.BigButton)) TransferToShip(_robotSel, QtyFor(_robotSel.count));
+            if (GUI.Button(new Rect(buttons.x, buttons.y, buttons.width, 44), Tr.T("←  Transferir a Nave"), HudTheme.BigButton)) TransferToShip(_robotSel, QtyFor(_robotSel.count));
             GUI.enabled = _robotSel != null && ContainsStack(_robotSel);
-            if (GUI.Button(new Rect(buttons.x, buttons.y + 52, buttons.width, 40), "Desechar (soltar al suelo)", HudTheme.Button)) Drop(_robotSel);
+            if (GUI.Button(new Rect(buttons.x, buttons.y + 52, buttons.width, 40), Tr.T("Desechar (soltar al suelo)"), HudTheme.Button)) Drop(_robotSel);
             GUI.enabled = true;
         }
 
         private void DrawStatusColumn(Rect r)
         {
-            HudTheme.Panel(r, "Estado del Robot", RobotName + " • Marte • Estado del sistema");
+            HudTheme.Panel(r, Tr.T("Estado del Robot"), RobotName + Tr.T(" • Marte • Estado del sistema"));
             if (_preview != null && _preview.Texture != null) DrawPreview(new Rect(r.x + 130, r.y + 70, 260, 200));
             DrawModuleList(new Rect(r.x + 14, r.y + 280, r.width - 28, r.height - 380), true);
             DrawStatusButtons(new Rect(r.x + 20, r.yMax - 92, r.width - 40, 40));
             float charge = _battery != null ? _battery.Charge01 : 0f;
-            HudTheme.Bar(new Rect(r.x + 20, r.yMax - 44, r.width - 40, 24), charge, BarColor(1f - charge), "Batería: " + Mathf.RoundToInt(charge * 100f) + "%");
+            HudTheme.Bar(new Rect(r.x + 20, r.yMax - 44, r.width - 40, 24), charge, BarColor(1f - charge), Tr.T("Batería: ") + Mathf.RoundToInt(charge * 100f) + "%");
         }
 
         // ------------------------------------------------------------------
@@ -432,7 +426,7 @@ namespace MarsRobot.Items
             Rect r = new Rect(20, 116, 1050, 760);
             RocketBase b = Ship;
             BaseInventory inv = b != null ? b.Inventory : null;
-            HudTheme.Panel(r, "INVENTARIO DE LA NAVE", inv != null ? "Recursos y materiales — peso total: " + inv.TotalMassKg.ToString("0") + " / " + inv.MaxMassKg.ToString("0") + " kg" : "Sin nave");
+            HudTheme.Panel(r, Tr.T("INVENTARIO DE LA NAVE"), inv != null ? Tr.T("Recursos y materiales — peso total: ") + inv.TotalMassKg.ToString("0") + " / " + inv.MaxMassKg.ToString("0") + " kg" : Tr.T("Sin nave"));
             if (inv == null) return;
 
             List<ResourceType> types = ShipTypes(inv);
@@ -448,18 +442,18 @@ namespace MarsRobot.Items
             }
 
             float used = inv.TotalMassKg / inv.MaxMassKg;
-            GUI.Label(new Rect(r.x + 24, r.yMax - 140, 700, 24), "CAPACIDAD: " + (used * 100f).ToString("0.0") + "% USADA — " +
+            GUI.Label(new Rect(r.x + 24, r.yMax - 140, 700, 24), Tr.T("CAPACIDAD: ") + (used * 100f).ToString("0.0") + Tr.T("% USADA — ") +
                       (Linked ? "<color=#60ff80>TRANSFERENCIA RÁPIDA DISPONIBLE</color>" : "<color=#ff8080>ROBOT FUERA DE ALCANCE</color>"), HudTheme.Small);
             DrawQuantityAndTransferToRobot(new Rect(r.x + 24, r.yMax - 110, 560, 96));
         }
 
         private void DrawQuantityAndTransferToRobot(Rect r)
         {
-            string selText = _hasShipSel ? BaseInventory.Label(_shipSel) : "elige un recurso";
-            GUI.Label(new Rect(r.x, r.y, r.width, 22), "Seleccionado: <b>" + selText + "</b>", HudTheme.Small);
-            _qtyMode = GUI.Toolbar(new Rect(r.x, r.y + 24, Mathf.Min(300, r.width), 26), _qtyMode, new[] { "1 u", "10 u", "Todo" }, HudTheme.Tab);
+            string selText = _hasShipSel ? BaseInventory.Label(_shipSel) : Tr.T("elige un recurso");
+            GUI.Label(new Rect(r.x, r.y, r.width, 22), Tr.T("Seleccionado: <b>") + selText + "</b>", HudTheme.Small);
+            _qtyMode = GUI.Toolbar(new Rect(r.x, r.y + 24, Mathf.Min(300, r.width), 26), _qtyMode, new[] { "1 u", "10 u", Tr.T("Todo") }, HudTheme.Tab);
             GUI.enabled = Linked && _hasShipSel;
-            if (GUI.Button(new Rect(r.x, r.y + 56, r.width, 44), "[ TRANSFERIR A ROBOT >> ]", HudTheme.BigButton)) TransferToRobot(_shipSel);
+            if (GUI.Button(new Rect(r.x, r.y + 56, r.width, 44), Tr.T("[ TRANSFERIR A ROBOT >> ]"), HudTheme.BigButton)) TransferToRobot(_shipSel);
             GUI.enabled = true;
         }
 
@@ -471,10 +465,10 @@ namespace MarsRobot.Items
         {
             ItemContainer bay = _inventory.Bay;
             Rect r = new Rect(20, 116, 1050, 760);
-            HudTheme.Panel(r, "INVENTARIO DEL ROBOT", "Carga del rover — " + bay.TotalMassKg.ToString("0.#") + " / " + bay.MaxMassKg.ToString("0") + " kg · " +
+            HudTheme.Panel(r, Tr.T("INVENTARIO DEL ROBOT"), Tr.T("Carga del rover — ") + bay.TotalMassKg.ToString("0.#") + " / " + bay.MaxMassKg.ToString("0") + " kg · " +
                                                      bay.TotalVolumeLiters.ToString("0") + " / " + bay.MaxVolumeLiters.ToString("0") + " L");
-            HudTheme.Bar(new Rect(r.x + 24, r.y + 78, 490, 22), bay.MassRatio, BarColor(bay.MassRatio), "Masa " + Mathf.RoundToInt(bay.MassRatio * 100f) + "%  (peso en Marte " + _inventory.WeightNewtons.ToString("0") + " N)");
-            HudTheme.Bar(new Rect(r.x + 534, r.y + 78, 490, 22), bay.VolumeRatio, BarColor(bay.VolumeRatio), "Volumen " + Mathf.RoundToInt(bay.VolumeRatio * 100f) + "%");
+            HudTheme.Bar(new Rect(r.x + 24, r.y + 78, 490, 22), bay.MassRatio, BarColor(bay.MassRatio), Tr.T("Masa ") + Mathf.RoundToInt(bay.MassRatio * 100f) + Tr.T("%  (peso en Marte ") + _inventory.WeightNewtons.ToString("0") + " N)");
+            HudTheme.Bar(new Rect(r.x + 534, r.y + 78, 490, 22), bay.VolumeRatio, BarColor(bay.VolumeRatio), Tr.T("Volumen ") + Mathf.RoundToInt(bay.VolumeRatio * 100f) + "%");
 
             Rect grid = new Rect(r.x + 24, r.y + 112, 640, 560);
             const int cols = 5;
@@ -499,7 +493,7 @@ namespace MarsRobot.Items
             if (_robotSel == null || !ContainsStack(_robotSel))
             {
                 _robotSel = null;
-                GUILayout.Label("Selecciona un objeto.", HudTheme.Body);
+                GUILayout.Label(Tr.T("Selecciona un objeto."), HudTheme.Body);
                 GUILayout.Label(_inventory.LoadStatus, HudTheme.Body);
             }
             else
@@ -508,17 +502,17 @@ namespace MarsRobot.Items
                 GUILayout.Label("<b>" + d.itemName + "</b>  ×" + _robotSel.count, HudTheme.Body);
                 GUILayout.Label(d.description, HudTheme.Body);
                 GUILayout.Label("<i>" + d.scientificNotes + "</i>", HudTheme.Body);
-                GUILayout.Label("Masa del montón: " + _robotSel.MassKg.ToString("0.#") + " kg · Volumen: " + _robotSel.VolumeLiters.ToString("0.#") + " L", HudTheme.Body);
-                GUILayout.Label("Conservación: " + Mathf.RoundToInt(_robotSel.condition * 100f) + " %", HudTheme.Body);
+                GUILayout.Label(Tr.T("Masa del montón: ") + _robotSel.MassKg.ToString("0.#") + Tr.T(" kg · Volumen: ") + _robotSel.VolumeLiters.ToString("0.#") + " L", HudTheme.Body);
+                GUILayout.Label(Tr.T("Conservación: ") + Mathf.RoundToInt(_robotSel.condition * 100f) + " %", HudTheme.Body);
                 if (d.requiresCryoStorage) GUILayout.Label("<color=#80d0ff>Necesita almacenamiento criogénico.</color>", HudTheme.Body);
                 if (d.isCorrosiveOrToxic) GUILayout.Label("<color=#ffb060>Corrosivo / tóxico: guardar sellado.</color>", HudTheme.Body);
                 GUILayout.Space(8);
-                _qtyMode = GUILayout.Toolbar(_qtyMode, new[] { "1 u", "10 u", "Todo" }, HudTheme.Tab);
+                _qtyMode = GUILayout.Toolbar(_qtyMode, new[] { "1 u", "10 u", Tr.T("Todo") }, HudTheme.Tab);
                 GUI.enabled = Linked;
-                if (GUILayout.Button("<< TRANSFERIR A NAVE", HudTheme.BigButton, GUILayout.Height(44))) TransferToShip(_robotSel, QtyFor(_robotSel.count));
+                if (GUILayout.Button(Tr.T("<< TRANSFERIR A NAVE"), HudTheme.BigButton, GUILayout.Height(44))) TransferToShip(_robotSel, QtyFor(_robotSel.count));
                 GUI.enabled = true;
-                if (GUILayout.Button("Dividir pila", HudTheme.Button) && !_inventory.Bay.Split(_robotSel)) Say("No hay ranura libre para dividir.");
-                if (GUILayout.Button("Soltar al suelo", HudTheme.Button)) Drop(_robotSel);
+                if (GUILayout.Button(Tr.T("Dividir pila"), HudTheme.Button) && !_inventory.Bay.Split(_robotSel)) Say(Tr.T("No hay ranura libre para dividir."));
+                if (GUILayout.Button(Tr.T("Soltar al suelo"), HudTheme.Button)) Drop(_robotSel);
             }
             GUILayout.EndArea();
         }
@@ -530,7 +524,7 @@ namespace MarsRobot.Items
         private void DrawStatusTab()
         {
             Rect r = new Rect(20, 116, 1050, 760);
-            HudTheme.Panel(r, "ESTADO DEL ROBOT", "Integridad por componente — sin barra de salud genérica");
+            HudTheme.Panel(r, Tr.T("ESTADO DEL ROBOT"), Tr.T("Integridad por componente — sin barra de salud genérica"));
             DrawModuleList(new Rect(r.x + 20, r.y + 80, 600, 560), false);
 
             Rect info = new Rect(r.x + 640, r.y + 80, 390, 560);
@@ -539,21 +533,21 @@ namespace MarsRobot.Items
             if (_moduleSel != null)
             {
                 GUILayout.Label("<b>" + _moduleSel.Definition.displayName + "</b>", HudTheme.Body);
-                GUILayout.Label("Integridad: " + _moduleSel.Integrity.ToString("0") + " / " + _moduleSel.MaxIntegrity.ToString("0") + " (" + Mathf.RoundToInt(_moduleSel.Integrity01 * 100f) + " %)", HudTheme.Body);
-                GUILayout.Label("Rendimiento: " + Mathf.RoundToInt(_moduleSel.Efficiency * 100f) + " %", HudTheme.Body);
-                GUILayout.Label("Se repara con: " + ToolList(_moduleSel), HudTheme.Body);
+                GUILayout.Label(Tr.T("Integridad: ") + _moduleSel.Integrity.ToString("0") + " / " + _moduleSel.MaxIntegrity.ToString("0") + " (" + Mathf.RoundToInt(_moduleSel.Integrity01 * 100f) + " %)", HudTheme.Body);
+                GUILayout.Label(Tr.T("Rendimiento: ") + Mathf.RoundToInt(_moduleSel.Efficiency * 100f) + " %", HudTheme.Body);
+                GUILayout.Label(Tr.T("Se repara con: ") + ToolList(_moduleSel), HudTheme.Body);
                 GUILayout.Space(10);
             }
             if (_health != null)
             {
-                GUILayout.Label("Movilidad: " + Mathf.RoundToInt(_health.Mobility * 100f) + " %", HudTheme.Body);
-                GUILayout.Label("Integridad estructural: " + Mathf.RoundToInt(_health.StructuralIntegrity01 * 100f) + " %", HudTheme.Body);
+                GUILayout.Label(Tr.T("Movilidad: ") + Mathf.RoundToInt(_health.Mobility * 100f) + " %", HudTheme.Body);
+                GUILayout.Label(Tr.T("Integridad estructural: ") + Mathf.RoundToInt(_health.StructuralIntegrity01 * 100f) + " %", HudTheme.Body);
             }
             if (_modules != null)
             {
                 GUILayout.Space(8);
                 GUILayout.Label("<b>Módulos instalados</b>", HudTheme.Body);
-                foreach (RoverSlotType slot in new[] { RoverSlotType.FrontArm, RoverSlotType.TopDeck, RoverSlotType.InternalBay })
+                foreach (RoverSlotType slot in new[] { RoverSlotType.Wheels, RoverSlotType.FrontArm, RoverSlotType.TopDeck, RoverSlotType.InternalBay })
                 {
                     var names = new List<string>();
                     foreach (RoverModuleType m in _modules.GetSlots(slot))
@@ -561,9 +555,9 @@ namespace MarsRobot.Items
                         RoverModuleDefinition d = RobotModuleSystem.Find(m);
                         if (d != null) names.Add(d.name);
                     }
-                    GUILayout.Label(RobotModuleSystem.SlotLabel(slot) + ": " + (names.Count > 0 ? string.Join(", ", names) : "(vacío)"), HudTheme.Body);
+                    GUILayout.Label(RobotModuleSystem.SlotLabel(slot) + ": " + (names.Count > 0 ? string.Join(", ", names) : Tr.T("(vacío)")), HudTheme.Body);
                 }
-                GUILayout.Label("Masa total: " + _modules.TotalMassKg.ToString("0") + " kg", HudTheme.Body);
+                GUILayout.Label(Tr.T("Masa total: ") + _modules.TotalMassKg.ToString("0") + " kg", HudTheme.Body);
             }
             GUILayout.EndArea();
             DrawStatusButtons(new Rect(r.x + 20, r.yMax - 100, 600, 44));
@@ -575,7 +569,7 @@ namespace MarsRobot.Items
             IReadOnlyList<RobotModule> mods = _health.Modules;
             int ok = 0;
             for (int i = 0; i < mods.Count; i++) if (mods[i].State == ModuleState.Operational) ok++;
-            GUI.Label(new Rect(r.x, r.y, r.width, 24), "<color=#ffd060>Estado general:</color> <b>" + (ok == mods.Count ? "Óptimo" : "Parcial") + "</b> • " + ok + "/" + mods.Count + " sistemas óptimos", HudTheme.Small);
+            GUI.Label(new Rect(r.x, r.y, r.width, 24), "<color=#ffd060>Estado general:</color> <b>" + (ok == mods.Count ? Tr.T("Óptimo") : Tr.T("Parcial")) + "</b> • " + ok + "/" + mods.Count + Tr.T(" sistemas óptimos"), HudTheme.Small);
 
             float rowH = compact ? 34f : 42f;
             int extra = 2; // batería y herramienta
@@ -595,15 +589,15 @@ namespace MarsRobot.Items
             float charge = _battery != null ? _battery.Charge01 : 0f;
             Rect bat = new Rect(0, y, view.width - 20, rowH);
             HudTheme.Fill(bat, HudTheme.Slot);
-            GUI.Label(new Rect(bat.x + 12, bat.y, 300, rowH), "●  Batería", HudTheme.Small);
+            GUI.Label(new Rect(bat.x + 12, bat.y, 300, rowH), Tr.T("●  Batería"), HudTheme.Small);
             HudTheme.StatePill(new Rect(bat.xMax - 200, bat.y + 6, 190, rowH - 12), Mathf.RoundToInt(charge * 100f) + "%", charge > 0.3f ? HudTheme.Good : (charge > 0.15f ? HudTheme.Warn : HudTheme.Bad));
             y += rowH + 4;
             if (_tools != null)
             {
                 Rect tool = new Rect(0, y, view.width - 20, rowH);
                 HudTheme.Fill(tool, HudTheme.Slot);
-                GUI.Label(new Rect(tool.x + 12, tool.y, 340, rowH), "●  " + RoverToolController.ToolLabel(_tools.ActiveTool) + " (equipada)", HudTheme.Small);
-                HudTheme.StatePill(new Rect(tool.xMax - 200, tool.y + 6, 190, rowH - 12), "Operativo", HudTheme.Good);
+                GUI.Label(new Rect(tool.x + 12, tool.y, 340, rowH), "●  " + RoverToolController.ToolLabel(_tools.ActiveTool) + Tr.T(" (equipada)"), HudTheme.Small);
+                HudTheme.StatePill(new Rect(tool.xMax - 200, tool.y + 6, 190, rowH - 12), Tr.T("Operativo"), HudTheme.Good);
             }
             GUI.EndScrollView();
         }
@@ -611,9 +605,9 @@ namespace MarsRobot.Items
         private void DrawStatusButtons(Rect r)
         {
             float w = (r.width - 20f) / 3f;
-            if (GUI.Button(new Rect(r.x, r.y, w, r.height), "Reparar", HudTheme.Button)) Repair();
-            if (GUI.Button(new Rect(r.x + w + 10, r.y, w, r.height), "Diagnóstico", HudTheme.Button)) Diagnose();
-            if (GUI.Button(new Rect(r.x + 2 * (w + 10), r.y, w, r.height), "Calibrar", HudTheme.Button)) Calibrate();
+            if (GUI.Button(new Rect(r.x, r.y, w, r.height), Tr.T("Reparar"), HudTheme.Button)) Repair();
+            if (GUI.Button(new Rect(r.x + w + 10, r.y, w, r.height), Tr.T("Diagnóstico"), HudTheme.Button)) Diagnose();
+            if (GUI.Button(new Rect(r.x + 2 * (w + 10), r.y, w, r.height), Tr.T("Calibrar"), HudTheme.Button)) Calibrate();
         }
 
         private void Repair()
@@ -622,11 +616,11 @@ namespace MarsRobot.Items
             if (_modules != null && _modules.IsDockedAtAssemblyBay())
             {
                 _health.RepairAll();
-                Say("Reparación completa en el taller de ensamblaje (gratis en la base).");
+                Say(Tr.T("Reparación completa en el taller de ensamblaje (gratis en la base)."));
             }
             else
             {
-                Say("Fuera del taller: repara a mano con R y la herramienta adecuada (T cambia de herramienta, G de módulo).");
+                Say(Tr.T("Fuera del taller: repara a mano con R y la herramienta adecuada (T cambia de herramienta, G de módulo)."));
             }
         }
 
@@ -638,8 +632,8 @@ namespace MarsRobot.Items
             {
                 if (m.State != ModuleState.Operational) bad.Add(m.Definition.displayName + " " + Mathf.RoundToInt(m.Integrity01 * 100f) + "%");
             }
-            string bias = Mathf.Abs(_health.SteeringBias) > 0.05f ? " · desvío de dirección hacia la " + (_health.SteeringBias < 0f ? "izquierda" : "derecha") : "";
-            Say(bad.Count == 0 ? "Diagnóstico: todos los sistemas óptimos." : "Diagnóstico: " + string.Join(", ", bad) + " · movilidad " + Mathf.RoundToInt(_health.Mobility * 100f) + "%" + bias);
+            string bias = Mathf.Abs(_health.SteeringBias) > 0.05f ? Tr.T(" · desvío de dirección hacia la ") + (_health.SteeringBias < 0f ? "izquierda" : "derecha") : "";
+            Say(bad.Count == 0 ? Tr.T("Diagnóstico: todos los sistemas óptimos.") : Tr.T("Diagnóstico: ") + string.Join(", ", bad) + Tr.T(" · movilidad ") + Mathf.RoundToInt(_health.Mobility * 100f) + "%" + bias);
         }
 
         private void Calibrate()
@@ -647,7 +641,7 @@ namespace MarsRobot.Items
             if (_health == null || _battery == null) return;
             if (!_battery.TryConsume(20f))
             {
-                Say("Batería insuficiente para calibrar (20 Wh).");
+                Say(Tr.T("Batería insuficiente para calibrar (20 Wh)."));
                 return;
             }
             int fixedCount = 0;
@@ -658,7 +652,7 @@ namespace MarsRobot.Items
                 _health.Repair(id, RepairToolType.CableKit, 1.7f); // ~+10 de integridad por recalibrado
                 fixedCount++;
             }
-            Say(fixedCount > 0 ? "Sensores recalibrados (+10 en cableado no cortado)." : "Calibración completa: no había nada que ajustar (los cables cortados se empalman a mano).");
+            Say(fixedCount > 0 ? Tr.T("Sensores recalibrados (+10 en cableado no cortado).") : Tr.T("Calibración completa: no había nada que ajustar (los cables cortados se empalman a mano)."));
         }
 
         // ------------------------------------------------------------------
@@ -668,8 +662,8 @@ namespace MarsRobot.Items
         private void DrawSettingsTab()
         {
             Rect r = new Rect(20, 116, 1050, 760);
-            HudTheme.Panel(r, "AJUSTES", _settingsPage == 0 ? "Se guardan en este equipo" : "Todas las teclas del juego");
-            _settingsPage = GUI.Toolbar(new Rect(r.xMax - 330, r.y + 18, 310, 34), _settingsPage, new[] { "Opciones", "Controles" }, HudTheme.Tab);
+            HudTheme.Panel(r, Tr.T("AJUSTES"), _settingsPage == 0 ? Tr.T("Se guardan en este equipo") : Tr.T("Todas las teclas del juego"));
+            _settingsPage = GUI.Toolbar(new Rect(r.xMax - 330, r.y + 18, 310, 34), _settingsPage, new[] { Tr.T("Opciones"), Tr.T("Controles") }, HudTheme.Tab);
             if (_settingsPage == 1)
             {
                 DrawControls(new Rect(r.x + 20, r.y + 80, r.width - 40, r.height - 100));
@@ -677,29 +671,37 @@ namespace MarsRobot.Items
             }
             float x = r.x + 30, y = r.y + 90, w = 600;
 
-            GUI.Label(new Rect(x, y, 300, 26), "Calidad gráfica", HudTheme.Body);
+            GUI.Label(new Rect(x, y, 300, 26), Tr.T("Calidad gráfica"), HudTheme.Body);
             int q = GUI.Toolbar(new Rect(x + 260, y, w, 32), GameSettings.Quality, GameSettings.QualityLabels, HudTheme.Tab);
             if (q != GameSettings.Quality) GameSettings.SetQuality(q);
             y += 60;
 
-            float master = Slider(ref y, x, w, "Sonido general", GameSettings.MasterVolume, 0f, 1f, "{0:P0}");
-            float music = Slider(ref y, x, w, "Música (cuando la haya)", GameSettings.MusicVolume, 0f, 1f, "{0:P0}");
-            float fx = Slider(ref y, x, w, "Efectos", GameSettings.EffectsVolume, 0f, 1f, "{0:P0}");
+            float master = Slider(ref y, x, w, Tr.T("Sonido general"), GameSettings.MasterVolume, 0f, 1f, "{0:P0}");
+            float music = Slider(ref y, x, w, Tr.T("Música (cuando la haya)"), GameSettings.MusicVolume, 0f, 1f, "{0:P0}");
+            float fx = Slider(ref y, x, w, Tr.T("Efectos"), GameSettings.EffectsVolume, 0f, 1f, "{0:P0}");
             if (!Mathf.Approximately(master, GameSettings.MasterVolume) || !Mathf.Approximately(music, GameSettings.MusicVolume) || !Mathf.Approximately(fx, GameSettings.EffectsVolume))
             {
                 GameSettings.SetVolumes(master, music, fx);
             }
-            float bright = Slider(ref y, x, w, "Brillo", GameSettings.Brightness, 0.5f, 1.5f, "{0:0.00}");
+            float bright = Slider(ref y, x, w, Tr.T("Brillo"), GameSettings.Brightness, 0.5f, 1.5f, "{0:0.00}");
             if (!Mathf.Approximately(bright, GameSettings.Brightness)) GameSettings.SetBrightness(bright);
-            float sens = Slider(ref y, x, w, "Sensibilidad del ratón", GameSettings.MouseSensitivity, 0.2f, 8f, "{0:0.0}");
+            float sens = Slider(ref y, x, w, Tr.T("Sensibilidad del ratón"), GameSettings.MouseSensitivity, 0.2f, 8f, "{0:0.0}");
             if (!Mathf.Approximately(sens, GameSettings.MouseSensitivity)) GameSettings.SetMouseSensitivity(sens);
 
-            GUI.Label(new Rect(x, y, 300, 26), "Idioma", HudTheme.Body);
-            int lang = GUI.Toolbar(new Rect(x + 260, y, 420, 32), 0, GameSettings.LanguageLabels, HudTheme.Tab);
-            if (lang != 0) Say("De momento el juego solo está en español.");
+            GUI.Label(new Rect(x, y, 300, 26), Tr.T("Idioma"), HudTheme.Body);
+            int lang = GUI.Toolbar(new Rect(x + 260, y, 420, 32), GameSettings.Language, GameSettings.LanguageLabels, HudTheme.Tab);
+            if (lang != GameSettings.Language) GameSettings.SetLanguage(lang);
             y += 60;
 
-            bool fps = GUI.Toggle(new Rect(x, y, 400, 30), GameSettings.ShowFps, "  Mostrar FPS");
+            if (GUI.Button(new Rect(x, y, 420, 34), MarsRobot.Localization.Localizer.L("Repetir el tutorial de Marti", "Replay Marti's tutorial"), HudTheme.Tab))
+            {
+                MarsRobot.UI.TutorialGuide.Reset();
+                MarsRobot.UI.TutorialGuide.StartIfNeeded();
+                Say(MarsRobot.Localization.Localizer.L("¡Marti te vuelve a enseñar! Cierra este menú.", "Marti will teach you again! Close this menu."));
+            }
+            y += 50;
+
+            bool fps = GUI.Toggle(new Rect(x, y, 400, 30), GameSettings.ShowFps, Tr.T("  Mostrar FPS"));
             if (fps != GameSettings.ShowFps) GameSettings.SetShowFps(fps);
         }
 
@@ -719,26 +721,26 @@ namespace MarsRobot.Items
         private void DrawRobotCard(Rect r)
         {
             HudTheme.Frame(r, HudTheme.PanelBg, HudTheme.AccentDim);
-            GUI.Label(new Rect(r.x + 24, r.y + 14, r.width - 48, 40), "<size=32><b>" + RobotName.ToUpperInvariant().Replace("ROBOT EXPLORADOR ", "ROBOT EXPLORADOR\n") + "</b></size>", HudTheme.Title);
-            GUI.Label(new Rect(r.x + 24, r.y + 100, r.width - 48, 24), "ROVER DE EXPLORACIÓN — MODELO XR-1", HudTheme.Subtitle);
+            GUI.Label(new Rect(r.x + 24, r.y + 14, r.width - 48, 40), "<size=32><b>" + RobotName.ToUpperInvariant().Replace(Tr.T("ROBOT EXPLORADOR "), Tr.T("ROBOT EXPLORADOR\n")) + "</b></size>", HudTheme.Title);
+            GUI.Label(new Rect(r.x + 24, r.y + 100, r.width - 48, 24), Tr.T("ROVER DE EXPLORACIÓN — MODELO XR-1"), HudTheme.Subtitle);
             DrawPreview(new Rect(r.x + 20, r.y + 130, r.width - 40, 380));
 
             Rect card = new Rect(r.x + 20, r.y + 524, r.width - 40, 220);
             HudTheme.Frame(card, new Color(0.02f, 0.06f, 0.1f, 0.95f), HudTheme.AccentDim, 1f);
             float y = card.y + 12;
-            GUI.Label(new Rect(card.x + 16, y, card.width - 32, 26), "<color=#ffd060>ESTADO:</color>  " + RobotState(), HudTheme.Small);
+            GUI.Label(new Rect(card.x + 16, y, card.width - 32, 26), Tr.T("<color=#ffd060>ESTADO:</color>  ") + RobotState(), HudTheme.Small);
             y += 34;
             float charge = _battery != null ? _battery.Charge01 : 0f;
-            GUI.Label(new Rect(card.x + 16, y, 200, 24), "ENERGÍA: " + Mathf.RoundToInt(charge * 100f) + "% | BATERÍA", HudTheme.Small);
+            GUI.Label(new Rect(card.x + 16, y, 200, 24), Tr.T("ENERGÍA: ") + Mathf.RoundToInt(charge * 100f) + Tr.T("% | BATERÍA"), HudTheme.Small);
             HudTheme.Bar(new Rect(card.x + 16, y + 24, card.width - 32, 16), charge, HudTheme.Accent, "");
             y += 50;
             MarsEnvironmentSystem env;
             float temp = GameServices.TryGet(out env) ? env.TemperatureC : -60f;
-            GUI.Label(new Rect(card.x + 16, y, card.width - 32, 24), "TEMPERATURA EXTERNA: " + temp.ToString("0") + " °C", HudTheme.Small);
+            GUI.Label(new Rect(card.x + 16, y, card.width - 32, 24), Tr.T("TEMPERATURA EXTERNA: ") + temp.ToString("0") + " °C", HudTheme.Small);
             y += 30;
-            GUI.Label(new Rect(card.x + 16, y, card.width - 32, 24), "UBICACIÓN: " + Location(), HudTheme.Small);
+            GUI.Label(new Rect(card.x + 16, y, card.width - 32, 24), Tr.T("UBICACIÓN: ") + Location(), HudTheme.Small);
             y += 30;
-            GUI.Label(new Rect(card.x + 16, y, card.width - 32, 24), "VINCULADO A: " + (Linked ? "<color=#60ff80>BASE DE LA NAVE</color>" : "<color=#ff8080>SIN ENLACE (" + DistanceToShip.ToString("0") + " m)</color>"), HudTheme.Small);
+            GUI.Label(new Rect(card.x + 16, y, card.width - 32, 24), Tr.T("VINCULADO A: ") + (Linked ? "<color=#60ff80>BASE DE LA NAVE</color>" : Tr.T("<color=#ff8080>SIN ENLACE (") + DistanceToShip.ToString("0") + " m)</color>"), HudTheme.Small);
         }
 
         private void DrawPreview(Rect r)
@@ -763,7 +765,7 @@ namespace MarsRobot.Items
 
         private string Location()
         {
-            string zone = "Marte";
+            string zone = Tr.T("Marte");
             RocketBase b = Ship;
             if (b != null && b.Zone != null) zone = b.Zone.displayName;
             TerrainManager terrain;
@@ -791,7 +793,7 @@ namespace MarsRobot.Items
             int available = b.Inventory.Get(type);
             if (available <= 0)
             {
-                Say("No queda " + BaseInventory.Label(type) + " en la nave.");
+                Say(Tr.T("No queda ") + BaseInventory.Label(type) + Tr.T(" en la nave."));
                 return;
             }
             ItemData item = ItemDatabase.ForResource(type);
@@ -799,13 +801,13 @@ namespace MarsRobot.Items
             int fit = _inventory.Bay.HowManyFit(item, want);
             if (fit <= 0)
             {
-                Say("No cabe en el robot: masa o volumen al límite.");
+                Say(Tr.T("No cabe en el robot: masa o volumen al límite."));
                 return;
             }
             if (!b.Inventory.TrySpend(new[] { new ResourceAmount(type, fit) })) return;
             int added = _inventory.TryAdd(item, fit);
             if (added < fit) b.Inventory.Add(type, fit - added); // devolver lo que no entró
-            Say("Transferidos " + added + " de " + BaseInventory.Label(type) + " al robot.");
+            Say(Tr.T("Transferidos ") + added + Tr.T(" de ") + BaseInventory.Label(type) + Tr.T(" al robot."));
         }
 
         private void TransferToShip(ItemStack stack, int count)
@@ -817,19 +819,19 @@ namespace MarsRobot.Items
             float addKg = stack.item.convertsToBaseResource ? count * stack.item.baseResourcePerUnit * BaseInventory.MassPerUnit(stack.item.baseResource) : 0f;
             if (b.Inventory.TotalMassKg + addKg > b.Inventory.MaxMassKg)
             {
-                Say("La nave está llena (" + b.Inventory.MaxMassKg.ToString("0") + " kg).");
+                Say(Tr.T("La nave está llena (") + b.Inventory.MaxMassKg.ToString("0") + " kg).");
                 return;
             }
             string name = stack.item.itemName;
             int moved = mgr.Hold.Receive(_inventory.Bay, stack, count);
-            Say(moved > 0 ? "Transferidos " + moved + " de " + name + " a la nave." : "La nave no admite más de ese recurso (tanques llenos).");
+            Say(moved > 0 ? Tr.T("Transferidos ") + moved + Tr.T(" de ") + name + Tr.T(" a la nave.") : Tr.T("La nave no admite más de ese recurso (tanques llenos)."));
         }
 
         private void Drop(ItemStack stack)
         {
             if (stack == null || !ContainsStack(stack)) return;
             DroppedItem.Spawn(stack.item, stack.count, stack.condition, transform.position + transform.forward * 3f + Vector3.up * 1.5f);
-            Say(stack.item.itemName + " soltado delante del rover (se puede recoger con F).");
+            Say(stack.item.itemName + Tr.T(" soltado delante del rover (se puede recoger con F)."));
             _inventory.Bay.RemoveFromSlot(stack, stack.count);
             _robotSel = null;
         }
@@ -874,10 +876,10 @@ namespace MarsRobot.Items
         {
             switch (s)
             {
-                case ModuleState.Operational: return "Operativo";
-                case ModuleState.Damaged: return "Desgaste";
-                case ModuleState.Critical: return "Necesita reparación";
-                default: return "Averiado";
+                case ModuleState.Operational: return Tr.T("Operativo");
+                case ModuleState.Damaged: return Tr.T("Desgaste");
+                case ModuleState.Critical: return Tr.T("Necesita reparación");
+                default: return Tr.T("Averiado");
             }
         }
 
@@ -910,9 +912,9 @@ namespace MarsRobot.Items
                 switch (t)
                 {
                     case RepairToolType.Wrench: names.Add("llave"); break;
-                    case RepairToolType.CableKit: names.Add("kit de empalme"); break;
+                    case RepairToolType.CableKit: names.Add(Tr.T("kit de empalme")); break;
                     case RepairToolType.Welder: names.Add("soldador"); break;
-                    case RepairToolType.ServoKit: names.Add("kit de servos"); break;
+                    case RepairToolType.ServoKit: names.Add(Tr.T("kit de servos")); break;
                 }
             }
             return string.Join(", ", names);

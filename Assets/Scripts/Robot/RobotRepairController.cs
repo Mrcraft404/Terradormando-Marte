@@ -92,7 +92,7 @@ namespace MarsRobot.Robot
 
             if (controller != null && controller.CurrentSpeed > maxSpeedToRepair)
             {
-                Blocked(module, "Detén el robot para reparar.");
+                Blocked(module, Tr.T("Detén el robot para reparar."));
                 return;
             }
 
@@ -100,7 +100,7 @@ namespace MarsRobot.Robot
             switch (result)
             {
                 case RepairResult.WrongTool:
-                    Blocked(module, "Herramienta no válida para " + module.Definition.displayName + ".");
+                    Blocked(module, Tr.T("Herramienta no válida para ") + module.Definition.displayName + ".");
                     break;
                 case RepairResult.Repaired:
                     IsRepairing = true;

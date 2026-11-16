@@ -104,11 +104,11 @@ namespace MarsRobot.Base
                 // Obra por fases con recursos: espera hasta poder pagar la capa.
                 while (layerGate != null && habitat != null && !layerGate(habitat, layer))
                 {
-                    habitat.ConstructionStatus = HabitatLayerNode.NodeName(layer) + ": esperando materiales";
+                    habitat.ConstructionStatus = HabitatLayerNode.NodeName(layer) + Tr.T(": esperando materiales");
                     yield return wait;
                 }
                 if (habitat == null) yield break;
-                habitat.ConstructionStatus = "Construyendo " + HabitatLayerNode.NodeName(layer);
+                habitat.ConstructionStatus = Tr.T("Construyendo ") + HabitatLayerNode.NodeName(layer);
 
                 HabitatLayerNode node = BuildLayer(habitat, layer);
                 float seconds = habitat.Data.GetLayer(layer).buildSeconds;
@@ -125,7 +125,7 @@ namespace MarsRobot.Base
                 if (LayerBuilt != null) LayerBuilt(habitat, layer);
             }
             if (habitat == null) yield break;
-            habitat.ConstructionStatus = "Terminado";
+            habitat.ConstructionStatus = Tr.T("Terminado");
             habitat.EndBatch(); // validación final con las 5 capas
             if (HabitatCompleted != null) HabitatCompleted(habitat);
         }

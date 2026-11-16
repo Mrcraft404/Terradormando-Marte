@@ -34,7 +34,7 @@ namespace MarsRobot.Base
         {
             if (robot.Controller != null && robot.Controller.CurrentSpeed > maxParkedSpeed)
             {
-                _status = "Plataforma de carga: detente encima para cargar.";
+                _status = Tr.T("Plataforma de carga: detente encima para cargar.");
                 return;
             }
 
@@ -49,8 +49,8 @@ namespace MarsRobot.Base
 
             float charge = robot.Battery != null ? robot.Battery.Charge01 : 1f;
             _status = charge >= 0.999f
-                ? "Plataforma de carga: batería llena."
-                : "Cargando batería… " + Mathf.RoundToInt(charge * 100f) + " %";
+                ? Tr.T("Plataforma de carga: batería llena.")
+                : Tr.T("Cargando batería… ") + Mathf.RoundToInt(charge * 100f) + " %";
         }
 
         public override void DrawMenu(RobotBaseLink robot) { }

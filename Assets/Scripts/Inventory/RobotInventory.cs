@@ -194,7 +194,7 @@ namespace MarsRobot.Items
                 ItemData item = s.item;
                 _bay.RemoveFromSlot(s, lost);
                 changed = true;
-                if (ItemLost != null) ItemLost(item, lost, item.itemCategory == ItemCategory.Volatile ? "se ha sublimado" : "se ha degradado");
+                if (ItemLost != null) ItemLost(item, lost, item.itemCategory == ItemCategory.Volatile ? Tr.T("se ha sublimado") : Tr.T("se ha degradado"));
             }
 
             if (corrosiveKg > 0f && !HasSealedContainer && _health != null)

@@ -126,6 +126,12 @@ namespace MarsRobot.Base
             _window.y = (Screen.height - _window.height) * 0.5f;
         }
 
+        /// <summary>Cierra el menú abierto (botón "Cerrar" de las pantallas propias).</summary>
+        public void RequestClose()
+        {
+            if (_open != null) CloseMenu();
+        }
+
         private void CloseMenu()
         {
             _open = null;
@@ -167,7 +173,8 @@ namespace MarsRobot.Base
 
             if (_open != null)
             {
-                _window = GUILayout.Window(MenuWindowId, _window, DrawWindow, _open.DisplayName);
+                if (_open.DrawsFullScreen) _open.DrawFullScreen(this);
+                else _window = GUILayout.Window(MenuWindowId, _window, DrawWindow, _open.DisplayName);
             }
         }
 
@@ -175,14 +182,14 @@ namespace MarsRobot.Base
         {
             _open.DrawMenu(this);
             GUILayout.FlexibleSpace();
-            GUILayout.Label("F o Esc: cerrar · números: elegir opción");
+            GUILayout.Label(Tr.T("F o Esc: cerrar · números: elegir opción"));
             GUI.DragWindow();
         }
 
         private void DrawInventory()
         {
             BaseInventory inv = _base.Inventory;
-            var sb = new System.Text.StringBuilder("<b>Almacén de la base</b>\n");
+            var sb = new System.Text.StringBuilder(Tr.T("<b>Almacén de la base</b>\n"));
             foreach (ResourceType t in System.Enum.GetValues(typeof(ResourceType)))
             {
                 int n = inv.Get(t);
@@ -197,13 +204,13 @@ namespace MarsRobot.Base
             BaseGrid grid = _base.Grid;
             if (grid != null)
             {
-                sb.Append("\n<b>Energía</b>\n+").Append(grid.GenerationWatts.ToString("0")).Append(" W  −")
-                  .Append(grid.DemandWatts.ToString("0")).Append(" W\nBaterías: ")
+                sb.Append(Tr.T("\n<b>Energía</b>\n+")).Append(grid.GenerationWatts.ToString("0")).Append(" W  −")
+                  .Append(grid.DemandWatts.ToString("0")).Append(Tr.T(" W\nBaterías: "))
                   .Append(grid.CapacityWh > 0f ? Mathf.RoundToInt(grid.StoredWh / grid.CapacityWh * 100f) : 0).Append(" %");
-                if (grid.SupplyRatio < 0.99f) sb.Append("\n<color=#ff8080>¡Falta energía! (").Append(Mathf.RoundToInt(grid.SupplyRatio * 100f)).Append(" %)</color>");
+                if (grid.SupplyRatio < 0.99f) sb.Append(Tr.T("\n<color=#ff8080>¡Falta energía! (")).Append(Mathf.RoundToInt(grid.SupplyRatio * 100f)).Append(" %)</color>");
                 if (grid.Count(StructureKind.CommsAntenna) > 0)
                 {
-                    sb.Append("\n\n<b>Preparación:</b> ").Append(ColonyObjectives.CompletedCount(_base)).Append('/').Append(ColonyObjectives.Total);
+                    sb.Append(Tr.T("\n\n<b>Preparación:</b> ")).Append(ColonyObjectives.CompletedCount(_base)).Append('/').Append(ColonyObjectives.Total);
                 }
             }
 

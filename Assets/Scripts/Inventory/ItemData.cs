@@ -25,7 +25,7 @@ namespace MarsRobot.Items
     {
         [Header("Identidad")]
         public string itemID = "item";
-        public string itemName = "Objeto";
+        public string itemName = Tr.T("Objeto");
         [Tooltip("Icono (opcional). Sin icono se dibuja un cuadro de color con las iniciales.")]
         public Texture2D icon;
         public Color iconColor = new Color(0.6f, 0.4f, 0.3f);

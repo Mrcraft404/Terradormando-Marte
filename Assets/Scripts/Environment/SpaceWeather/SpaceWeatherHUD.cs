@@ -31,12 +31,12 @@ namespace MarsRobot.World.SpaceWeather
                 float h = SpaceWeatherState.CmeCountdownHours;
                 int hh = Mathf.FloorToInt(h);
                 int mm = Mathf.FloorToInt((h - hh) * 60f);
-                text = "⚠ CME EN CAMINO · impacto en " + hh + " h " + mm.ToString("00") + " min · busque refugio";
+                text = Tr.T("⚠ EYECCIÓN DE MASA CORONAL EN CAMINO · impacto en ") + hh + " h " + mm.ToString("00") + Tr.T(" min · busque refugio");
                 bg = new Color(0.6f, 0.05f, 0.05f, pulse);
             }
             else if (SpaceWeatherState.GlobalStormActive)
             {
-                text = "TORMENTA GLOBAL · visibilidad mínima · energía solar nula";
+                text = Tr.T("TORMENTA GLOBAL · visibilidad mínima · energía solar nula");
                 bg = new Color(0.45f, 0.2f, 0.05f, 0.85f);
             }
             if (text != null)
@@ -51,17 +51,17 @@ namespace MarsRobot.World.SpaceWeather
 
             // Indicadores pequeños bajo la banda.
             string flags = "";
-            if (SpaceWeatherState.RadarBlocked) flags += "<color=#ff8080>INTERFERENCIA (FLR)</color>   ";
-            if (SpaceWeatherState.SepActive) flags += "<color=#ffd060>RADIACIÓN (SEP)</color>   ";
-            if (SpaceWeatherState.GstActive) flags += "<color=#a0a0ff>TORMENTA GEOMAGNÉTICA (GST)</color>";
+            if (SpaceWeatherState.RadarBlocked) flags += Tr.T("<color=#ff8080>INTERFERENCIA POR FULGURACIÓN SOLAR</color>   ");
+            if (SpaceWeatherState.SepActive) flags += Tr.T("<color=#ffd060>RADIACIÓN POR PARTÍCULAS SOLARES</color>   ");
+            if (SpaceWeatherState.GstActive) flags += "<color=#a0a0ff>TORMENTA GEOMAGNÉTICA</color>";
             if (flags.Length > 0) GUI.Label(new Rect(Screen.width * 0.5f - 330, 222, 660, 22), flags, _banner);
         }
 
         /// <summary>Panel de estado para la terminal del cohete (dentro de un menú GUILayout).</summary>
         public static void DrawStatusPanel(SpaceWeatherManager m)
         {
-            GUILayout.Label("<b>Origen:</b> " + m.SourceStatus);
-            GUILayout.Label("Fuente: NASA DONKI (FLR, CME, SEP, GST). Los últimos 30 días se reparten en los próximos soles.");
+            GUILayout.Label(Tr.T("<b>Origen:</b> ") + m.SourceStatus);
+            GUILayout.Label(Tr.T("Fuente: base de datos de clima espacial de la NASA (fulguraciones solares, eyecciones de masa coronal, partículas solares energéticas y tormentas geomagnéticas). Los últimos 30 días se reparten en los próximos soles."));
 
             GUILayout.Space(4);
             GUILayout.Label("<b>Activo ahora</b>");
@@ -71,18 +71,18 @@ namespace MarsRobot.World.SpaceWeather
                 any = true;
                 GUILayout.Label("  • " + e.label);
             }
-            if (!any) GUILayout.Label("  Sin eventos activos.");
-            if (SpaceWeatherState.CmeCountdownHours >= 0f) GUILayout.Label("  <color=#ff8080>CME en camino: impacto en " + SpaceWeatherState.CmeCountdownHours.ToString("0.0") + " h</color>");
+            if (!any) GUILayout.Label(Tr.T("  Sin eventos activos."));
+            if (SpaceWeatherState.CmeCountdownHours >= 0f) GUILayout.Label(Tr.T("  <color=#ff8080>Eyección de masa coronal en camino: impacto en ") + SpaceWeatherState.CmeCountdownHours.ToString("0.0") + " h</color>");
 
             GUILayout.Space(4);
-            GUILayout.Label("<b>Previsión</b> (horas de juego)");
+            GUILayout.Label(Tr.T("<b>Previsión</b> (horas de juego)"));
             int shown = 0;
             foreach (var kv in m.Upcoming())
             {
                 if (shown++ >= 6) break;
-                GUILayout.Label("  • " + kv.Key.label + " — en " + Mathf.Max(0f, kv.Value).ToString("0.0") + " h");
+                GUILayout.Label("  • " + kv.Key.label + Tr.T(" — en ") + Mathf.Max(0f, kv.Value).ToString("0.0") + " h");
             }
-            if (shown == 0) GUILayout.Label(m.Loaded ? "  Nada previsto." : "  Cargando datos…");
+            if (shown == 0) GUILayout.Label(m.Loaded ? Tr.T("  Nada previsto.") : Tr.T("  Cargando datos…"));
 
             GUILayout.Space(4);
             GUILayout.Label("<b>Historial</b>");

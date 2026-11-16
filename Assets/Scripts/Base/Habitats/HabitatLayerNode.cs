@@ -35,11 +35,11 @@ namespace MarsRobot.Base
         {
             switch (layer)
             {
-                case HabitatLayer.Foundation: return "Capa 0 · Cimentación";
-                case HabitatLayer.Skeleton: return "Capa 1 · Estructura esquelética";
-                case HabitatLayer.PressureShell: return "Capa 2 · Contención neumática y térmica";
-                case HabitatLayer.RegolithShield: return "Capa 3 · Escudo de regolito";
-                default: return "Capa 4 · Sistemas internos";
+                case HabitatLayer.Foundation: return Tr.T("Capa 0 · Cimentación");
+                case HabitatLayer.Skeleton: return Tr.T("Capa 1 · Estructura esquelética");
+                case HabitatLayer.PressureShell: return Tr.T("Capa 2 · Contención neumática y térmica");
+                case HabitatLayer.RegolithShield: return Tr.T("Capa 3 · Escudo de regolito");
+                default: return Tr.T("Capa 4 · Sistemas internos");
             }
         }
 

@@ -1,0 +1,204 @@
+1101| Cutaway (C)
+1102| Labels (L)
+1103| Measurements (M)
+1104|Left mouse: rotate · right: move · wheel: zoom\nWASD move · Q/E down/up · Shift fast\n1–5 level (Shift+n: isolate) · 0 all · K/Esc exit\n\n<i>Made-up interior layout for the game: the real ship doesn't have these floors.</i>
+1105|Core: spiral staircase + cargo lift
+1106|Robot hangar · 4.5 × 5 m (built-in workshop)
+1107|Gantry: change wheels, legs and tools
+1108|Battery charging station
+1109|Spare parts storage · 1.1 × 2.8 m
+1110|Workbenches
+1111|Cargo door 3.2 m → lift platform
+1112|Induction smelter
+1113|Chemical refinery (Sabatier · electrolysis · Bosch)
+1152|Level 1 · Robot hangar
+1153|Level 2 · Crafting workshops
+1154|Level 3 · Industry
+1155|Level 4 · Science and farming
+1156|Level 5 · Resources and survival
+1157|Level 6 · Control and communications
+1172|Liquid oxygen tank (LOX) · 5–15 m
+1173|Methane tank (CH₄) · ISRU refinery · 16–23 m
+1175|Engines: 3 sea-level + 3 vacuum
+1176|Nose section: antennas and header tanks
+1189|Iron ore → 3 iron · 5 regolith → 1 block · perchlorates → regolith + oxygen ·
+1190|clays → silicon · sulfates → samples · ice → water
+1191|Move all minerals to the smelter
+1192|Loaded
+1193| units into the hopper.
+1194|You aren't carrying minerals.
+1195|<b>In the hopper:</b>
+1196|empty
+1197|Processing…
+1198|  <color=#ff8080>(not enough power in the grid)</color>
+1199|Melts ores and processes regolith. The result goes to the base storage. Uses
+1200| W from the grid while working.
+1202|Zone
+1203|Moderate-high
+1204|Extreme
+1207|Test zone
+1208|Dirty panels: press C to clean them.
+1210|Test: +10 of each resource in storage.
+1211|Test: heavy hit.
+1212|Test: everything repaired.
+1213|Test: dust storm.
+1214|Test: next space weather event.
+1215|   Panel:
+1216| W   Dust:
+1217|   Integrity:
+1218|   Speed:
+1219|Time of sol:
+1220|   <color=orange>STORM</color>
+1221|Chunks:
+1222| active,
+1223| in pool,
+1224| pending
+1225|Minimap: OK
+1226|Map:
+1227| · elevation
+1228|Minerals: clays
+1229| · sulfates
+1230| · Fe oxides
+1231| · ice
+1232|Radiation:
+1233| mGy/day · pressure
+1235|Tool:
+1236|  <color=lime>repairing…</color>
+1237|Keys: (
+1238|)   On ground:
+1239|yes
+1240|   Mouse:
+1241|free (click on the view)
+1242|   Camera:
+1243|1st person
+1244|3rd person
+1245|W forward · S back · A left · D right · Q/E turn · mouse look · V camera
+1246|F use machine · R repair · T tool · G part · C clean panels
+1247|M map and zones · F7 +resources · F8 hit · F9 repair all · F10 storm · F11 space weather · H hide panel
+1248|Abandoned landing module
+1257|CHOOSE THE GAME MODE
+1258|You can change it later when creating the world
+1259|CREATIVE
+1260|Build with no limits
+1261|Unlimited resources and energy
+1262|No damage or breakdowns
+1263|No dust storms
+1264|Great for designing your colony
+1265|SURVIVAL
+1266|Survive the red planet
+1267|Manage battery, dust and breakdowns
+1268|Storms and space weather
+1269|Gather, process and craft
+1270|Get Mars ready for the crew
+1271|BACK
+1272|CONTINUE:
+1273|▶  CHOOSE
+1274|CHOOSE
+1275|CREATE WORLD
+1276|Survival Mode
+1277|Creative Mode
+1278|World name
+1279|Seed
+1280|RANDOM
+1281|Game mode
+1282|Difficulty
+1283|EASY
+1284|NORMAL
+1285|HARD
+1286|No difficulty: no damage, no storms and unlimited resources
+1287|Landing spot
+1288|Procedural terrain
+1289|Zone with real data (NASA)
+1290|You haven't chosen where to land yet
+1291|CHANGE ON THE MAP
+1292|CHOOSE ON THE MAP
+1293|Ares Colony
+1294|Horizon Base
+1295|Aurora Colony
+1296|Phoenix Outpost
+1297|Olympus Base
+1298|New Hope Colony
+1299|Give the world a name
+1300|First choose a landing spot
+1302|CHOOSE YOUR LANDING SPOT
+1303|Click anywhere on Mars. The gold diamonds are zones with real NASA data.
+1305|COMMANDER
+1306|Drawing the map of Mars…
+1307|No spot chosen
+1308|Choose where your rocket will land. The zones marked with a diamond use real terrain and minerals;
+1309|the rest of the planet is made from its latitude, height and roughness.
+1310|REAL DATA · NASA
+1311|PROCEDURAL TERRAIN
+1312|Difficulty:
+1313|      Elevation
+1314|Temperature
+1315| °C   ·   Pressure
+1316| mbar   ·   Water ice:
+1317|   ·   Sunlight
+1318|CONFIRM
+1319|RANDOM
+1320|CANCEL
+1321|Very high
+1322|High
+1323|Moderate
+1324|Low
+1325|OPTIONS
+1326|Commander name
+1327|Main volume
+1328|Music / ambient
+1329|LOW
+1330|MEDIUM
+1331|HIGH
+1332|ULTRA
+1333|Show FPS
+1334|NO
+1335|YES
+1336|RESET
+1337|BACK
+1338|QUIT THE GAME?
+1339|Your last colony is saved so you can continue later.
+1340|QUIT
+1341|LANDING IN
+1342|Creative mode · unlimited resources
+1343|Survival mode · difficulty
+1349|MARS
+1350| · TACTICAL RADAR
+1351|NO SIGNAL\nminimap cable cut
+1352|SOLAR INTERFERENCE\nradar blocked
+1353|  ·  explored
+1354|<color=#ff6060>CORONAL MASS EJECTION COMING!</color>
+1391|North polar region
+1392|South polar region
+1393|Ice everywhere, but extreme cold and long polar nights.
+1394|Volcanic plateaus
+1395|High volcanic ground: very thin air and more radiation, but rock rich in metals.
+1396|Northern plains
+1397|Low, smooth plains, easy to build on. Maybe ice under the ground.
+1398|Southern highlands
+1399|Very old ground, full of craters and rocks. Hard on the wheels.
+1400|Equatorial plains
+1401|Milder weather and good sunlight, but little water within reach.
+1403|The tallest volcano in the solar system (about 22 km). Amazing views, very thin air and huge slopes.
+1404|Tharsis Montes
+1405|Three big volcanoes in a row. Basalt, lava tubes and lots of radiation because of the height.
+1407|A 4,000 km canyon. The walls protect from the wind and show layers of minerals.
+1408|Gale Crater
+1409|Crater with a layered mountain in the middle. Clays and sulfates; long slopes.
+1410|Jezero Crater
+1411|An ancient lake with a river delta. Clays, carbonates and maybe traces of ancient life.
+1413|The deepest impact basin: higher air pressure and ice near the rim.
+1415|A huge plain with big ice deposits under the surface. Very harsh winters.
+1417|Smooth and safe volcanic plain. A good place to start.
+1419|Second big volcanic complex, surrounded by lava flows.
+1421|Ancient impact basin with buried ice and mountains on its rim.
+1423|Very old, worn-down highlands, covered in craters.
+1425|Dark northern plain; flat ground great for building, with frequent storms.
+1427|Plain where ancient flood channels used to end.
+1429|Plain rich in hematite; smooth, safe ground for landing.
+1431|Dark volcanic plateau, rich in basalt.
+1432|North polar cap
+1433|Almost unlimited water ice, but extreme cold and months without sun.
+1434|South polar cap
+1435|Water ice and CO₂ ice. The coldest and darkest place on the planet.
+1452|Clays
+1453|Iron oxides

@@ -16,6 +16,21 @@ namespace MarsRobot.World.SpaceWeather
         GST  // Tormenta geomagnética
     }
 
+    /// <summary>Nombres completos para la pantalla (los identificadores del enum no se cambian: los usa el código).</summary>
+    public static class SpaceWeatherNames
+    {
+        public static string Full(SpaceWeatherEventType type)
+        {
+            switch (type)
+            {
+                case SpaceWeatherEventType.FLR: return Tr.T("Fulguración solar");
+                case SpaceWeatherEventType.CME: return Tr.T("Eyección de masa coronal");
+                case SpaceWeatherEventType.SEP: return Tr.T("Partículas solares energéticas");
+                default: return Tr.T("Tormenta geomagnética");
+            }
+        }
+    }
+
     /// <summary>Un evento ya interpretado (real o simulado).</summary>
     [Serializable]
     public class SpaceWeatherEvent
@@ -23,7 +38,7 @@ namespace MarsRobot.World.SpaceWeather
         public SpaceWeatherEventType type;
         public DateTime time;           // hora real (UTC) del evento
         public float intensity01;       // 0..1
-        public string label;            // p. ej. "Fulguración X1.2", "CME a 1200 km/s"
+        public string label;            // p. ej. "Fulguración solar de clase X1.2", "Eyección de masa coronal a 1200 km/s"
         public bool simulated;
     }
 
@@ -95,9 +110,9 @@ namespace MarsRobot.World.SpaceWeather
             }
 
             LastFromApi = ok > 0;
-            LastStatus = ok == 4 ? "Datos reales de NASA DONKI (" + start.ToString("dd/MM") + "–" + end.ToString("dd/MM/yyyy") + ")"
-                : ok > 0 ? "Datos reales parciales de DONKI + simulación"
-                : "Sin conexión con DONKI: clima espacial simulado";
+            LastStatus = ok == 4 ? Tr.T("Datos reales de la base de datos de clima espacial de la NASA (") + start.ToString("dd/MM") + "–" + end.ToString("dd/MM/yyyy") + ")"
+                : ok > 0 ? Tr.T("Datos reales parciales de la NASA + simulación")
+                : Tr.T("Sin conexión con la NASA: clima espacial simulado");
             all.Sort((a, b) => a.time.CompareTo(b.time));
             done(all);
         }
@@ -126,7 +141,7 @@ namespace MarsRobot.World.SpaceWeather
                     case SpaceWeatherEventType.FLR:
                         foreach (FlrItem f in Items<FlrItem>(wrapped))
                         {
-                            list.Add(new SpaceWeatherEvent { type = type, time = Date(f.beginTime), intensity01 = FlareIntensity(f.classType), label = "Fulguración " + f.classType });
+                            list.Add(new SpaceWeatherEvent { type = type, time = Date(f.beginTime), intensity01 = FlareIntensity(f.classType), label = Tr.T("Fulguración solar de clase ") + f.classType });
                         }
                         break;
                     case SpaceWeatherEventType.CME:
@@ -138,13 +153,13 @@ namespace MarsRobot.World.SpaceWeather
                                 foreach (CmeAnalysis a in c.cmeAnalyses) if (a.isMostAccurate || speed <= 0f) speed = a.speed;
                             }
                             if (speed <= 0f) speed = 500f;
-                            list.Add(new SpaceWeatherEvent { type = type, time = Date(c.startTime), intensity01 = Mathf.InverseLerp(300f, 2500f, speed), label = "CME a " + speed.ToString("0") + " km/s" });
+                            list.Add(new SpaceWeatherEvent { type = type, time = Date(c.startTime), intensity01 = Mathf.InverseLerp(300f, 2500f, speed), label = Tr.T("Eyección de masa coronal a ") + speed.ToString("0") + " km/s" });
                         }
                         break;
                     case SpaceWeatherEventType.SEP:
                         foreach (SepItem s in Items<SepItem>(wrapped))
                         {
-                            list.Add(new SpaceWeatherEvent { type = type, time = Date(s.eventTime), intensity01 = 0.6f, label = "Partículas energéticas (SEP)" });
+                            list.Add(new SpaceWeatherEvent { type = type, time = Date(s.eventTime), intensity01 = 0.6f, label = Tr.T("Partículas solares energéticas") });
                         }
                         break;
                     case SpaceWeatherEventType.GST:
@@ -152,7 +167,7 @@ namespace MarsRobot.World.SpaceWeather
                         {
                             float kp = 5f;
                             if (g.allKpIndex != null) foreach (KpItem k in g.allKpIndex) kp = Mathf.Max(kp, k.kpIndex);
-                            list.Add(new SpaceWeatherEvent { type = type, time = Date(g.startTime), intensity01 = Mathf.InverseLerp(4f, 9f, kp), label = "Tormenta geomagnética Kp " + kp.ToString("0") });
+                            list.Add(new SpaceWeatherEvent { type = type, time = Date(g.startTime), intensity01 = Mathf.InverseLerp(4f, 9f, kp), label = Tr.T("Tormenta geomagnética de intensidad ") + kp.ToString("0") + Tr.T(" de 9") });
                         }
                         break;
                 }
@@ -220,21 +235,21 @@ namespace MarsRobot.World.SpaceWeather
                         // Distribución tipo ley de potencias: muchas C, algunas M, pocas X.
                         string cls = r < 0.7f ? "C" + (1 + rng.Next(9)) : (r < 0.95f ? "M" + (1 + rng.Next(9)) : "X" + (1 + rng.Next(3)));
                         e.intensity01 = FlareIntensity(cls);
-                        e.label = "Fulguración " + cls + " (simulada)";
+                        e.label = Tr.T("Fulguración solar de clase ") + cls + Tr.T(" (simulada)");
                         break;
                     case SpaceWeatherEventType.CME:
                         float speed = 400f + r * r * 1800f;
                         e.intensity01 = Mathf.InverseLerp(300f, 2500f, speed);
-                        e.label = "CME a " + speed.ToString("0") + " km/s (simulada)";
+                        e.label = Tr.T("Eyección de masa coronal a ") + speed.ToString("0") + Tr.T(" km/s (simulada)");
                         break;
                     case SpaceWeatherEventType.SEP:
                         e.intensity01 = 0.4f + r * 0.5f;
-                        e.label = "Partículas energéticas (simuladas)";
+                        e.label = Tr.T("Partículas solares energéticas (simuladas)");
                         break;
                     default:
                         float kp = 5f + r * 4f;
                         e.intensity01 = Mathf.InverseLerp(4f, 9f, kp);
-                        e.label = "Tormenta geomagnética Kp " + kp.ToString("0") + " (simulada)";
+                        e.label = Tr.T("Tormenta geomagnética de intensidad ") + kp.ToString("0") + Tr.T(" de 9 (simulada)");
                         break;
                 }
                 list.Add(e);

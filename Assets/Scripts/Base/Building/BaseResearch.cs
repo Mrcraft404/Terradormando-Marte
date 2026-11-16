@@ -39,8 +39,8 @@ namespace MarsRobot.Base
         public static void Draw(RocketBase owner)
         {
             GUILayout.Space(6);
-            GUILayout.Label("<b>Investigación</b>  (tienes " + owner.Inventory.Get(ResourceType.Research) + " puntos; " +
-                            "consigue muestras con el taladro del robot: tecla X)");
+            GUILayout.Label(Tr.T("<b>Investigación</b>  (tienes ") + owner.Inventory.Get(ResourceType.Research) + Tr.T(" puntos; ") +
+                            Tr.T("consigue muestras con el taladro del robot: tecla X)"));
             var all = StructureCatalog.All;
             bool any = false;
             for (int i = 0; i < all.Count; i++)
@@ -51,15 +51,15 @@ namespace MarsRobot.Base
                 bool done = owner.Research.IsUnlocked(def);
                 GUILayout.BeginHorizontal();
                 GUI.enabled = !done && owner.Inventory.Get(ResourceType.Research) >= def.researchCost;
-                if (GUILayout.Button(done ? def.name + " ✓" : "Desbloquear " + def.name, GUILayout.Width(300)))
+                if (GUILayout.Button(done ? def.name + " ✓" : Tr.T("Desbloquear ") + def.name, GUILayout.Width(300)))
                 {
                     owner.Research.TryUnlock(def, owner.Inventory);
                 }
                 GUI.enabled = true;
-                GUILayout.Label(done ? "<color=#80ff80>desbloqueado</color>" : def.researchCost + " puntos");
+                GUILayout.Label(done ? "<color=#80ff80>desbloqueado</color>" : def.researchCost + Tr.T(" puntos"));
                 GUILayout.EndHorizontal();
             }
-            if (!any) GUILayout.Label("No hay nada pendiente de investigar.");
+            if (!any) GUILayout.Label(Tr.T("No hay nada pendiente de investigar."));
         }
     }
 }

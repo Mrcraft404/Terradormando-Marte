@@ -10,7 +10,7 @@ namespace MarsRobot.Base
     /// </summary>
     public abstract class BaseStation : MonoBehaviour, IInteractable
     {
-        [SerializeField] private string displayName = "Máquina";
+        [SerializeField] private string displayName = Tr.T("Máquina");
         [Tooltip("Distancia (m) desde la que el robot puede usarla.")]
         [SerializeField, Min(0.5f)] private float interactRadius = 3.5f;
 
@@ -35,7 +35,7 @@ namespace MarsRobot.Base
         /// <summary>Texto que se muestra al acercarse.</summary>
         public virtual string Prompt
         {
-            get { return "F: usar " + displayName; }
+            get { return Tr.T("F: usar ") + displayName; }
         }
 
         /// <summary>Lo llama la base al crear la máquina.</summary>
@@ -85,5 +85,14 @@ namespace MarsRobot.Base
 
         /// <summary>Dibuja el contenido del menú (dentro de una ventana GUILayout).</summary>
         public abstract void DrawMenu(RobotBaseLink robot);
+
+        /// <summary>Si es true, la máquina dibuja su propia pantalla completa (DrawFullScreen) en vez de la ventana.</summary>
+        public virtual bool DrawsFullScreen
+        {
+            get { return false; }
+        }
+
+        /// <summary>Pantalla completa propia (tarjetas con dibujos, pensada para niños).</summary>
+        public virtual void DrawFullScreen(RobotBaseLink robot) { }
     }
 }

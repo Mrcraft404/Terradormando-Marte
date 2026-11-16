@@ -65,7 +65,7 @@ namespace MarsRobot.Dialogue
 
         private void OnCableCut(RobotModule m)
         {
-            NotificationSystem.Notify("¡Cable cortado: " + m.Definition.displayName + "! Repáralo con el kit de empalme (R).", NotificationLevel.Critical, 7f);
+            NotificationSystem.Notify(Tr.T("¡Cable cortado: ") + m.Definition.displayName + Tr.T("! Repáralo con el kit de empalme (R)."), NotificationLevel.Critical, 7f);
 
             // La primera vez que se corta el de sensores, la IA del cohete ofrece ayuda
             // (diálogo de ejemplo en Assets/Resources/Dialogue).
@@ -82,22 +82,22 @@ namespace MarsRobot.Dialogue
         {
             if (m.State == ModuleState.Broken && m.Category != ModuleCategory.Wiring)
             {
-                NotificationSystem.Notify(m.Definition.displayName + " inutilizado.", NotificationLevel.Critical, 6f);
+                NotificationSystem.Notify(m.Definition.displayName + Tr.T(" inutilizado."), NotificationLevel.Critical, 6f);
             }
             else if (m.State == ModuleState.Critical && previous != ModuleState.Broken)
             {
-                NotificationSystem.Notify(m.Definition.displayName + ": integridad crítica.", NotificationLevel.Warning);
+                NotificationSystem.Notify(m.Definition.displayName + Tr.T(": integridad crítica."), NotificationLevel.Warning);
             }
         }
 
         private void OnLowCharge()
         {
-            NotificationSystem.Notify("Batería baja: vuelve a la plataforma de carga o busca el sol.", NotificationLevel.Warning, 6f);
+            NotificationSystem.Notify(Tr.T("Batería baja: vuelve a la plataforma de carga o busca el sol."), NotificationLevel.Warning, 6f);
         }
 
         private void OnItemLost(ItemData item, int count, string how)
         {
-            NotificationSystem.Notify(item.itemName + " ×" + count + " " + how + " (falta contenedor criogénico).", NotificationLevel.Warning);
+            NotificationSystem.Notify(item.itemName + " ×" + count + " " + how + Tr.T(" (falta contenedor criogénico)."), NotificationLevel.Warning);
         }
 
         private void Update()
@@ -112,7 +112,7 @@ namespace MarsRobot.Dialogue
                 if (!_dustWarned && _dusting.Dust01 >= dustAlert)
                 {
                     _dustWarned = true;
-                    NotificationSystem.Notify("Polvo acumulado en paneles solares al " + Mathf.RoundToInt(_dusting.Dust01 * 100f) + " %. Límpialos (C) o usa el soplador.", NotificationLevel.Warning, 7f);
+                    NotificationSystem.Notify(Tr.T("Polvo acumulado en paneles solares al ") + Mathf.RoundToInt(_dusting.Dust01 * 100f) + Tr.T(" %. Límpialos (C) o usa el soplador."), NotificationLevel.Warning, 7f);
                 }
                 else if (_dusting.Dust01 < dustAlert * 0.7f) _dustWarned = false;
             }
@@ -123,7 +123,7 @@ namespace MarsRobot.Dialogue
                 if (!_overloadWarned && _inventory.MassRatio > 0.9f)
                 {
                     _overloadWarned = true;
-                    NotificationSystem.Notify("Sobrecarga: los servos se calientan. Riesgo de daño en terreno irregular.", NotificationLevel.Warning);
+                    NotificationSystem.Notify(Tr.T("Sobrecarga: los servos se calientan. Riesgo de daño en terreno irregular."), NotificationLevel.Warning);
                 }
                 else if (_inventory.MassRatio < 0.8f) _overloadWarned = false;
             }
@@ -139,7 +139,7 @@ namespace MarsRobot.Dialogue
             if (!_radWarned && dose > backgroundDoseMilliGray * 3f)
             {
                 _radWarned = true;
-                NotificationSystem.Notify("¡Alerta! Niveles de radiación elevados detectados por el sensor RAD (" + dose.ToString("0.0") + " mGy/día). Busca refugio tras la berma.", NotificationLevel.Critical, 8f);
+                NotificationSystem.Notify(Tr.T("¡Alerta! Niveles de radiación elevados detectados por el sensor RAD (") + dose.ToString("0.0") + Tr.T(" mGy/día). Busca refugio tras la berma."), NotificationLevel.Critical, 8f);
             }
             else if (dose < backgroundDoseMilliGray * 1.5f) _radWarned = false;
 
@@ -150,7 +150,7 @@ namespace MarsRobot.Dialogue
                 if (env.IsDustStormActive && !_stormWarned)
                 {
                     _stormWarned = true;
-                    NotificationSystem.Notify("Tormenta de polvo: visibilidad y energía solar reducidas.", NotificationLevel.Warning, 7f);
+                    NotificationSystem.Notify(Tr.T("Tormenta de polvo: visibilidad y energía solar reducidas."), NotificationLevel.Warning, 7f);
                 }
                 else if (!env.IsDustStormActive) _stormWarned = false;
             }

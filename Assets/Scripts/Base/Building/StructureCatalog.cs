@@ -108,6 +108,12 @@ namespace MarsRobot.Base
     {
         private static List<StructureDefinition> _all;
 
+        /// <summary>Vuelve a crear el catálogo (p. ej. tras cambiar de idioma, al empezar partida).</summary>
+        public static void ResetCache()
+        {
+            _all = null;
+        }
+
         public static IReadOnlyList<StructureDefinition> All
         {
             get
@@ -131,10 +137,10 @@ namespace MarsRobot.Base
         {
             switch (c)
             {
-                case StructureCategory.Energy: return "Energía";
-                case StructureCategory.LifeSupport: return "Aire y agua";
-                case StructureCategory.Construction: return "Construcción";
-                default: return "Ciencia";
+                case StructureCategory.Energy: return Tr.T("Energía");
+                case StructureCategory.LifeSupport: return Tr.T("Aire y agua");
+                case StructureCategory.Construction: return Tr.T("Construcción");
+                default: return Tr.T("Ciencia");
             }
         }
 
@@ -150,22 +156,22 @@ namespace MarsRobot.Base
                 // ---------------- Energía ----------------
                 new StructureDefinition
                 {
-                    id = "solar", name = "Panel solar fijo", kind = StructureKind.SolarArray, category = StructureCategory.Energy,
-                    description = "Genera hasta 600 W con sol directo. Se ensucia de polvo: límpialo con F.",
+                    id = "solar", name = Tr.T("Panel solar fijo"), kind = StructureKind.SolarArray, category = StructureCategory.Energy,
+                    description = Tr.T("Genera hasta 600 W con sol directo. Se ensucia de polvo: límpialo con F."),
                     size = new Vector3(4f, 1.6f, 3f), generationWatts = 600f, maxSlopeDegrees = 20f,
                     cost = new[] { R(ResourceType.SolarCells, 3), R(ResourceType.MetalParts, 2) }
                 },
                 new StructureDefinition
                 {
-                    id = "battery", name = "Batería de la base", kind = StructureKind.BaseBattery, category = StructureCategory.Energy,
-                    description = "Guarda 5000 Wh para la noche y las tormentas.",
+                    id = "battery", name = Tr.T("Batería de la base"), kind = StructureKind.BaseBattery, category = StructureCategory.Energy,
+                    description = Tr.T("Guarda 5000 Wh para la noche y las tormentas."),
                     size = new Vector3(2f, 1.6f, 2f), storageWh = 5000f,
                     cost = new[] { R(ResourceType.MetalParts, 3), R(ResourceType.Wiring, 2) }
                 },
                 new StructureDefinition
                 {
-                    id = "reactor", name = "Reactor de fisión pequeño", kind = StructureKind.FissionReactor, category = StructureCategory.Energy,
-                    description = "8 kW constantes, de día, de noche y con tormenta. Caro y requiere investigación.",
+                    id = "reactor", name = Tr.T("Reactor de fisión pequeño"), kind = StructureKind.FissionReactor, category = StructureCategory.Energy,
+                    description = Tr.T("8 kW constantes, de día, de noche y con tormenta. Caro y requiere investigación."),
                     size = new Vector3(3f, 3.5f, 3f), generationWatts = 8000f, researchCost = 30,
                     cost = new[] { R(ResourceType.MetalParts, 10), R(ResourceType.Wiring, 4), R(ResourceType.RegolithBricks, 6) }
                 },
@@ -173,39 +179,39 @@ namespace MarsRobot.Base
                 // ---------------- Aire y agua ----------------
                 new StructureDefinition
                 {
-                    id = "oxygen", name = "Extractor de oxígeno", kind = StructureKind.OxygenExtractor, category = StructureCategory.LifeSupport,
-                    description = "Separa el oxígeno del CO₂ de la atmósfera (como el experimento real MOXIE). Gasta mucha energía.",
+                    id = "oxygen", name = Tr.T("Extractor de oxígeno"), kind = StructureKind.OxygenExtractor, category = StructureCategory.LifeSupport,
+                    description = Tr.T("Separa el oxígeno del CO₂ de la atmósfera (como el experimento real MOXIE). Gasta mucha energía."),
                     size = new Vector3(2.5f, 2.2f, 2.5f), consumptionWatts = 800f,
                     produces = new[] { new ResourceRate(ResourceType.Oxygen, 4f) },
                     cost = new[] { R(ResourceType.MetalParts, 4), R(ResourceType.Wiring, 2) }
                 },
                 new StructureDefinition
                 {
-                    id = "icedrill", name = "Taladro de hielo", kind = StructureKind.IceDrill, category = StructureCategory.LifeSupport,
-                    description = "Perfora el hielo del subsuelo y lo funde en agua. Rinde según el hielo de la zona.",
+                    id = "icedrill", name = Tr.T("Taladro de hielo"), kind = StructureKind.IceDrill, category = StructureCategory.LifeSupport,
+                    description = Tr.T("Perfora el hielo del subsuelo y lo funde en agua. Rinde según el hielo de la zona."),
                     size = new Vector3(2.5f, 4f, 2.5f), consumptionWatts = 600f,
                     produces = new[] { new ResourceRate(ResourceType.Water, 3f) },
                     cost = new[] { R(ResourceType.MetalParts, 5), R(ResourceType.Wiring, 1) }
                 },
                 new StructureDefinition
                 {
-                    id = "condenser", name = "Condensador atmosférico", kind = StructureKind.AtmosphericCondenser, category = StructureCategory.LifeSupport,
-                    description = "Saca un poco de agua del aire en cualquier zona. Rinde muy poco con tormenta.",
+                    id = "condenser", name = Tr.T("Condensador atmosférico"), kind = StructureKind.AtmosphericCondenser, category = StructureCategory.LifeSupport,
+                    description = Tr.T("Saca un poco de agua del aire en cualquier zona. Rinde muy poco con tormenta."),
                     size = new Vector3(2f, 2.5f, 2f), consumptionWatts = 500f, researchCost = 10,
                     produces = new[] { new ResourceRate(ResourceType.Water, 0.8f) },
                     cost = new[] { R(ResourceType.MetalParts, 3), R(ResourceType.Wiring, 2), R(ResourceType.SolarCells, 1) }
                 },
                 new StructureDefinition
                 {
-                    id = "o2tank", name = "Tanque de oxígeno", kind = StructureKind.OxygenTank, category = StructureCategory.LifeSupport,
-                    description = "+200 de capacidad de oxígeno.",
+                    id = "o2tank", name = Tr.T("Tanque de oxígeno"), kind = StructureKind.OxygenTank, category = StructureCategory.LifeSupport,
+                    description = Tr.T("+200 de capacidad de oxígeno."),
                     size = new Vector3(2f, 3f, 2f), storageBonus = R(ResourceType.Oxygen, 200),
                     cost = new[] { R(ResourceType.MetalParts, 3), R(ResourceType.RegolithBricks, 4) }
                 },
                 new StructureDefinition
                 {
-                    id = "watertank", name = "Tanque de agua", kind = StructureKind.WaterTank, category = StructureCategory.LifeSupport,
-                    description = "+200 de capacidad de agua.",
+                    id = "watertank", name = Tr.T("Tanque de agua"), kind = StructureKind.WaterTank, category = StructureCategory.LifeSupport,
+                    description = Tr.T("+200 de capacidad de agua."),
                     size = new Vector3(2.4f, 2.4f, 2.4f), storageBonus = R(ResourceType.Water, 200),
                     cost = new[] { R(ResourceType.MetalParts, 3), R(ResourceType.RegolithBricks, 4) }
                 },
@@ -213,8 +219,8 @@ namespace MarsRobot.Base
                 // ---------------- Construcción ----------------
                 new StructureDefinition
                 {
-                    id = "printer", name = "Impresora 3D de regolito", kind = StructureKind.RegolithPrinter, category = StructureCategory.Construction,
-                    description = "Convierte regolito en bloques sola. El regolito se apelmaza: a veces la tolva se atasca y hay que desatascarla con F.",
+                    id = "printer", name = Tr.T("Impresora 3D de regolito"), kind = StructureKind.RegolithPrinter, category = StructureCategory.Construction,
+                    description = Tr.T("Convierte regolito en bloques sola. El regolito se apelmaza: a veces la tolva se atasca y hay que desatascarla con F."),
                     size = new Vector3(3f, 2.5f, 3f), consumptionWatts = 400f,
                     consumes = new[] { new ResourceRate(ResourceType.Regolith, 10f) },
                     produces = new[] { new ResourceRate(ResourceType.RegolithBricks, 2f) },
@@ -222,29 +228,29 @@ namespace MarsRobot.Base
                 },
                 new StructureDefinition
                 {
-                    id = "wall", name = "Muro de regolito", kind = StructureKind.RegolithWall, category = StructureCategory.Construction,
-                    description = "Protege del viento y delimita la base.",
+                    id = "wall", name = Tr.T("Muro de regolito"), kind = StructureKind.RegolithWall, category = StructureCategory.Construction,
+                    description = Tr.T("Protege del viento y delimita la base."),
                     size = new Vector3(4f, 2.5f, 0.6f), maxSlopeDegrees = 25f,
                     cost = new[] { R(ResourceType.RegolithBricks, 3) }
                 },
                 new StructureDefinition
                 {
-                    id = "floor", name = "Suelo de regolito", kind = StructureKind.FloorPlate, category = StructureCategory.Construction,
-                    description = "Plataforma plana para caminar y construir encima.",
+                    id = "floor", name = Tr.T("Suelo de regolito"), kind = StructureKind.FloorPlate, category = StructureCategory.Construction,
+                    description = Tr.T("Plataforma plana para caminar y construir encima."),
                     size = new Vector3(4f, 0.2f, 4f), solid = false,
                     cost = new[] { R(ResourceType.RegolithBricks, 2) }
                 },
                 new StructureDefinition
                 {
-                    id = "shelter", name = "Refugio contra radiación", kind = StructureKind.RadiationShelter, category = StructureCategory.Construction,
-                    description = "Bóveda cubierta con una capa gruesa de regolito. Imprescindible para los colonos.",
+                    id = "shelter", name = Tr.T("Refugio contra radiación"), kind = StructureKind.RadiationShelter, category = StructureCategory.Construction,
+                    description = Tr.T("Bóveda cubierta con una capa gruesa de regolito. Imprescindible para los colonos."),
                     size = new Vector3(6f, 3.5f, 6f), maxSlopeDegrees = 12f,
                     cost = new[] { R(ResourceType.RegolithBricks, 12), R(ResourceType.MetalParts, 2) }
                 },
                 new StructureDefinition
                 {
-                    id = "pad", name = "Pista de aterrizaje nivelada", kind = StructureKind.LandingPad, category = StructureCategory.Construction,
-                    description = "Donde aterrizará la nave con la primera tripulación. Necesita terreno casi llano.",
+                    id = "pad", name = Tr.T("Pista de aterrizaje nivelada"), kind = StructureKind.LandingPad, category = StructureCategory.Construction,
+                    description = Tr.T("Donde aterrizará la nave con la primera tripulación. Necesita terreno casi llano."),
                     size = new Vector3(16f, 0.3f, 16f), solid = false, maxSlopeDegrees = 8f,
                     cost = new[] { R(ResourceType.RegolithBricks, 20), R(ResourceType.MetalParts, 4) }
                 },
@@ -252,8 +258,8 @@ namespace MarsRobot.Base
                 // ---------------- Ciencia ----------------
                 new StructureDefinition
                 {
-                    id = "lab", name = "Laboratorio de muestras", kind = StructureKind.SampleLab, category = StructureCategory.Science,
-                    description = "Analiza las muestras del taladro del robot y da puntos de investigación para desbloquear máquinas.",
+                    id = "lab", name = Tr.T("Laboratorio de muestras"), kind = StructureKind.SampleLab, category = StructureCategory.Science,
+                    description = Tr.T("Analiza las muestras del taladro del robot y da puntos de investigación para desbloquear máquinas."),
                     size = new Vector3(4f, 2.6f, 3f), consumptionWatts = 400f,
                     consumes = new[] { new ResourceRate(ResourceType.Samples, 2f) },
                     produces = new[] { new ResourceRate(ResourceType.Research, 6f) },
@@ -261,8 +267,8 @@ namespace MarsRobot.Base
                 },
                 new StructureDefinition
                 {
-                    id = "antenna", name = "Antena de comunicaciones", kind = StructureKind.CommsAntenna, category = StructureCategory.Science,
-                    description = "Recibe mensajes de la Tierra (con unos minutos de retraso) y la lista de preparación para la tripulación.",
+                    id = "antenna", name = Tr.T("Antena de comunicaciones"), kind = StructureKind.CommsAntenna, category = StructureCategory.Science,
+                    description = Tr.T("Recibe mensajes de la Tierra (con unos minutos de retraso) y la lista de preparación para la tripulación."),
                     size = new Vector3(2f, 6f, 2f), consumptionWatts = 150f,
                     cost = new[] { R(ResourceType.MetalParts, 3), R(ResourceType.Wiring, 3) }
                 },
@@ -270,8 +276,8 @@ namespace MarsRobot.Base
                 // ---------------- Cohete nodriza y exploración ----------------
                 new StructureDefinition
                 {
-                    id = "refinery", name = "Refinería ISRU (Sabatier)", kind = StructureKind.FuelRefinery, category = StructureCategory.LifeSupport,
-                    description = "Electroliza agua y la combina con el CO₂ del aire (reacción de Sabatier): metano para el cohete y oxígeno. 2 agua → 1 metano + 2 oxígeno.",
+                    id = "refinery", name = Tr.T("Refinería ISRU (Sabatier)"), kind = StructureKind.FuelRefinery, category = StructureCategory.LifeSupport,
+                    description = Tr.T("Electroliza agua y la combina con el CO₂ del aire (reacción de Sabatier): metano para el cohete y oxígeno. 2 agua → 1 metano + 2 oxígeno."),
                     size = new Vector3(4f, 3.5f, 3f), consumptionWatts = 1500f, hiddenFromBuildMenu = true,
                     consumes = new[] { new ResourceRate(ResourceType.Water, 2f) },
                     produces = new[] { new ResourceRate(ResourceType.Methane, 1f), new ResourceRate(ResourceType.Oxygen, 2f) },
@@ -279,8 +285,8 @@ namespace MarsRobot.Base
                 },
                 new StructureDefinition
                 {
-                    id = "beacon", name = "Baliza de comunicaciones", kind = StructureKind.CommBeacon, category = StructureCategory.Science,
-                    description = "Repetidor solar autónomo: revela el minimapa en 120 m a su alrededor. Se puede colocar lejos de la base.",
+                    id = "beacon", name = Tr.T("Baliza de comunicaciones"), kind = StructureKind.CommBeacon, category = StructureCategory.Science,
+                    description = Tr.T("Repetidor solar autónomo: revela el minimapa en 120 m a su alrededor. Se puede colocar lejos de la base."),
                     size = new Vector3(1f, 3f, 1f), ignoreBuildRadius = true, maxSlopeDegrees = 30f,
                     cost = new[] { R(ResourceType.MetalParts, 1), R(ResourceType.Wiring, 1) }
                 },
